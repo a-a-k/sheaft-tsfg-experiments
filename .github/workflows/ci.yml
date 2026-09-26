@@ -9,6 +9,7 @@ permissions:
   contents: read
 jobs:
   core:
+    if: github.event_name != 'pull_request'
     runs-on: ubuntu-24.04
     timeout-minutes: 20
     container:
@@ -20,7 +21,21 @@ jobs:
       MKL_NUM_THREADS: 1
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - name: Fetch pinned private TSFG source (read only)
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          repository: a-a-k/ozone-tech_mb3r_lab_1084
+          ref: 8510baf28673758f1e437d2dbc5a51ead9843a3b
+          path: .private/upstream
+          ssh-key: ${{ secrets.TSFG_SOURCE_SSH_KEY }}
+          persist-credentials: false
+      - uses: actions/setup-go@924ae3a1cded613372ab5595356fb5720e22ba16
+        with:
+          go-version: '1.26.0'
+          cache: false
       - run: python -m pip install --require-hashes -r requirements.lock
+      - name: Upstream regression tests and TSFG adapter build
+        run: python scripts/build_tsfg.py
       - name: Build independent C++ kernels
         run: python scripts/build.py
       - name: E0-core

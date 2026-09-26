@@ -11,6 +11,8 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from references.simpy_ref import simulate
 from validation.checks import compare, project, validate_dataset, validate_result
 
+NATIVE_ENGINES = ("tsfg", "grid", "des", "dag")
+
 
 def instance(rows):
     # rows: machine, work, planned start, predecessors, job, release
@@ -35,8 +37,10 @@ def run_native(engine, data, scenarios, horizon, mode, folder, label):
     dataset.write_text(json.dumps(data))
     scenario_file.write_text(json.dumps(scenarios))
     target = folder / f"{label}-{engine}-{mode}-{horizon}.jsonl"
-    subprocess.run(["artifacts/build/simulator", engine, str(dataset), str(scenario_file),
-                    str(target), mode, str(horizon), "5"], check=True, timeout=120)
+    binary = ".private/runtime/tsfg" if engine == "tsfg" else "artifacts/build/simulator"
+    subprocess.run([binary, engine, str(dataset), str(scenario_file),
+                    str(target), mode, str(horizon), "5"], check=True, timeout=120,
+                   env={**os.environ, "TSFG_OP_DRIVER": "true", "GOMAXPROCS": "1"})
     return [json.loads(line) for line in target.read_text().splitlines()]
 
 
@@ -65,7 +69,7 @@ def main():
         ("failure_prevents_start", [(0,100,200,[],0,0)], [[0,200,300]], [300], [400]),
     ]
     summary = {"suite":"E0-core", "status":"RUNNING", "hand_cases":[], "property_cases":[],
-               "engines":["grid","des","dag","simpy"], "invariant_checks":0, "comparisons":0}
+               "engines":[*NATIVE_ENGINES,"simpy"], "invariant_checks":0, "comparisons":0}
     try:
         for label, rows, failures, expected_s, expected_c in cases:
             folder = root / label
@@ -76,7 +80,7 @@ def main():
             oracle=simulate(data,sc,2000,"DIAGNOSTIC")
             assert oracle["start"]==expected_s and oracle["finish"]==expected_c, label
             trajectories={"simpy":oracle}
-            for engine in ("grid","des","dag"):
+            for engine in NATIVE_ENGINES:
                 row=run_native(engine,data,[sc],2000,"DIAGNOSTIC",folder,"trajectory")[0]
                 assert row["start"]==expected_s and row["finish"]==expected_c, label
                 trajectories[engine]=row
@@ -88,12 +92,12 @@ def main():
             for h in (0,100,200,299,300,499,500,501,700,1200):
                 projected=project(data,sc,oracle,h)
                 candidates={"simpy":simulate(data,sc,h,"MISSION")}
-                for engine in ("grid","des","dag"):
+                for engine in NATIVE_ENGINES:
                     candidates[engine]=run_native(engine,data,[sc],h,"MISSION",folder,"boundary")[0]
                 for row in candidates.values():
                     validate_result(data,sc,row); summary["invariant_checks"]+=1
                     compare(projected,row); summary["comparisons"]+=1
-            for engine in ("grid","des","dag"):
+            for engine in NATIVE_ENGINES:
                 censored=run_native(engine,data,[sc],99,"DIAGNOSTIC",folder,"censored")[0]
                 ref=simulate(data,sc,99,"DIAGNOSTIC")
                 validate_result(data,sc,censored); compare(ref,censored)
@@ -115,7 +119,7 @@ def main():
                        dict(id="longer_failure",failures=[[m,a,b+50]],work_overrides=[])]
             folder=root/f"property-{seed}"; folder.mkdir(exist_ok=True)
             references=[simulate(data,s,10000,"DIAGNOSTIC") for s in scenarios]
-            for engine in ("grid","des","dag"):
+            for engine in NATIVE_ENGINES:
                 results=run_native(engine,data,scenarios,10000,"DIAGNOSTIC",folder,"property")
                 for sc,ref,row in zip(scenarios,references,results):
                     validate_result(data,sc,row); compare(ref,row)
