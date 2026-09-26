@@ -1,5 +1,8 @@
 name: Complete E2 campaign
 on:
+  push:
+    branches: ['implementation/full-study']
+    paths: ['.github/workflows/campaign.yml']
   workflow_dispatch:
     inputs:
       stage:
@@ -9,11 +12,11 @@ on:
 permissions:
   contents: read
 concurrency:
-  group: full-e2-${{ inputs.stage }}
+  group: full-e2-${{ inputs.stage || 'screen' }}
   cancel-in-progress: false
 jobs:
   screen:
-    if: inputs.stage == 'screen'
+    if: (inputs.stage || 'screen') == 'screen'
     strategy:
       fail-fast: false
       max-parallel: 1
@@ -47,12 +50,12 @@ jobs:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
       - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
         with:
-          pattern: validated-${{ inputs.stage }}-*
+          pattern: validated-${{ inputs.stage || 'screen' }}-*
           path: evidence
-      - run: python experiments/scale_report.py --input evidence --output artifacts/scale-report --stage ${{ inputs.stage }}
+      - run: python experiments/scale_report.py --input evidence --output artifacts/scale-report --stage ${{ inputs.stage || 'screen' }}
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         if: always()
         with:
-          name: e2-${{ inputs.stage }}-report
+          name: e2-${{ inputs.stage || 'screen' }}-report
           path: artifacts/scale-report
           retention-days: 90
