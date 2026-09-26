@@ -80,6 +80,7 @@ def main():
     assert extended['status']==gate['status']==audit['status']=='PASS'
     if not args.preview:
         assert numeric is not None and numeric['status']=='PASS'
+        assert len(ranking)==2 and {r['family'] for r in ranking}=={'F1','F2'}
         assert all(r['conclusion']=='success' for r in runs.values()),'A campaign failed; report must disclose/reconcile it first'
         assert all_present,(expected,actual)
     summary=dict(status='PRELIMINARY_INCOMPLETE' if args.preview else 'COMPLETED_WITH_DISCLOSED_LIMITATIONS',expected=expected,actual=actual,
@@ -116,6 +117,7 @@ def main():
         raw=root/'e3-raw'/f"e3-{metadata['family']}-{metadata['density']}-{metadata['n']}-{metadata['seed']}"/'e3'
         exact_diagnostic=read_rows(raw/'DIAGNOSTIC-G0-des.jsonl')
         fluid_diagnostic=read_rows(raw/'DIAGNOSTIC-G2-tsfg.jsonl')
+        assert all(row['algorithm_id']=='tsfg-g2-fluid-s1-v2' for row in fluid_diagnostic.values())
         for ratio in (1.,1.01):
             deadline=metadata['C0_ticks']*int(round(ratio*100))/100
             assessed=[]
