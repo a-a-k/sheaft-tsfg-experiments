@@ -1,0 +1,37 @@
+name: Preliminary evidence report
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: preliminary-evidence-report
+  cancel-in-progress: false
+jobs:
+  preview:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    container:
+      image: python:3.12-bookworm@sha256:dbbe4ceb97851e2e5fa83798b239811f871cb743b259ba3563737349f6bcfaa0
+      options: --cpus=1 --cpuset-cpus=0 --memory=4g --memory-swap=4g
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - run: python -m pip install --require-hashes -r requirements.lock
+      - name: Collect currently available measured evidence
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python scripts/collect_evidence.py --output evidence --preview
+      - name: Derive provisional H3 coverage without filling missing pairs
+        run: python experiments/scale_report.py --input evidence/main-points --output evidence/main --stage main
+      - name: Preserve the complete already finished screen inputs
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python scripts/collect_evidence.py --output artifacts/preview --inputs --only-role screen
+      - run: python experiments/final_report.py --evidence evidence --output artifacts/preview --preview
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: preliminary-report
+          path: artifacts/preview/
+          retention-days: 90
+          compression-level: 1

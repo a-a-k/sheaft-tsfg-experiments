@@ -59,10 +59,11 @@ def main():
     p.add_argument('--check-only',action='store_true')
     p.add_argument('--inputs',action='store_true')
     p.add_argument('--only-role',help='Collect one already completed role for pipeline admission')
+    p.add_argument('--preview',action='store_true',help='Collect currently available evidence; cannot produce a final verdict')
     args=p.parse_args();args.output.mkdir(parents=True,exist_ok=True)
     registry=json.loads(args.registry.read_text());repository=registry['repository'];runs={}
     if args.only_role:
-        assert not args.inputs
+        assert not args.inputs or args.only_role=='screen'
         registry['runs']={args.only_role:registry['runs'][args.only_role]}
     for role,item in registry['runs'].items():
         actual=api(f"repos/{repository}/actions/runs/{item['id']}")
@@ -72,7 +73,7 @@ def main():
     if args.check_only:
         with open(os.environ['GITHUB_OUTPUT'],'a') as f:f.write('ready='+str(ready).lower()+'\n')
         print(json.dumps(dict(ready=ready,runs=runs)));return
-    if not ready:raise SystemExit('Required campaigns are not all complete and successful')
+    if not ready and not args.preview:raise SystemExit('Required campaigns are not all complete and successful')
     index=[]
     with tempfile.TemporaryDirectory() as temp:
         downloaded=Path(temp)/'artifact.zip'
@@ -108,7 +109,10 @@ def main():
             available=artifacts(repository,item['id'])
             for selection in item['artifacts']:
                 matches=[a for a in available if fnmatch.fnmatchcase(a['name'],selection['pattern'])]
-                if not matches:raise ValueError('Missing evidence pattern '+selection['pattern'])
+                if not matches:
+                    if args.preview:
+                        print('Preview missing evidence:',role,selection['pattern'],flush=True);continue
+                    raise ValueError('Missing evidence pattern '+selection['pattern'])
                 for artifact in sorted(matches,key=lambda a:a['name']):
                     assert not artifact['expired']
                     destination=args.output/selection['directory']
