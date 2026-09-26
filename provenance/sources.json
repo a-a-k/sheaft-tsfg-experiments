@@ -1,0 +1,13 @@
+{
+  "github_run_id": "36228034033",
+  "sources": {
+    "mk01.txt": {
+      "url": "https://raw.githubusercontent.com/SchedulingLab/fjsp-instances/f960b0b75b132488ddba9ec17a3b1ce77ab751db/brandimarte/mk01.txt",
+      "sha256": "449ada8093e03a84bf2255fa2a1673ccbc80cce7b82e855c5216533a330751ff"
+    },
+    "json.hpp": {
+      "url": "https://raw.githubusercontent.com/nlohmann/json/9cca280a4d0ccf0c08f47a99aa71d1b0e52f8d03/single_include/nlohmann/json.hpp",
+      "sha256": "9bea4c8066ef4a1c206b2be5a36302f8926f7fdc6087af5d20b417d0cf103ea6"
+    }
+  }
+}

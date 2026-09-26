@@ -1,0 +1,22 @@
+name: Telegram notification
+on:
+  workflow_dispatch:
+    inputs:
+      message:
+        description: Authorized project milestone or decision question
+        required: true
+        type: string
+permissions:
+  contents: read
+jobs:
+  notify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - name: Send notification
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          NOTIFICATION_TEXT: ${{ inputs.message }}
+        run: python scripts/telegram_notify.py --message "$NOTIFICATION_TEXT"
