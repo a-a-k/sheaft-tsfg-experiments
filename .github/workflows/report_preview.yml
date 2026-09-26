@@ -28,6 +28,18 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: python scripts/collect_evidence.py --output artifacts/preview --inputs --only-role screen
       - run: python experiments/final_report.py --evidence evidence --output artifacts/preview --preview
+      - name: Prove preliminary evidence cannot pass final publication admission
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          from scripts.publish_report import verify
+          try:
+              verify(Path('artifacts/preview'))
+          except AssertionError as error:
+              assert 'Preliminary or incomplete' in str(error)
+          else:
+              raise AssertionError('Preliminary report passed final publication admission')
+          PY
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         if: always()
         with:

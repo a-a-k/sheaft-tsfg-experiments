@@ -1,0 +1,58 @@
+name: Publish verified final study
+on:
+  workflow_run:
+    workflows: ['Publishable research report']
+    types: [completed]
+  workflow_dispatch:
+    inputs:
+      report_run_id:
+        description: Successful final report Actions run
+        type: string
+        required: true
+permissions:
+  contents: write
+  actions: read
+concurrency:
+  group: publish-final-study
+  cancel-in-progress: false
+jobs:
+  publish:
+    if: github.event_name == 'workflow_dispatch' || (github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_branch == 'main')
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    env:
+      GH_TOKEN: ${{ github.token }}
+      REPORT_RUN_ID: ${{ inputs.report_run_id || github.event.workflow_run.id }}
+    steps:
+      - name: Verify report origin and check for a final artifact
+        id: origin
+        run: |
+          python - <<'PY'
+          import json,os,subprocess
+          repo='a-a-k/sheaft-tsfg-experiments'
+          run=os.environ['REPORT_RUN_ID'];assert run.isdecimal()
+          def api(path):return json.loads(subprocess.check_output(['gh','api',f'repos/{repo}/'+path]))
+          item=api('actions/runs/'+run)
+          assert item['path']=='.github/workflows/report.yml'
+          assert item['head_branch']=='main' and item['conclusion']=='success'
+          artifacts=api('actions/runs/'+run+'/artifacts')['artifacts']
+          present=any(a['name']=='full-study-report' and not a['expired'] for a in artifacts)
+          with open(os.environ['GITHUB_OUTPUT'],'a') as output:
+              output.write('ready='+str(present).lower()+'\nsha='+item['head_sha']+'\n')
+          PY
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        if: steps.origin.outputs.ready == 'true'
+        with:
+          ref: ${{ steps.origin.outputs.sha }}
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        if: steps.origin.outputs.ready == 'true'
+        with:
+          name: full-study-report
+          path: publication
+          run-id: ${{ env.REPORT_RUN_ID }}
+          github-token: ${{ github.token }}
+      - name: Verify completeness, hashes and uploaded asset digests before publication
+        if: steps.origin.outputs.ready == 'true'
+        env:
+          REPORT_SOURCE_SHA: ${{ steps.origin.outputs.sha }}
+        run: python scripts/publish_report.py --directory publication
