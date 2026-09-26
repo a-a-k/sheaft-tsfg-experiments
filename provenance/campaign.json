@@ -2,12 +2,13 @@
   "repository": "a-a-k/sheaft-tsfg-experiments",
   "runs": {
     "screen": {"id": 36234413565, "artifacts": [{"pattern": "e2-screen-report", "directory": "screen"}]},
-    "main": {"id": 36247215750, "artifacts": [{"pattern": "e2-main-report", "directory": "main"}, {"pattern": "validated-main-*", "directory": "main-points", "subdirectories": true}]},
-    "e3": {"id": 36247161084, "artifacts": [{"pattern": "e3-summary-*", "directory": "e3", "subdirectories": true}]},
+    "main": {"id": 36247215750, "artifacts": [{"pattern": "e2-main-report", "directory": "main"}, {"pattern": "validated-main-*", "directory": "main-points", "subdirectories": true}, {"pattern": "scale-main-*", "directory": "main-environment", "subdirectories": true, "allow_prefixes": ["build/"]}]},
+    "e3": {"id": 36247161084, "artifacts": [{"pattern": "e3-summary-*", "directory": "e3", "subdirectories": true}, {"pattern": "e3-F*", "directory": "e3-raw", "subdirectories": true}]},
     "e4": {"id": 36234852274, "artifacts": [{"pattern": "e4-summary-*", "directory": "e4", "subdirectories": true}]},
     "extras": {"id": 36247446499, "artifacts": [{"pattern": "validated-*", "directory": "extras", "subdirectories": true}]},
     "ranking": {"id": 36247684531, "artifacts": [{"pattern": "g2-ranking-*", "directory": "ranking", "subdirectories": true}]},
     "core": {"id": 36247161041, "artifacts": [{"pattern": "core-*", "directory": "core"}]},
-    "audit": {"id": 36234360859, "artifacts": [{"pattern": "tsfg-audit-summary-*", "directory": "audit"}]}
+    "audit": {"id": 36234360859, "artifacts": [{"pattern": "tsfg-audit-summary-*", "directory": "audit"}]},
+    "witness": {"id": 36248742380, "artifacts": [{"pattern": "witness-*", "directory": "witness", "subdirectories": true}]}
   }
 }

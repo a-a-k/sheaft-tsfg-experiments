@@ -18,6 +18,13 @@ import numpy as np
 
 
 def read(path):return json.loads(path.read_text())
+def read_rows(path):
+    rows={}
+    with path.open() as source:
+        for line in source:
+            if not line.endswith('\n'):break
+            row=json.loads(line);rows[row['scenario_id']]=row
+    return rows
 def num(value):return '—' if value is None else f'{value:.3g}'
 def table(headers,rows):
     return ['| '+' | '.join(headers)+' |','|'+'|'.join('---' for _ in headers)+'|',
@@ -37,12 +44,23 @@ def main():
     args=parser.parse_args();root=args.evidence;out=args.output;out.mkdir(parents=True,exist_ok=True)
     screen=read(root/'screen/summary.json');main_result=read(root/'main/summary.json')
     main_rows=records(root/'main-points');extra_rows=records(root/'extras')
+    environments=[dict(read(p),evidence_path=str(p)) for p in sorted((root/'main-environment').glob('*/build/environment.json'))]
+    assert len(environments)==72
+    assert {r['commit'] for r in main_rows}=={'afb7081898506524e3591af4e727461fc46efa2d'}
+    for dataset in {r['dataset_id'] for r in main_rows}:
+        points=[r for r in main_rows if r['dataset_id']==dataset]
+        assert len({r['input_sha256'] for r in points})==1
+        assert len({r['scenarios_sha256'] for r in points})==1
     e3=[read(p) for p in sorted((root/'e3').glob('*/summary.json'))]
     e4=[read(p) for p in sorted((root/'e4').glob('*/summary.json'))]
     ranking=[read(p) for p in sorted((root/'ranking').glob('*/g2-ranking/summary.json'))]
     extended=read(root/'core/e1x/summary.json')
     gate=read(root/'core/e3-gate/summary.json')
     audit=read(root/'audit/audit/ozon-reproduction-check.json')
+    witnesses=[read(p) for p in sorted((root/'witness').glob('*/witness/summary.json'))]
+    diagnostics=read(out/'input-diagnostics.json')
+    assert len(witnesses)==4 and all(w['status']=='PASS' for w in witnesses)
+    assert len(diagnostics)==48
     runs=read(root/'runs.json')
     expected=dict(screen_processes=144,main_processes=432,e3_datasets=48,e4_families=2,extra_processes=171)
     actual=dict(screen_processes=screen['records'],main_processes=len(main_rows),e3_datasets=len(e3),
@@ -56,9 +74,10 @@ def main():
     summary=dict(status='COMPLETED_WITH_DISCLOSED_LIMITATIONS',expected=expected,actual=actual,
         H1='SUPPORTED_ON_TESTED_EXACT_PROFILE',H2='SUPPORTED_ON_TESTED_EXACT_PROFILE',H3=main_result['decisions'],
         H4=[],H5=[dict(family=s['family'],series=s['series']) for s in e4],
-        E0_aggregation=gate,E1X=extended,ozon_reproduction=audit,ranking=ranking,runs=runs,
+        E0_aggregation=gate,E1X=extended,ozon_reproduction=audit,ranking=ranking,runs=runs,witnesses=witnesses,
+        environment_records=len(environments),
         deviations='docs/EXECUTION_DEVIATIONS_RU.md')
-    e3_rows=[]
+    e3_rows=[];strict_deadlines=[]
     for item in e3:
         metadata=item['metadata'];by={(r['mode'],r['label']):r for r in item['measurements']}
         accuracy=item['accuracy']
@@ -80,7 +99,21 @@ def main():
             G1_bytes=item['representation']['input_bytes'],G0_bytes=item['representation']['G0_input_bytes'],
             G1_preparation_s=item['representation']['preparation_wall_s'])
         e3_rows.append(row)
+        raw=root/'e3-raw'/f"e3-{metadata['family']}-{metadata['density']}-{metadata['n']}-{metadata['seed']}"/'e3'
+        exact_diagnostic=read_rows(raw/'DIAGNOSTIC-G0-des.jsonl')
+        fluid_diagnostic=read_rows(raw/'DIAGNOSTIC-G2-tsfg.jsonl')
+        for ratio in (1.,1.01):
+            deadline=metadata['C0_ticks']*int(round(ratio*100))/100
+            assessed=[]
+            for scenario in exact_diagnostic.keys()&fluid_diagnostic.keys():
+                a,b=exact_diagnostic[scenario],fluid_diagnostic[scenario]
+                if a['cmax'] is None or b['cmax'] is None:continue
+                assessed.append((a['cmax']<=deadline,b['cmax']<=deadline))
+            strict_deadlines.append(dict(dataset_id=item['dataset_id'],deadline_ratio=ratio,scenarios=len(assessed),
+                exact_successes=sum(a for a,b in assessed),false_successes=sum(b and not a for a,b in assessed),
+                false_failures=sum(a and not b for a,b in assessed),analysis='POST_HOC diagnostic projection; no queue/WIP class at these deadlines'))
     summary['H4']=e3_rows
+    summary['strict_deadline_diagnostic_projection']=strict_deadlines
     summary['E2_screen']=screen
     summary['supplementary']=dict(processes=len(extra_rows),complete_correct=sum(r['completion_validated'] for r in extra_rows),
         timeouts=sum(r['status']=='TIMEOUT' for r in extra_rows),
@@ -90,6 +123,7 @@ def main():
     write_csv(out/'main-processes.csv',main_rows,fields)
     write_csv(out/'supplementary-processes.csv',extra_rows,fields)
     write_csv(out/'aggregation.csv',e3_rows,list(e3_rows[0]))
+    write_csv(out/'strict-deadlines-post-hoc.csv',strict_deadlines,list(strict_deadlines[0]))
     shutil.copyfile(root/'screen/measurements.csv',out/'screen-processes.csv')
     shutil.copyfile(root/'main/measurements.csv',out/'H3-measurements.csv')
     lines=['# TSFG: проверка исполнения производственного расписания','',
@@ -126,6 +160,9 @@ def main():
         'максимальная ошибка индивидуального времени 0,10556 и 0,03 единицы. Более мелкий '
         'шаг не ухудшил ни один из 90 результатов. Буферные исходные планы при необходимости '
         'заменялись заранее допустимым последовательным планом; это не исходный план Mk01.','',
+        'Для публичной ручной проверки дополнительно сохранены 36 полных трасс по миллиону '
+        'операций: F1/F2 × DENSE/SPARSE, seed101, M0/S0000/S0003, три движка. Все массивы '
+        'и физические инварианты совпали. Это отдельные контрольные запуски, не повтор H3.','',
         '## Основное время и память E2','',
         f"Предварительно: 48 наборов, {screen['correct_complete']}/144 полных корректных процессов, "
         f"{screen['timeouts']} таймаутов. Основная серия: {main_result['correct_complete']}/432 полных "
@@ -137,6 +174,12 @@ def main():
     lines+=table(['Область','N','Эталон','Пар / 9','G, T_batch','G, T_total','Решение'],[
         [f"{d['family']}/{d['density']}",d['n'],d['reference'],len(d['points']),num(d.get('G')),num(d.get('G_total')),d['status']]
         for d in main_result['decisions']])
+    lines+=['Номинальные горизонты и фактические пустые промежутки:','']
+    lines+=table(['Набор, seed101','C0, с','Нижняя оценка, с','Доля пустого времени','Наибольший пустой интервал, с'],[
+        [r['dataset_id'],num(r['C0_ticks']/100),num(r['lower_bound_ticks']/100),num(r['global_idle_fraction']),num(r['longest_global_idle_ticks']/100)]
+        for r in diagnostics if r['operations']==1000000 and r['dataset_id'].endswith('-s101')])
+    lines+=['Полные диагностики всех 48 планов, загрузка каждого станка и интервалы между '
+            'границами событий находятся в input-diagnostics.json.','']
     lines+=['Полные строки времени, RSS, CPU, завершённых сценариев и границ при TIMEOUT '
             'сохранены в main-processes.csv. Измеряется полный одинаковый SCHEDULE. '
             'Контрольные точки префикса внутри K=1000 не подменяют отдельный K=100.','',
@@ -163,7 +206,23 @@ def main():
         for f in ('F1','F2') for d in ('DENSE','SPARSE') for n in (1000,10000,100000,1000000)])
     lines+=['Максимумы взяты по M0 и десяти сценариям; ошибка НЗП — доля, 0,05 соответствует 5%. '
             'Скорость приближения, не прошедшего класс точности, не считается подтверждением H4. '
-            'Эти K=11 и один порядок процессов не являются парной H3.','',
+        'Эти K=11 и один порядок процессов не являются парной H3.','',
+        'При D=1,10C0 исходы основной сетки могут быть малоинформативны: синхронный отказ '
+        'подмножества станков длительностью не более 0,10C0 не хуже остановки всех станков '
+        'на этот интервал. В основной фиксированной постановке такая остановка добавляет '
+        'не более своей длительности к Cmax. После округления границ до секунды интервал '
+        'может оказаться длиннее 0,10C0 менее чем на секунду; такие пограничные срывы '
+        'сохраняются и проверяются без допуска на классификацию. Совпадение успехов не заменяет '
+        'проверку индивидуальных времён, очередей и НЗП.','',
+        'Дополнительно после просмотра первых результатов из полных DIAGNOSTIC-траекторий '
+        'спроецированы только исходы для D=C0 и D=1,01C0. Это явно послерезультатный анализ '
+        'чувствительности, а не изменение заранее выбранного класса MISSION; очереди и '
+        'НЗП на этих новых горизонтах этим анализом не проверяются.','']
+    lines+=table(['D/C0','Проверенных исходов','Ложных успехов G2','Ложных срывов G2'],[
+        [ratio,sum(r['scenarios'] for r in strict_deadlines if r['deadline_ratio']==ratio),
+         sum(r['false_successes'] for r in strict_deadlines if r['deadline_ratio']==ratio),
+         sum(r['false_failures'] for r in strict_deadlines if r['deadline_ratio']==ratio)] for ratio in (1.,1.01)])
+    lines+=[
         '![Скорость и ошибка G2](aggregation.png)','',
         '## Ресурсы и резервы E4','',
         'На F1/F2 DENSE, N=100000, seed101 каждый из 200 ресурсов ранжирован по 15 одинаковым '
@@ -177,7 +236,10 @@ def main():
     lines+=['Большой E4 проверен точными DES/DAG и физическими инвариантами. Он оценивает '
             'полезность ранжирования, а не производительность TSFG. Независимые отказы и '
             'общая причина — отдельные серии. Полученные вероятности относятся только к '
-            'заданному исследовательскому профилю, а не к неизвестной статистике предприятия.','',
+        'заданному исследовательскому профилю, а не к неизвестной статистике предприятия. '
+        'Постоянные бинарные исходы 0/1000 или 1000/1000 ограничивают информативность '
+        'сравнения вмешательств. Неподтверждение H5 не доказывает бесполезность любой '
+        'диагностики или иных бюджетов усиления.','',
         '![Доля выполнения E4](reserves.png)','']
     lines+=table(['Согласие рангов G2','Завершено / 3000','Top-3 общих','Спирмен','Статус'],[
         [r['family'],r['completed'],r.get('top3_overlap','—'),num(r.get('spearman_average_ties')),r['status']] for r in ranking])
@@ -256,7 +318,10 @@ def main():
             page.text(.94,.025,str(offset//57+1),ha='right',fontsize=8);pdf.savefig(page);plt.close(page)
         for fig in figures:pdf.savefig(fig)
     for fig in figures:plt.close(fig)
-    hashes={p.name:hashlib.sha256(p.read_bytes()).hexdigest() for p in sorted(out.iterdir()) if p.is_file()}
+    hashes={}
+    for p in sorted(out.iterdir()):
+        if p.is_file() and p.name!='SHA256.json':
+            with p.open('rb') as source:hashes[p.name]=hashlib.file_digest(source,'sha256').hexdigest()
     (out/'SHA256.json').write_text(json.dumps(hashes,indent=2))
     print(json.dumps(dict(status=summary['status'],actual=actual,H3=[d['status'] for d in summary['H3']],
         G2_admitted_datasets=sum(r['mission_admitted'] for r in e3_rows))))
