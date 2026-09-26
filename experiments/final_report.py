@@ -8,6 +8,7 @@ import os
 from pathlib import Path
 import re
 import shutil
+import statistics
 import textwrap
 
 import matplotlib
@@ -26,6 +27,7 @@ def read_rows(path):
             row=json.loads(line);rows[row['scenario_id']]=row
     return rows
 def num(value):return '—' if value is None else f'{value:.3g}'
+def max_known(values):return max((v for v in values if v is not None),default=None)
 def table(headers,rows):
     return ['| '+' | '.join(headers)+' |','|'+'|'.join('---' for _ in headers)+'|',
             *['| '+' | '.join(map(str,row))+' |' for row in rows],'']
@@ -41,11 +43,17 @@ def main():
     parser=argparse.ArgumentParser()
     parser.add_argument('--evidence',type=Path,required=True)
     parser.add_argument('--output',type=Path,required=True)
+    parser.add_argument('--preview',action='store_true',help='Explicitly incomplete publication, never a completed campaign')
     args=parser.parse_args();root=args.evidence;out=args.output;out.mkdir(parents=True,exist_ok=True)
     screen=read(root/'screen/summary.json');main_result=read(root/'main/summary.json')
     main_rows=records(root/'main-points');extra_rows=records(root/'extras')
+    for row in main_rows+extra_rows:
+        meta=row.get('engine_meta',{})
+        row['T_batch_s']=meta.get('T_batch_with_output_s')
+        progress=meta.get('prefix_batch_s',row.get('last_progress',{}).get('prefix_batch_s',{}))
+        row['prefix_K100_batch_s']=progress.get('100')
     environments=[dict(read(p),evidence_path=str(p)) for p in sorted((root/'main-environment').glob('*/build/environment.json'))]
-    assert len(environments)==72
+    assert len(environments)==72 or args.preview
     assert {r['commit'] for r in main_rows}=={'afb7081898506524e3591af4e727461fc46efa2d'}
     for dataset in {r['dataset_id'] for r in main_rows}:
         points=[r for r in main_rows if r['dataset_id']==dataset]
@@ -69,9 +77,10 @@ def main():
     assert screen['datasets_present']==48 and not screen['missing_datasets']
     assert all(v['status'].startswith('PASS') for v in e3)
     assert extended['status']==gate['status']==audit['status']=='PASS'
-    assert all(r['conclusion']=='success' for r in runs.values()),'A campaign failed; report must disclose/reconcile it first'
-    assert all_present,(expected,actual)
-    summary=dict(status='COMPLETED_WITH_DISCLOSED_LIMITATIONS',expected=expected,actual=actual,
+    if not args.preview:
+        assert all(r['conclusion']=='success' for r in runs.values()),'A campaign failed; report must disclose/reconcile it first'
+        assert all_present,(expected,actual)
+    summary=dict(status='PRELIMINARY_INCOMPLETE' if args.preview else 'COMPLETED_WITH_DISCLOSED_LIMITATIONS',expected=expected,actual=actual,
         H1='SUPPORTED_ON_TESTED_EXACT_PROFILE',H2='SUPPORTED_ON_TESTED_EXACT_PROFILE',H3=main_result['decisions'],
         H4=[],H5=[dict(family=s['family'],series=s['series']) for s in e4],
         E0_aggregation=gate,E1X=extended,ozon_reproduction=audit,ranking=ranking,runs=runs,witnesses=witnesses,
@@ -88,7 +97,8 @@ def main():
         def ratio(reference):
             return reference['T_total_s']/g2['T_total_s'] if reference['status']==g2['status']=='OK' else None
         row=dict(dataset_id=item['dataset_id'],family=metadata['family'],density=metadata['density'],n=metadata['n'],seed=metadata['seed'],
-            scenarios_compared=len(accuracy),false_successes=sum(a['false_success'] for a in accuracy),
+            scenarios_compared=len(accuracy),accuracy_coverage='COMPLETE' if complete else 'PARTIAL' if accuracy else 'UNASSESSED',
+            false_successes=sum(a['false_success'] for a in accuracy),
             false_failures=sum(a['false_failure'] for a in accuracy),mission_admitted=admitted,
             diagnostic_admitted=complete and all(a['diagnostic_class']=='APPROX-DIAGNOSTIC-1' for a in accuracy),
             max_produced_error=max((a['errors']['produced_fraction'] for a in accuracy),default=None),
@@ -97,7 +107,8 @@ def main():
             S_G0_over_G2=ratio(g0),S_DES_over_G2=ratio(des),S_DAG_over_G2=ratio(dag),
             G1_types=item['representation']['type_count'],individual_states=item['representation']['individual_state_count'],
             G1_bytes=item['representation']['input_bytes'],G0_bytes=item['representation']['G0_input_bytes'],
-            G1_preparation_s=item['representation']['preparation_wall_s'])
+            G1_preparation_s=item['representation']['preparation_wall_s'],
+            G0_status=g0['status'],G2_status=g2['status'],DES_status=des['status'],DAG_status=dag['status'])
         e3_rows.append(row)
         raw=root/'e3-raw'/f"e3-{metadata['family']}-{metadata['density']}-{metadata['n']}-{metadata['seed']}"/'e3'
         exact_diagnostic=read_rows(raw/'DIAGNOSTIC-G0-des.jsonl')
@@ -119,15 +130,33 @@ def main():
         timeouts=sum(r['status']=='TIMEOUT' for r in extra_rows),
         validated_prefix_scenarios=sum(r.get('validated_prefix_scenarios',0) for r in extra_rows))
     fields=['dataset_id','engine','K','label','status','completion_validated','scenarios_completed','validated_prefix_scenarios',
-            'T_total_s','T_total_lower_bound_s','process_wall_observed_s','rss_peak_bytes','cpu_s','input_sha256','scenarios_sha256','commit','run_id']
+            'T_total_s','T_batch_s','prefix_K100_batch_s','T_total_lower_bound_s','process_wall_observed_s','rss_peak_bytes','cpu_s','input_sha256','scenarios_sha256','commit','run_id']
     write_csv(out/'main-processes.csv',main_rows,fields)
     write_csv(out/'supplementary-processes.csv',extra_rows,fields)
     write_csv(out/'aggregation.csv',e3_rows,list(e3_rows[0]))
     write_csv(out/'strict-deadlines-post-hoc.csv',strict_deadlines,list(strict_deadlines[0]))
+    extra_groups={}
+    for row in extra_rows:
+        key=(re.sub(r'-s\d+(?=-|$)','',row['dataset_id']),row['K'])
+        extra_groups.setdefault(key,[]).append(row)
+    supplementary=[]
+    for (dataset,k),group in sorted(extra_groups.items()):
+        row=dict(dataset=dataset,K=k)
+        for engine in ('tsfg','des','dag'):
+            selected=[r for r in group if r['engine']==engine]
+            complete=[r for r in selected if r['completion_validated']]
+            row[engine+'_completed']=len(complete)
+            row[engine+'_processes']=len(selected)
+            row[engine+'_timeouts']=sum(r['status']=='TIMEOUT' for r in selected)
+            row[engine+'_median_total_s']=statistics.median([r['T_total_s'] for r in complete]) if complete else None
+        supplementary.append(row)
+    write_csv(out/'supplementary-summary.csv',supplementary,list(supplementary[0]))
     shutil.copyfile(root/'screen/measurements.csv',out/'screen-processes.csv')
     shutil.copyfile(root/'main/measurements.csv',out/'H3-measurements.csv')
     lines=['# TSFG: проверка исполнения производственного расписания','',
-        'Итог фактически выполненной кампании 26–27 сентября 2026 года. Все исполнения, '
+        ('ПРЕДВАРИТЕЛЬНЫЙ ОТЧЁТ. Основные кампании ещё выполняются; ниже только доступные '
+         'проверенные результаты. Это не итоговая приёмка всей кампании. ' if args.preview else
+         'Итог фактически выполненной кампании 26–27 сентября 2026 года. ')+'Все исполнения, '
         'измерения и построение этого отчёта выполнены в GitHub-hosted Actions.', '',
         '## Ответ на вопрос о корректности и кейсе Ozon','',
         'На проверенном точном профиле исходное ядро S1 с пооперационным адаптером даёт '
@@ -161,8 +190,9 @@ def main():
         'шаг не ухудшил ни один из 90 результатов. Буферные исходные планы при необходимости '
         'заменялись заранее допустимым последовательным планом; это не исходный план Mk01.','',
         'Для публичной ручной проверки дополнительно сохранены 36 полных трасс по миллиону '
-        'операций: F1/F2 × DENSE/SPARSE, seed101, M0/S0000/S0003, три движка. Все массивы '
-        'и физические инварианты совпали. Это отдельные контрольные запуски, не повтор H3.','',
+        'операций: F1/F2 × DENSE/SPARSE, seed101, M0/S0000/S0003, три движка. Сохранены '
+        'все индивидуальные состояния MISSION на [0,D], включая незавершённые операции. '
+        'Массивы и физические инварианты совпали. Это отдельные контрольные запуски, не повтор H3.','',
         '## Основное время и память E2','',
         f"Предварительно: 48 наборов, {screen['correct_complete']}/144 полных корректных процессов, "
         f"{screen['timeouts']} таймаутов. Основная серия: {main_result['correct_complete']}/432 полных "
@@ -183,7 +213,17 @@ def main():
     lines+=['Полные строки времени, RSS, CPU, завершённых сценариев и границ при TIMEOUT '
             'сохранены в main-processes.csv. Измеряется полный одинаковый SCHEDULE. '
             'Контрольные точки префикса внутри K=1000 не подменяют отдельный K=100.','',
-        '![Парные ускорения E2](H3.png)','',
+        'Медиана и максимум RSS ниже относятся только к завершённым корректным процессам. '
+        'RSS прерванного процесса остаётся наблюдённой памятью до остановки и опубликован '
+        'в CSV отдельно; его нельзя считать пиком неизвестного полного исполнения.','']
+    memory=[]
+    for n in (100000,1000000):
+        for engine in ('tsfg','des','dag'):
+            selected=[r for r in main_rows if r['engine']==engine and f'-N{n}-' in r['dataset_id']]
+            rss=[r['rss_peak_bytes']/2**20 for r in selected if r['completion_validated']]
+            memory.append([n,engine,f'{len(rss)}/{len(selected)}',num(statistics.median(rss) if rss else None),num(max_known(rss))])
+    lines+=table(['N','Движок','Полных процессов','Медиана RSS, MiB','Максимум RSS, MiB'],memory)
+    lines+=['![Парные ускорения E2](H3.png)','',
         '## Агрегирование G1 и G2','',
         f"E3: {len(e3_rows)} наборов, M0 и 10 воздействий; отдельные MISSION и DIAGNOSTIC. "
         f"Все 11 сценариев прошли APPROX-MISSION-1 на {sum(r['mission_admitted'] for r in e3_rows)} наборах; "
@@ -199,14 +239,16 @@ def main():
         'по долям суммарной работы. Это отдельная приближённая модель. При одинаковом выходе '
         'AGG-MISSION время всех участников включает расчёт очередей и интеграла НЗП. '
         'Индивидуальные сроки G2 имеют статус UNSUPPORTED.','']
-    lines+=table(['Семейство/плотность','N','Допуск MISSION / 3 seed','Ложных успехов','Макс. ошибка НЗП'],[
+    lines+=table(['Семейство/плотность','N','Допуск MISSION / 3 seed','Сравнено / 33','Ложных успехов','Макс. ошибка НЗП'],[
         [f'{f}/{d}',n,sum(r['mission_admitted'] for r in e3_rows if (r['family'],r['density'],r['n'])==(f,d,n)),
+         sum(r['scenarios_compared'] for r in e3_rows if (r['family'],r['density'],r['n'])==(f,d,n)),
          sum(r['false_successes'] for r in e3_rows if (r['family'],r['density'],r['n'])==(f,d,n)),
-         num(max(r['max_wip_error'] for r in e3_rows if (r['family'],r['density'],r['n'])==(f,d,n)))]
+         num(max_known(r['max_wip_error'] for r in e3_rows if (r['family'],r['density'],r['n'])==(f,d,n)))]
         for f in ('F1','F2') for d in ('DENSE','SPARSE') for n in (1000,10000,100000,1000000)])
     lines+=['Максимумы взяты по M0 и десяти сценариям; ошибка НЗП — доля, 0,05 соответствует 5%. '
             'Скорость приближения, не прошедшего класс точности, не считается подтверждением H4. '
-        'Эти K=11 и один порядок процессов не являются парной H3.','',
+            'Неполное сравнение не считается допуском всех 11 сценариев; отсутствие данных '
+            'не подменено ошибкой 0. Эти K=11 и один порядок процессов не являются парной H3.','',
         'При D=1,10C0 исходы основной сетки могут быть малоинформативны: синхронный отказ '
         'подмножества станков длительностью не более 0,10C0 не хуже остановки всех станков '
         'на этот интервал. В основной фиксированной постановке такая остановка добавляет '
@@ -244,9 +286,17 @@ def main():
     lines+=table(['Согласие рангов G2','Завершено / 3000','Top-3 общих','Спирмен','Статус'],[
         [r['family'],r['completed'],r.get('top3_overlap','—'),num(r.get('spearman_average_ties')),r['status']] for r in ranking])
     lines+=['## Дополнительные серии и границы вывода','',
-        f"57 наборов: BURST — 24; рост оборудования — 9; сборка F3 — 12; самостоятельный "
-        f"K=1000 — 12. Процессов {len(extra_rows)}, завершённых корректных "
+        f"План дополнительных серий: 57 наборов — BURST 24, рост оборудования 9, сборка F3 12, "
+        f"самостоятельный K=1000 12. Доступно процессов {len(extra_rows)}, завершённых корректных "
         f"{summary['supplementary']['complete_correct']}, таймаутов {summary['supplementary']['timeouts']}.", '',
+        'Следующая таблица содержит медианы T_total только полных корректных процессов; '
+        'в скобках — число таких процессов / число запущенных. Это описательные '
+        'одноразовые измерения, а не парные коэффициенты H3. Все времена, достигнутые '
+        'префиксы K=100 внутри K=1000 и границы опубликованы в supplementary-processes.csv.','']
+    lines+=table(['Набор','K','TSFG, с (полнота)','DES, с (полнота)','DAG, с (полнота)'],[
+        [r['dataset'],r['K'],*[f"{num(r[e+'_median_total_s'])} ({r[e+'_completed']}/{r[e+'_processes']})" for e in ('tsfg','des','dag')]]
+        for r in supplementary])
+    lines+=[
         'BURST имеет четыре партии и проверенные пустые промежутки. GRID их не пропускает. '
         'В серии роста оборудования F2 имеет ровно две альтернативы при 20/200/2000 станках. '
         'Дополнительный K=1000 на миллионе операций не запускался в текущем бюджете. '
@@ -291,7 +341,8 @@ def main():
         rows=[r for r in e3_rows if r['family']==family]
         for ax,key in zip(axes,('S_G0_over_G2','S_DAG_over_G2')):
             for admitted,marker in ((True,'o'),(False,'x')):
-                selected=[r for r in rows if r[key] is not None and r['mission_admitted']==admitted]
+                selected=[r for r in rows if r[key] is not None and r['max_wip_error'] is not None
+                          and r['accuracy_coverage']=='COMPLETE' and r['mission_admitted']==admitted]
                 ax.scatter([r[key] for r in selected],[max(1e-5,r['max_wip_error'])*100 for r in selected],
                     marker=marker,color=color,label=family+(' допущен' if admitted else 'вне класса'))
             ax.set_xscale('log');ax.set_yscale('log');ax.axhline(5,color='gray',ls='--');ax.axvline(1,color='black',lw=.8)
