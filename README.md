@@ -4,6 +4,11 @@ Fixed manufacturing schedule experiment using the existing Go TSFG kernel from
 S1 with a new operation policy adapter. [Reuse specification](docs/TSFG_REUSE_RU.md)
 amends protocol 1.1 and records exactly which code is reused.
 
+DES-REF and DAG-REF are our independent, open research implementations. DAG-REF
+computes execution along operation dependencies and fixed machine queues; it is
+not a competing vendor. BFG and PlantTwin were not directly benchmarked, so the
+reported speed ratios do not describe those commercial products.
+
 The first full correctness campaign passed in
 [GitHub Actions run 36230395401](https://github.com/a-a-k/sheaft-tsfg-experiments/actions/runs/36230395401)
 at commit `75776d6c81806fdd2a53c8faf95e8283ef2409f6`: 481 complete trajectories,
