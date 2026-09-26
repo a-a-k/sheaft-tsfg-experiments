@@ -18,3 +18,26 @@
 Код исходного S1 не менялся. Публичный адаптер, исходное ядро и собранный бинарник
 идентифицированы в `docs/results/mk01/tsfg-provenance.json`. Архив включает
 полные входы и результаты; частный исходник и его Go-бинарник исключены.
+
+## Последующие допуски и аудиты
+
+| Run | Содержание | Итог |
+|---|---|---|
+| [36232181823](https://github.com/a-a-k/sheaft-tsfg-experiments/actions/runs/36232181823) | Первая масштабная калибровка, seed901 | PASS; не H3 |
+| [36233184981](https://github.com/a-a-k/sheaft-tsfg-experiments/actions/runs/36233184981) | E1X: буферы, дополнительный ресурс, дробные скорости | PASS |
+| [36233185095](https://github.com/a-a-k/sheaft-tsfg-experiments/actions/runs/36233185095) | Воспроизведение исходного Ozon и аудит адаптера | PASS |
+| [36233867001](https://github.com/a-a-k/sheaft-tsfg-experiments/actions/runs/36233867001) | Первая попытка парного аудита | FAIL: проверка владельца Git checkout, до замеров |
+| [36234360859](https://github.com/a-a-k/sheaft-tsfg-experiments/actions/runs/36234360859) | Парный аудит до/после исправления | PASS; 2000 совпавших траекторий, сокращение времени 31–32% |
+| [36234413565](https://github.com/a-a-k/sheaft-tsfg-experiments/actions/runs/36234413565) | 48 наборов E2, K=10 | 140 полных корректных процессов, 4 TIMEOUT |
+| [36234852274](https://github.com/a-a-k/sheaft-tsfg-experiments/actions/runs/36234852274) | E4: ранжирование и независимые вмешательства | Проверки PASS; H5 NOT_SUPPORTED |
+| [36247684531](https://github.com/a-a-k/sheaft-tsfg-experiments/actions/runs/36247684531) | Первое ранжирование G2 v1 | Историческая версия; после численного аудита повторена |
+| [36248742380](https://github.com/a-a-k/sheaft-tsfg-experiments/actions/runs/36248742380) | 36 полных MISSION-состояний на миллионных входах | PASS |
+| [36251071943](https://github.com/a-a-k/sheaft-tsfg-experiments/actions/runs/36251071943) | Численная регрессия G2 v1/v2 | Дефект v1 воспроизведён; исправление v2 PASS |
+| [36251306989](https://github.com/a-a-k/sheaft-tsfg-experiments/actions/runs/36251306989) | Повтор ранжирования G2 v2 | PASS; F1 top-3 overlap=3, F2 overlap=0 |
+| [36252103124](https://github.com/a-a-k/sheaft-tsfg-experiments/actions/runs/36252103124) | Интерпретация счётчика пиковой памяти | Влияние истории fork/exec подтверждено; изолированное сравнение памяти UNSUPPORTED |
+| [36251407245](https://github.com/a-a-k/sheaft-tsfg-experiments/actions/runs/36251407245) | Сборка предварительного PDF по реальным артефактам | PASS; предварительный отчёт отклоняется финальным барьером публикации |
+
+Основная E2 остаётся закреплена на afb7081. Исправленные E3 и ранжирование,
+первоначальная E3 с известным численным дефектом и контрольные аудиты перечислены
+в `provenance/campaign.json`. Успех workflow означает успешное выполнение
+его проверок, а не автоматическое подтверждение исследовательской гипотезы.
