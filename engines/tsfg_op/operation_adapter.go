@@ -43,20 +43,29 @@ func opReadDataset(path string) (opDataset,error) {
     first,err:=reader.Peek(1);if err!=nil{return data,err}
     if first[0]!='T' { err=json.NewDecoder(reader).Decode(&data);return data,err }
     magic:=make([]byte,8);if _,err=io.ReadFull(reader,magic);err!=nil{return data,err}
-    if string(magic)!="TSFGBIN1" {return data,errors.New("Invalid binary version")}
+    grouped:=string(magic)=="TSFGGRP1"
+    if !grouped && string(magic)!="TSFGBIN1" {return data,errors.New("Invalid binary version")}
     read32:=func()(int,error){var v uint32;e:=binary.Read(reader,binary.LittleEndian,&v);return int(v),e}
     read64:=func()(int64,error){var v int64;e:=binary.Read(reader,binary.LittleEndian,&v);return v,e}
     n,err:=read32();if err!=nil{return data,err}
     jobs,err:=read32();if err!=nil{return data,err}
     machines,err:=read32();if err!=nil{return data,err}
     if n<=0 || n>10000000 || jobs<=0 || jobs>n || machines<=0 || machines>100000 {return data,errors.New("Invalid binary dimensions")}
+    var types []int64
+    if grouped {
+        count,e:=read32();if e!=nil{return data,e};if count<=0 || count>n{return data,errors.New("Invalid type count")}
+        types=make([]int64,count)
+        for k:=range types {if types[k],err=read64();err!=nil{return data,err};if types[k]<=0{return data,errors.New("Invalid type work")}}
+    }
     data.Operations=make([]opInput,n);data.Queues=make([][]int,machines)
     data.Jobs=make([]struct{Final int `json:"final_operation"`},jobs)
     for i:=range data.Operations {
         o:=&data.Operations[i];o.ID=i
         if o.Job,err=read32();err!=nil{return data,err}
         if o.Machine,err=read32();err!=nil{return data,err}
-        if o.Work,err=read64();err!=nil{return data,err}
+        if grouped {
+            index,e:=read32();if e!=nil{return data,e};if index<0 || index>=len(types){return data,errors.New("Invalid type index")};o.Work=types[index]
+        } else {if o.Work,err=read64();err!=nil{return data,err}}
         if o.Planned,err=read64();err!=nil{return data,err}
         if o.Release,err=read64();err!=nil{return data,err}
         count,e:=read32();if e!=nil{return data,e}
@@ -265,6 +274,11 @@ func opSolve(data opDataset, sc opScenario, horizon, delta int64, diagnostic boo
     }
     upstreamSeconds:=time.Since(upstreamStarted).Seconds()
     resultStarted:=time.Now()
+    if os.Getenv("TSFG_OUTPUT_PROFILE")=="AGG-MISSION" {
+        row:=opObserve(p,horizon)
+        if diagnostic {row["mode"]="DIAGNOSTIC"}
+        return row,nil
+    }
     starts,finishes := make([]any,n),make([]any,n)
     states := make([]string,n)
     var cmax int64
@@ -308,7 +322,7 @@ func opCommand() error {
     stopProfile,err:=opAuditProfile();if err!=nil{return err};defer stopProfile()
     t0:=time.Now()
     if len(os.Args)!=8 { return errors.New("Expected ENGINE DATA SCENARIOS OUTPUT MODE HORIZON DELTA") }
-    if (os.Args[1]!="tsfg" && os.Args[1]!="tsfg-ext") || (os.Args[5]!="MISSION" && os.Args[5]!="DIAGNOSTIC") { return errors.New("Invalid engine/mode") }
+    if (os.Args[1]!="tsfg" && os.Args[1]!="tsfg-ext" && os.Args[1]!="tsfg-agg") || (os.Args[5]!="MISSION" && os.Args[5]!="DIAGNOSTIC") { return errors.New("Invalid engine/mode") }
     horizon,err:=strconv.ParseInt(os.Args[6],10,64);if err!=nil{return err}
     delta,err:=strconv.ParseInt(os.Args[7],10,64);if err!=nil{return err}
     data,err:=opReadDataset(os.Args[2]);if err!=nil{return err}
@@ -322,7 +336,11 @@ func opCommand() error {
     count:=0
     for _,sc:=range scenarios {
         begin:=time.Now()
-        row,err:=opSolve(data,sc,horizon,delta,os.Args[5]=="DIAGNOSTIC");if err!=nil{return err}
+        var row map[string]any
+        if os.Args[1]=="tsfg-agg" {row,err=aggSolve(data,sc,horizon,delta,os.Args[5]=="DIAGNOSTIC")} else {
+            row,err=opSolve(data,sc,horizon,delta,os.Args[5]=="DIAGNOSTIC")
+        }
+        if err!=nil{return err}
         row["kernel_elapsed_s"]=time.Since(begin).Seconds()
         if err=encoder.Encode(row);err!=nil{return err}
         count++
@@ -343,6 +361,8 @@ func opCommand() error {
         "cpu_s":float64(usage.Utime.Sec+usage.Stime.Sec)+float64(usage.Utime.Usec+usage.Stime.Usec)/1e6,
         "prefix_batch_s":prefixes,"output_profile":"SCHEDULE",
         "construction_policy":"original graph and policy rebuilt per scenario; included in batch"}
+    if os.Args[1]=="tsfg-agg" || os.Getenv("TSFG_OUTPUT_PROFILE")=="AGG-MISSION" {meta["output_profile"]="AGG-MISSION"}
+    meta["engine"]=os.Args[1]
     encoded,err:=json.MarshalIndent(meta,"","  ");if err!=nil{return err}
     if err=os.WriteFile(os.Args[4]+".meta.json",encoded,0600);err!=nil{return err}
     return nil

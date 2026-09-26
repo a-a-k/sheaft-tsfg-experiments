@@ -84,14 +84,26 @@ inline std::uint64_t read_uint(std::istream& stream, int bytes) {
 }
 inline Instance read_binary(std::istream& stream) {
     char magic[8]; stream.read(magic,8);
-    if (std::string(magic,8)!="TSFGBIN1") throw std::runtime_error("Invalid binary version");
+    bool grouped=std::string(magic,8)=="TSFGGRP1";
+    if (!grouped && std::string(magic,8)!="TSFGBIN1") throw std::runtime_error("Invalid binary version");
     int n=read_uint(stream,4), jobs=read_uint(stream,4), machines=read_uint(stream,4);
     if (n<=0 || n>10000000 || jobs<=0 || jobs>n || machines<=0 || machines>100000)
         throw std::runtime_error("Invalid binary dimensions");
+    std::vector<Tick> types;
+    if (grouped) {
+        int count=read_uint(stream,4);
+        if(count<=0 || count>n) throw std::runtime_error("Invalid type count");
+        for(int k=0;k<count;++k) {
+            Tick work=read_uint(stream,8);
+            if(work<=0) throw std::runtime_error("Invalid type work");
+            types.push_back(work);
+        }
+    }
     Instance in; in.jobs=jobs; in.ops.reserve(n); in.successors.resize(n); in.queues.resize(machines);
     for (int i=0;i<n;++i) {
         Op o{}; o.id=i; o.job=read_uint(stream,4); o.machine=read_uint(stream,4);
-        o.work=read_uint(stream,8); o.planned=read_uint(stream,8); o.release=read_uint(stream,8);
+        o.work=grouped ? types.at(read_uint(stream,4)) : read_uint(stream,8);
+        o.planned=read_uint(stream,8); o.release=read_uint(stream,8);
         int count=read_uint(stream,4);
         if (o.job<0 || o.job>=jobs || o.machine<0 || o.machine>=machines || o.work<=0 ||
             o.planned<0 || o.release<0 || count<0 || count>n) throw std::runtime_error("Invalid binary operation");

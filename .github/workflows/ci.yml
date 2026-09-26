@@ -42,6 +42,8 @@ jobs:
         run: python validation/replay_core.py
       - name: E0-extended
         run: python validation/extended_core.py
+      - name: E3 shared types, observers and fluid conservation
+        run: python validation/aggregation_core.py
       - name: Freeze Mk01 schedule and scenarios
         run: python experiments/mk01.py
       - name: Mk01 complete campaign and report

@@ -244,11 +244,22 @@ def write_binary(data, path):
 
 def read_binary(path):
     with Path(path).open("rb") as f:
-        assert f.read(8) == b"TSFGBIN1"
+        magic=f.read(8)
+        assert magic in (b"TSFGBIN1",b"TSFGGRP1")
         n,jobs,machines = struct.unpack("<III",f.read(12))
+        types=[]
+        if magic==b"TSFGGRP1":
+            count,=struct.unpack("<I",f.read(4))
+            assert 0<count<=n
+            types=struct.unpack(f"<{count}q",f.read(8*count))
+            assert min(types)>0
         ops=[]
         for i in range(n):
-            j,m,p,s,r,k = struct.unpack("<IIqqqI",f.read(36))
+            if types:
+                j,m,type_id,s,r,k=struct.unpack("<IIIqqI",f.read(32))
+                p=types[type_id]
+            else:
+                j,m,p,s,r,k = struct.unpack("<IIqqqI",f.read(36))
             pred = list(struct.unpack(f"<{k}I",f.read(k*4)))
             ops.append(dict(id=i,job=j,machine=m,work=p,planned_start=s,planned_end=s+p,release=r,predecessors=pred))
         queues=[]

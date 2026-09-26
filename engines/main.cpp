@@ -1,4 +1,5 @@
 #include "model.hpp"
+#include "aggregate_metrics.hpp"
 #include <chrono>
 #include <cstdlib>
 #include <cstdio>
@@ -20,6 +21,7 @@ int main(int argc,char** argv) {
             throw std::runtime_error("Execution is restricted to GitHub Actions");
         if (argc!=8) throw std::runtime_error("Usage: simulator ENGINE DATA SCENARIOS OUTPUT MODE HORIZON DELTA");
         std::string name=argv[1], mode=argv[5];
+        bool aggregate=std::getenv("TSFG_OUTPUT_PROFILE") && std::string(std::getenv("TSFG_OUTPUT_PROFILE"))=="AGG-MISSION";
         if (mode!="MISSION" && mode!="DIAGNOSTIC") throw std::runtime_error("Unknown mode");
         Tick horizon=std::stoll(argv[6]), delta=std::stoll(argv[7]);
         if (horizon<0) throw std::runtime_error("Negative horizon");
@@ -45,6 +47,14 @@ int main(int argc,char** argv) {
             Scenario sc=read_scenario(in,raw);
             Result r=engine->solve(sc,horizon,mode=="DIAGNOSTIC",delta);
             auto end=Clock::now();
+            json row;
+            if(aggregate) {
+                row=aggregate_metrics(in,r,horizon);
+                row["scenario_id"]=sc.id;row["engine"]=name;row["mode"]=mode;
+                row["horizon"]=horizon;row["stopped"]=r.stopped;row["run_status"]="OK";
+                row["output_profile"]="AGG-MISSION";
+                row["kernel_elapsed_s"]=seconds(begin,end);
+            } else {
             bool complete=std::all_of(r.finish.begin(),r.finish.end(),[](Tick x){ return x>=0; });
             json states=json::array(), jobs=json::array();
             for (const auto& o : in.ops) {
@@ -61,13 +71,14 @@ int main(int argc,char** argv) {
                 Tick finish=r.finish.at(terminal);
                 jobs.push_back(finish<0 ? json(nullptr) : json(finish));
             }
-            json row={{"scenario_id",sc.id},{"engine",name},{"mode",mode},{"horizon",horizon},
+            row={{"scenario_id",sc.id},{"engine",name},{"mode",mode},{"horizon",horizon},
                 {"stopped",r.stopped},{"start",times(r.start)},{"finish",times(r.finish)},
                 {"remaining",r.remaining},{"state",states},{"job_finish",jobs},
                 {"mission_success",complete},{"completion_known",complete},
                 {"cmax",complete ? json(*std::max_element(r.finish.begin(),r.finish.end())) : json(nullptr)},
                 {"completion_lower_bound",complete ? json(nullptr) : json(horizon)},
                 {"run_status","OK"},{"counters",r.counters},{"kernel_elapsed_s",seconds(begin,end)}};
+            }
             output << row.dump() << '\n'; output.flush(); ++count;
             if (count==1 || count==10 || count==100 || count==1000)
                 prefixes[std::to_string(count)]=seconds(t2,Clock::now());
@@ -85,7 +96,7 @@ int main(int argc,char** argv) {
             {"T_build_s",seconds(t1,t2)},{"T_batch_with_output_s",seconds(t2,t3)},
             {"rss_peak_bytes",static_cast<std::uint64_t>(usage.ru_maxrss)*1024},
             {"cpu_s",usage.ru_utime.tv_sec+usage.ru_utime.tv_usec/1e6+usage.ru_stime.tv_sec+usage.ru_stime.tv_usec/1e6},
-            {"prefix_batch_s",prefixes},{"output_profile","SCHEDULE"}};
+            {"prefix_batch_s",prefixes},{"output_profile",aggregate ? "AGG-MISSION":"SCHEDULE"}};
         std::ofstream(std::string(argv[4])+".meta.json") << meta.dump(2) << '\n';
         return 0;
     } catch (const std::exception& e) {
