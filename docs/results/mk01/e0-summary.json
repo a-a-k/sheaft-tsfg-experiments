@@ -1,0 +1,170 @@
+{
+  "suite": "E0-core",
+  "status": "PASS",
+  "hand_cases": [
+    {
+      "id": "serial",
+      "status": "PASS"
+    },
+    {
+      "id": "resume",
+      "status": "PASS"
+    },
+    {
+      "id": "failure_at_completion",
+      "status": "PASS"
+    },
+    {
+      "id": "initial_failure",
+      "status": "PASS"
+    },
+    {
+      "id": "overlapping_failures",
+      "status": "PASS"
+    },
+    {
+      "id": "touching_failures",
+      "status": "PASS"
+    },
+    {
+      "id": "same_machine_two_jobs",
+      "status": "PASS"
+    },
+    {
+      "id": "parallel",
+      "status": "PASS"
+    },
+    {
+      "id": "head_of_line",
+      "status": "PASS"
+    },
+    {
+      "id": "simultaneous_assembly",
+      "status": "PASS"
+    },
+    {
+      "id": "material_release",
+      "status": "PASS"
+    },
+    {
+      "id": "planned_floor",
+      "status": "PASS"
+    },
+    {
+      "id": "repair_at_start",
+      "status": "PASS"
+    },
+    {
+      "id": "failure_prevents_start",
+      "status": "PASS"
+    }
+  ],
+  "property_cases": [
+    {
+      "id": 0,
+      "status": "PASS"
+    },
+    {
+      "id": 1,
+      "status": "PASS"
+    },
+    {
+      "id": 2,
+      "status": "PASS"
+    },
+    {
+      "id": 3,
+      "status": "PASS"
+    },
+    {
+      "id": 4,
+      "status": "PASS"
+    },
+    {
+      "id": 5,
+      "status": "PASS"
+    },
+    {
+      "id": 6,
+      "status": "PASS"
+    },
+    {
+      "id": 7,
+      "status": "PASS"
+    },
+    {
+      "id": 8,
+      "status": "PASS"
+    },
+    {
+      "id": 9,
+      "status": "PASS"
+    },
+    {
+      "id": 10,
+      "status": "PASS"
+    },
+    {
+      "id": 11,
+      "status": "PASS"
+    },
+    {
+      "id": 12,
+      "status": "PASS"
+    },
+    {
+      "id": 13,
+      "status": "PASS"
+    },
+    {
+      "id": 14,
+      "status": "PASS"
+    },
+    {
+      "id": 15,
+      "status": "PASS"
+    },
+    {
+      "id": 16,
+      "status": "PASS"
+    },
+    {
+      "id": 17,
+      "status": "PASS"
+    },
+    {
+      "id": 18,
+      "status": "PASS"
+    },
+    {
+      "id": 19,
+      "status": "PASS"
+    },
+    {
+      "id": 20,
+      "status": "PASS"
+    },
+    {
+      "id": 21,
+      "status": "PASS"
+    },
+    {
+      "id": 22,
+      "status": "PASS"
+    },
+    {
+      "id": 23,
+      "status": "PASS"
+    }
+  ],
+  "engines": [
+    "tsfg",
+    "grid",
+    "des",
+    "dag",
+    "simpy"
+  ],
+  "invariant_checks": 1114,
+  "comparisons": 1114,
+  "validator_negative_control": "PASS"
+}

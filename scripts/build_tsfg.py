@@ -1,0 +1,42 @@
+"""Build unchanged private S1 plus public operation adapter, only on Actions."""
+import hashlib
+import json
+import os
+from pathlib import Path
+import shutil
+import subprocess
+
+if os.environ.get("GITHUB_ACTIONS") != "true":
+    raise SystemExit("Actions only")
+source = Path(".private/upstream")
+commit = "8510baf28673758f1e437d2dbc5a51ead9843a3b"
+actual = subprocess.check_output(["git", "-C", str(source), "rev-parse", "HEAD"], text=True).strip()
+if actual != commit:
+    raise SystemExit("Wrong TSFG source commit")
+engine = source / "engine"
+result = subprocess.run(["go", "test", "-json", "./..."], cwd=engine, capture_output=True, text=True)
+events = [json.loads(line) for line in result.stdout.splitlines() if line.startswith("{")]
+summary = {"source_commit": commit, "status": "PASS" if result.returncode == 0 else "FAIL",
+           "tests_passed": sum(e.get("Action") == "pass" and bool(e.get("Test")) for e in events)}
+out = Path("artifacts/build")
+out.mkdir(parents=True, exist_ok=True)
+(out / "upstream-tests.json").write_text(json.dumps(summary, indent=2) + "\n")
+if result.returncode:
+    raise SystemExit("Upstream regression tests failed; private diagnostics omitted")
+adapter = Path("engines/tsfg_op/operation_adapter.go")
+shutil.copyfile(adapter, engine / "cmd/ozon-engine/operation_adapter.go")
+binary = Path(".private/runtime/tsfg").resolve()
+binary.parent.mkdir(parents=True, exist_ok=True)
+result = subprocess.run(["go", "build", "-trimpath", "-o", str(binary), "./cmd/ozon-engine"],
+                        cwd=engine, capture_output=True, text=True)
+if result.returncode:
+    for line in result.stderr.splitlines():
+        if "operation_adapter.go:" in line:
+            print(line)
+    raise SystemExit("TSFG build failed; other private diagnostics omitted")
+summary.update(go_version=subprocess.check_output(["go", "version"], text=True).strip(),
+               adapter_sha256=hashlib.sha256(adapter.read_bytes()).hexdigest(),
+               binary_sha256=hashlib.sha256(binary.read_bytes()).hexdigest(),
+               source_modified=False, public_binary=False)
+(out / "tsfg-provenance.json").write_text(json.dumps(summary, indent=2) + "\n")
+print(json.dumps(summary))

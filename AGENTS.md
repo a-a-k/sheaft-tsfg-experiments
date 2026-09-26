@@ -10,8 +10,9 @@ The authorized first milestone is protocol/specification 1.1, E0-core and the
 complete Mk01 E1 campaign: 481 trajectories and 1,443 deadline outcomes per
 engine. E1X and E2–E4 are subsequent research stages, not acceptance substitutes.
 
-Keep TSFG-GRID, DES and DAG transition logic independent. Shared input parsing
+Use the original S1 TSFG kernel with the operation adapter specified in
+docs/TSFG_REUSE_RU.md. The prior standalone C++ GRID is auxiliary only.
+Keep TSFG, DES and DAG transition logic independent. Shared input parsing
 and output metrics are allowed. Record all failures; never fabricate results.
 Public repository creation and publication of this experimental implementation
 are explicitly authorized. Do not publish credentials or private source code.
-

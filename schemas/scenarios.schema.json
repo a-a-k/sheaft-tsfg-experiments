@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "array", "minItems": 1,
+  "items": {
+    "type": "object", "required": ["id", "failures", "work_overrides"],
+    "properties": {
+      "id": {"type": "string", "minLength": 1},
+      "failures": {"type": "array", "items": {
+        "type": "array", "minItems": 3, "maxItems": 3,
+        "items": {"type": "integer", "minimum": 0}
+      }},
+      "work_overrides": {"type": "array", "items": {
+        "type": "array", "minItems": 2, "maxItems": 2,
+        "prefixItems": [{"type": "integer", "minimum": 0}, {"type": "integer", "minimum": 1}]
+      }}
+    }
+  }
+}
