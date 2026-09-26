@@ -17,6 +17,7 @@ if actual != commit:
 engine = source / "engine"
 parser = argparse.ArgumentParser()
 parser.add_argument("--upstream-test-evidence", type=Path)
+parser.add_argument("--audit-baseline", action="store_true")
 args = parser.parse_args()
 if args.upstream_test_evidence:
     evidence = json.loads(args.upstream_test_evidence.read_text())
@@ -57,3 +58,22 @@ summary.update(go_version=subprocess.check_output(["go", "version"], text=True).
                source_modified=False, public_binary=False)
 (out / "tsfg-provenance.json").write_text(json.dumps(summary, indent=2) + "\n")
 print(json.dumps(summary))
+if args.audit_baseline:
+    baseline_ref = "2ade199735cf49eae328d8402b2b0a984b7d2e49"
+    baseline_files = (adapter, extended_adapter, audit_adapter)
+    try:
+        for public in baseline_files:
+            previous = subprocess.check_output(["git", "show", f"{baseline_ref}:{public.as_posix()}"])
+            (engine / "cmd/ozon-engine" / public.name).write_bytes(previous)
+        previous_binary = binary.with_name("tsfg-baseline")
+        result = subprocess.run(["go", "build", "-trimpath", "-o", str(previous_binary), "./cmd/ozon-engine"],
+                                cwd=engine, capture_output=True, text=True)
+        if result.returncode:
+            raise SystemExit("Audit baseline build failed; private diagnostics omitted")
+        (out / "baseline-provenance.json").write_text(json.dumps(dict(
+            source_commit=commit, public_adapter_commit=baseline_ref,
+            binary_sha256=hashlib.sha256(previous_binary.read_bytes()).hexdigest(),
+            source_modified=False, public_binary=False), indent=2)+"\n")
+    finally:
+        for public in baseline_files:
+            shutil.copyfile(public, engine / "cmd/ozon-engine" / public.name)

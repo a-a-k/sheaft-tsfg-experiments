@@ -16,7 +16,7 @@ from experiments.scale_data import sha256
 from validation.checks import SIGNATURE
 
 
-def run_one(dataset, engine, count, output, limit=300, label="screen", mode="MISSION"):
+def run_one(dataset, engine, count, output, limit=300, label="screen", mode="MISSION", binary_override=None):
     manifest=json.loads((dataset/"manifest.json").read_text())
     scenarios=json.loads((dataset/"scenarios-1000.json").read_text())[:count]
     output.mkdir(parents=True,exist_ok=True)
@@ -24,11 +24,13 @@ def run_one(dataset, engine, count, output, limit=300, label="screen", mode="MIS
     scenario_path.write_text(json.dumps(scenarios,separators=(",",":")))
     raw=output/"result.jsonl"
     binary=".private/runtime/tsfg" if engine=="tsfg" else "artifacts/build/simulator"
+    if binary_override is not None:binary=binary_override
     horizon=manifest["metadata"]["D_ticks"]*(10 if mode=="DIAGNOSTIC" else 1)
     command=[binary,engine,str(dataset/"input.bin"),str(scenario_path),str(raw),mode,str(horizon),"100"]
     record=dict(dataset_id=manifest["dataset_id"],engine=engine,K=count,label=label,
                 process_time_limit_s=limit,mode=mode,output_profile="SCHEDULE",delta_ticks=100,
                 input_sha256=manifest["files"]["input.bin"],scenarios_sha256=sha256(scenario_path),
+                binary_sha256=sha256(binary),
                 commit=os.environ["GITHUB_SHA"],run_id=os.environ["GITHUB_RUN_ID"],
                 status="RUNNING",completion_validated=False)
     result_path=output/"measurement.json"

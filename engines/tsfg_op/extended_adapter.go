@@ -3,7 +3,6 @@ package main
 
 import (
     "errors"
-    "fmt"
     "sort"
 )
 
@@ -104,7 +103,7 @@ func (p *opPolicy) extBoundary(t int64) {
             active=true
             if x.needsShared[i] && !p.sharedAvailable(t) {rate=0}
         }
-        p.runtime.ResourceMultipliers[fmt.Sprintf("M%d",m)][0]=float64(rate)
+        p.multiplierRefs[m][0]=float64(rate)
         if p.data.BufferCapacity>0 && x.bufferUsed[m]>p.data.BufferCapacity {panic("Buffer overflow")}
     }
     if !active && p.completed<len(p.data.Operations) {
@@ -116,7 +115,7 @@ func (p *opPolicy) extBoundary(t int64) {
 }
 func (p *opPolicy) extEndStep()error {
     if p.ext.deadlock {return opDeadlocked}
-    completed:=make([]int,0,len(p.current))
+    completed:=p.completionScratch[:0]
     for _,i:=range p.current {
         if i>=0 && p.left[i]==0 && p.finish[i]<0 {
             p.finish[i]=p.stepEnd;completed=append(completed,i)
@@ -130,7 +129,7 @@ func (p *opPolicy) extEndStep()error {
         if len(p.successors[i])==0 || p.data.BufferCapacity==0 {p.extRelease(i,p.stepEnd)}
     }
     p.completed+=len(completed);p.stopped=p.stepEnd
-    if p.diagnostic && p.completed==len(p.data.Operations) {return opAllDone}
+    if p.completed==len(p.data.Operations) {return opAllDone}
     return nil
 }
 func (p *opPolicy) extOutput(row map[string]any) {

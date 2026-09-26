@@ -32,12 +32,28 @@ def main():
             subprocess.run([binary],env=env,check=True,timeout=300,stdout=log,stderr=log)
         original.append(json.loads((root/f"ozon-replay-{i}.json").read_text()))
     profile_top(binary,private/"original.pprof",root/"ozon-cpu-top.txt")
+    history=json.loads(Path(".private/upstream/contracts/convergence/outputs/convergence.json").read_text())
+    regime=next(r for r in history["timestep"] if r["id"]=="healthy_100k")
+    point=next(r for r in regime["points"] if r["dt_s"]==5)
+    expected={m["metric"]:m["value"] for m in point["metrics"]}
+    for replay in original:
+        assert replay["workload_fingerprint"]==regime["workload_fingerprint"]
+        for key,value in replay["metrics"].items():
+            assert abs(value-expected[key])<=1e-7,(key,value,expected[key])
+    (root/"ozon-reproduction-check.json").write_text(json.dumps(dict(status="PASS",
+        workload_fingerprint=regime["workload_fingerprint"],historical_runtime_ms=point["runtime_ms"],
+        metric_checks=2*len(original[0]["metrics"]),
+        scope="Exact historical metric reproduction; historical runtime is not a paired benchmark"),indent=2))
     for family in ("F1","F2"):
         folder=root/family;folder.mkdir(exist_ok=True)
         subprocess.run([sys.executable,"experiments/scale_data.py","--n","10000","--family",family,
                         "--seed","902","--output",str(folder/"dataset")],check=True)
-        for engine in ("tsfg","grid","des","dag"):
-            run_one(folder/"dataset",engine,100,folder/"measurements"/engine,label="audit-uninstrumented")
+        order=("baseline","tsfg","grid","des","dag","dag","des","grid","tsfg","baseline")
+        for index,engine in enumerate(order):
+            actual="tsfg" if engine=="baseline" else engine
+            binary_override=".private/runtime/tsfg-baseline" if engine=="baseline" else None
+            run_one(folder/"dataset",actual,100,folder/"measurements"/f"{index:02d}-{engine}",
+                    label=f"audit-uninstrumented-{engine}",binary_override=binary_override)
         subprocess.run([sys.executable,"validation/scale_results.py","--dataset",str(folder/"dataset"),
                         "--results",str(folder/"measurements")],check=True)
         os.environ["TSFG_CPU_PROFILE"]=str(private/f"{family}.pprof")
@@ -45,7 +61,7 @@ def main():
         del os.environ["TSFG_CPU_PROFILE"]
         profile_top(binary,private/f"{family}.pprof",folder/"tsfg-cpu-top.txt")
         totals={}
-        with gzip.open(folder/"measurements"/"tsfg"/"result.jsonl.gz","rt") as f:
+        with gzip.open(folder/"measurements"/"01-tsfg"/"result.jsonl.gz","rt") as f:
             for line in f:
                 row=json.loads(line)
                 for key,value in row["phase_seconds"].items():totals[key]=totals.get(key,0)+value

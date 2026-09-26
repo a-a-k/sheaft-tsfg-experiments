@@ -4,10 +4,12 @@ import gzip
 import hashlib
 import heapq
 import json
+import io
 import math
 import os
 from pathlib import Path
 import struct
+import resource
 import sys
 import time
 
@@ -16,7 +18,7 @@ import numpy as np
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from validation.checks import validate_dataset
 
-VERSION = "e2-earliest-start-1"
+VERSION = "e2-earliest-start-2"
 
 
 def rng(dataset_id, purpose, scenario_id="none"):
@@ -204,9 +206,11 @@ def scenarios(data, count=1000, purpose="scale_scenarios"):
     c0 = data["metadata"]["C0_ticks"]/100
     width = len(data["queues"])//10
     for i in range(count):
-        source = rng(data["dataset_id"], purpose, str(i))
+        source = rng(data["dataset_id"], purpose+":failures", str(i))
+        recovery = rng(data["dataset_id"], purpose+":recovery", str(i))
+        work_source = rng(data["dataset_id"], purpose+":work", str(i))
         start_s = float(source.uniform(.1*c0, .9*c0))
-        duration = float(source.choice([.01,.05,.1]))*c0
+        duration = float(recovery.choice([.01,.05,.1]))*c0
         start = math.floor(start_s+.5)*100
         end = max(start+100, math.floor(start_s+duration+.5)*100)
         affected, overrides = [], []
@@ -215,8 +219,8 @@ def scenarios(data, count=1000, purpose="scale_scenarios"):
         elif i%4 == 1:
             affected = [int(m) for m in source.choice(len(data["queues"]), 2, replace=False)]
         elif i%4 == 2:
-            op = int(source.integers(len(data["operations"])))
-            coef = int(source.choice([125,150,200]))
+            op = int(work_source.integers(len(data["operations"])))
+            coef = int(work_source.choice([125,150,200]))
             overrides = [[op, math.ceil(data["operations"][op]["work"]*coef/10000)*100]]
         else:
             g = int(source.integers(10))
@@ -277,13 +281,14 @@ def main():
     args.output.mkdir(parents=True,exist_ok=True)
     write_binary(data,args.output/"input.bin")
     # Full alternative sets and schedule provenance; never read by timed engines.
-    with gzip.open(args.output/"operations.jsonl.gz","wt",encoding="utf-8",compresslevel=1) as f:
+    with (args.output/"operations.jsonl.gz").open("wb") as raw, gzip.GzipFile(filename="",fileobj=raw,mode="wb",compresslevel=1,mtime=0) as compressed, io.TextIOWrapper(compressed,encoding="utf-8") as f:
         for o in data["operations"]:
             f.write(json.dumps(o,separators=(",",":"))+"\n")
     (args.output/"scenarios-1000.json").write_text(json.dumps(scenarios(data),separators=(",",":")))
     (args.output/"sample.json").write_text(json.dumps(data["operations"][:10],indent=2))
     manifest=dict(dataset_id=data["dataset_id"],metadata=data["metadata"],schema="TSFGBIN1",
-                  generation_wall_s=time.monotonic()-begin,validation="PASS",seed_spec="PCG64/SHA256/8-byte-LE",
+                  generation_wall_s=time.monotonic()-begin,generator_rss_peak_bytes=resource.getrusage(resource.RUSAGE_SELF).ru_maxrss*1024,
+                  validation="PASS",seed_spec="PCG64/SHA256/8-byte-LE",
                   files={name:sha256(args.output/name) for name in ("input.bin","operations.jsonl.gz","scenarios-1000.json")})
     (args.output/"manifest.json").write_text(json.dumps(manifest,indent=2))
     print(json.dumps(manifest),flush=True)

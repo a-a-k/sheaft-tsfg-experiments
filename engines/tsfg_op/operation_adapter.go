@@ -91,6 +91,8 @@ type opPolicy struct {
     scenario opScenario
     runtime *graphFlowRuntime
     nodeIndex map[string]int
+    multiplierRefs [][]float64
+    completionScratch []int
     head, current, pending []int
     successors [][]int
     start, finish, left, injection []int64
@@ -119,7 +121,7 @@ func (p *opPolicy) boundary(t int64) {
         up := p.available(m,t)
         value := 0.0
         if up { value = 1 }
-        p.runtime.ResourceMultipliers[fmt.Sprintf("M%d",m)][0] = value
+        p.multiplierRefs[m][0] = value
         if !up || p.current[m] >= 0 || p.head[m] == len(queue) { continue }
         i := queue[p.head[m]]
         o := p.data.Operations[i]
@@ -156,7 +158,7 @@ func (p *opPolicy) RouteNodeOutput(id string, processed, _ float64) (float64,flo
 }
 func (p *opPolicy) EndStep(_,_,_ float64) error {
     if p.ext!=nil {return p.extEndStep()}
-    completed := make([]int,0,len(p.current))
+    completed := p.completionScratch[:0]
     for m,i := range p.current {
         if i >= 0 && p.left[i] == 0 {
             p.finish[i] = p.stepEnd
@@ -170,7 +172,7 @@ func (p *opPolicy) EndStep(_,_,_ float64) error {
     }
     p.completed += len(completed)
     p.stopped = p.stepEnd
-    if p.diagnostic && p.completed == len(p.data.Operations) { return opAllDone }
+    if p.completed == len(p.data.Operations) { return opAllDone }
     return nil
 }
 
@@ -180,6 +182,7 @@ func opSolve(data opDataset, sc opScenario, horizon, delta int64, diagnostic boo
     if n == 0 || m == 0 || horizon < 0 || delta <= 0 { return nil,errors.New("Invalid operation profile dimensions") }
     runtime := &graphFlowRuntime{IntervalS:1, ResourceMultipliers:map[string][]float64{}}
     p := &opPolicy{data:data,scenario:sc,runtime:runtime,nodeIndex:map[string]int{},
+        multiplierRefs:make([][]float64,m),completionScratch:make([]int,0,m),
         head:make([]int,m),current:make([]int,m),pending:make([]int,n),successors:make([][]int,n),
         start:make([]int64,n),finish:make([]int64,n),left:make([]int64,n),injection:make([]int64,m),
         down:make([][][2]int64,m),cursor:make([]int,m),diagnostic:diagnostic}
@@ -238,6 +241,7 @@ func opSolve(data opDataset, sc opScenario, horizon, delta int64, diagnostic boo
             p.current[j] = -1
             p.nodeIndex[id] = j
             runtime.ResourceMultipliers[id] = []float64{1}
+            p.multiplierRefs[j] = runtime.ResourceMultipliers[id]
             for _,i := range data.Queues[j] {
                 if i<0 || i>=n || seen[i] || data.Operations[i].Machine!=j { return nil,errors.New("Invalid machine queue") }
                 seen[i]=true
@@ -256,6 +260,7 @@ func opSolve(data opDataset, sc opScenario, horizon, delta int64, diagnostic boo
         experiment := experimentFile{HorizonS:float64(horizon),DtS:float64(delta),MeasurementWindows:[]float64{float64(horizon)}}
         _,err := runGraphLocalTemporalCapacityModelWithRuntimeAndSink(facility,experiment,resources,arithmetic{},runtime,"",p)
         if err != nil && !errors.Is(err,opAllDone) && !errors.Is(err,opDeadlocked) { return nil,err }
+        if errors.Is(err,opAllDone) && !diagnostic {p.stopped=horizon}
         if err == nil { p.boundary(horizon) }
     }
     upstreamSeconds:=time.Since(upstreamStarted).Seconds()
@@ -285,7 +290,8 @@ func opSolve(data opDataset, sc opScenario, horizon, delta int64, diagnostic boo
         "stopped":p.stopped,"start":starts,"finish":finishes,"remaining":p.left,"state":states,
         "job_finish":jobs,"mission_success":complete,"completion_known":complete,"cmax":completion,
         "completion_lower_bound":bound,"run_status":"OK",
-        "counters":map[string]int{"upstream_steps":p.steps,"dependency_updates":p.updates}}
+        "counters":map[string]int{"upstream_steps":p.steps,"dependency_updates":p.updates},
+        "algorithm_id":"tsfg-op-grid-s1-cached-v1"}
     if p.ext!=nil {p.extOutput(row)}
     row["phase_seconds"]=map[string]float64{"adapter_prepare":prepareSeconds,
         "upstream_with_policy":upstreamSeconds,"result_prepare":time.Since(resultStarted).Seconds()}
