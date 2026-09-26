@@ -175,6 +175,7 @@ func (p *opPolicy) EndStep(_,_,_ float64) error {
 }
 
 func opSolve(data opDataset, sc opScenario, horizon, delta int64, diagnostic bool) (map[string]any,error) {
+    prepareStarted:=time.Now()
     n,m := len(data.Operations),len(data.Queues)
     if n == 0 || m == 0 || horizon < 0 || delta <= 0 { return nil,errors.New("Invalid operation profile dimensions") }
     runtime := &graphFlowRuntime{IntervalS:1, ResourceMultipliers:map[string][]float64{}}
@@ -248,6 +249,8 @@ func opSolve(data opDataset, sc opScenario, horizon, delta int64, diagnostic boo
         }
     }
     for _,found := range seen { if !found { return nil,errors.New("Missing operation in queues") } }
+    prepareSeconds:=time.Since(prepareStarted).Seconds()
+    upstreamStarted:=time.Now()
     p.boundary(0)
     if horizon>0 {
         experiment := experimentFile{HorizonS:float64(horizon),DtS:float64(delta),MeasurementWindows:[]float64{float64(horizon)}}
@@ -255,6 +258,8 @@ func opSolve(data opDataset, sc opScenario, horizon, delta int64, diagnostic boo
         if err != nil && !errors.Is(err,opAllDone) && !errors.Is(err,opDeadlocked) { return nil,err }
         if err == nil { p.boundary(horizon) }
     }
+    upstreamSeconds:=time.Since(upstreamStarted).Seconds()
+    resultStarted:=time.Now()
     starts,finishes := make([]any,n),make([]any,n)
     states := make([]string,n)
     var cmax int64
@@ -282,6 +287,8 @@ func opSolve(data opDataset, sc opScenario, horizon, delta int64, diagnostic boo
         "completion_lower_bound":bound,"run_status":"OK",
         "counters":map[string]int{"upstream_steps":p.steps,"dependency_updates":p.updates}}
     if p.ext!=nil {p.extOutput(row)}
+    row["phase_seconds"]=map[string]float64{"adapter_prepare":prepareSeconds,
+        "upstream_with_policy":upstreamSeconds,"result_prepare":time.Since(resultStarted).Seconds()}
     return row,nil
 }
 
@@ -292,6 +299,7 @@ func init() {
     os.Exit(0)
 }
 func opCommand() error {
+    stopProfile,err:=opAuditProfile();if err!=nil{return err};defer stopProfile()
     t0:=time.Now()
     if len(os.Args)!=8 { return errors.New("Expected ENGINE DATA SCENARIOS OUTPUT MODE HORIZON DELTA") }
     if (os.Args[1]!="tsfg" && os.Args[1]!="tsfg-ext") || (os.Args[5]!="MISSION" && os.Args[5]!="DIAGNOSTIC") { return errors.New("Invalid engine/mode") }

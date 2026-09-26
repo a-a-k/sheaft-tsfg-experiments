@@ -6,6 +6,7 @@ import json
 import os
 from pathlib import Path
 import signal
+import select
 import subprocess
 import sys
 import time
@@ -38,18 +39,17 @@ def run_one(dataset, engine, count, output, limit=300, label="screen", mode="MIS
     with private_log.open("wb") as log:
         process=subprocess.Popen(command,stdout=log,stderr=log,start_new_session=True,
                                  env={**os.environ,"TSFG_OP_DRIVER":"true","GOMAXPROCS":"1"})
-        while True:
-            pid,status,usage=os.wait4(process.pid,os.WNOHANG)
-            if pid: break
-            if time.monotonic()-start >= limit:
-                timed_out=True
-                os.killpg(process.pid,signal.SIGKILL)
-                _,status,usage=os.wait4(process.pid,0)
-                break
-            time.sleep(.05)
+        # Kernel notification avoids rounding short processes to a polling period.
+        descriptor=os.pidfd_open(process.pid)
+        ready,_,_=select.select([descriptor],[],[],max(0,limit-(time.monotonic()-start)))
+        if not ready:
+            timed_out=True
+            os.killpg(process.pid,signal.SIGKILL)
+        _,status,usage=os.wait4(process.pid,0)
+        os.close(descriptor)
         process.returncode=os.waitstatus_to_exitcode(status)
     elapsed=time.monotonic()-start
-    record.update(process_wall_observed_s=elapsed,exit_code=process.returncode,
+    record.update(process_wall_observed_s=elapsed,wait_method="Linux pidfd readiness",exit_code=process.returncode,
                   rss_peak_bytes=usage.ru_maxrss*1024,cpu_s=usage.ru_utime+usage.ru_stime)
     if timed_out:
         record.update(status="TIMEOUT",T_total_s=None,T_total_lower_bound_s=limit)

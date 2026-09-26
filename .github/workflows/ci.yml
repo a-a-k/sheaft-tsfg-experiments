@@ -44,6 +44,8 @@ jobs:
         run: python experiments/mk01.py
       - name: Mk01 complete campaign and report
         run: python experiments/campaign.py
+      - name: E1X extended campaign
+        run: python experiments/extended_campaign.py
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         if: always()
         with:
