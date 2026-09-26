@@ -195,7 +195,7 @@ def make_dataset(n, family, density, seed, machines=200):
             last = max(ops[10*j+9]["planned_end"] for j in range(prev["first_job"], prev["first_job"]+prev["jobs"]))
             assert nxt["release"]-last >= metadata["minimum_gap_ticks"]
     metadata["C0_ticks"] = max(o["planned_end"] for o in ops)
-    metadata["D_ticks"] = ((metadata["C0_ticks"]*11+999)//1000)*100
+    metadata["D_ticks"] = metadata["C0_ticks"]*11//10
     return data
 
 

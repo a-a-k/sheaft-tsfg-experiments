@@ -30,6 +30,10 @@ type opDataset struct {
     Operations []opInput `json:"operations"`
     Queues [][]int `json:"queues"`
     Jobs []struct { Final int `json:"final_operation"` } `json:"jobs"`
+    Extended bool `json:"extended_profile"`
+    BufferCapacity int `json:"buffer_capacity"`
+    SharedOperations []int `json:"shared_operations"`
+    BaseSpeed []int64 `json:"base_speed_percent"`
 }
 
 func opReadDataset(path string) (opDataset,error) {
@@ -79,6 +83,8 @@ type opScenario struct {
     ID string `json:"id"`
     Failures [][3]int64 `json:"failures"`
     Overrides [][2]int64 `json:"work_overrides"`
+    Speeds [][4]int64 `json:"speed_intervals"`
+    SharedFailures [][2]int64 `json:"shared_failures"`
 }
 type opPolicy struct {
     data opDataset
@@ -93,6 +99,7 @@ type opPolicy struct {
     stepEnd, stopped int64
     steps, updates, completed int
     diagnostic bool
+    ext *opExtension
 }
 var opAllDone = errors.New("operation profile completed")
 
@@ -106,6 +113,7 @@ func (p *opPolicy) available(m int, t int64) bool {
     return p.cursor[m] == len(p.down[m]) || t < p.down[m][p.cursor[m]][0]
 }
 func (p *opPolicy) boundary(t int64) {
+    if p.ext!=nil {p.extBoundary(t);return}
     p.stopped = t
     for m, queue := range p.data.Queues {
         up := p.available(m,t)
@@ -147,6 +155,7 @@ func (p *opPolicy) RouteNodeOutput(id string, processed, _ float64) (float64,flo
     return 0,processed
 }
 func (p *opPolicy) EndStep(_,_,_ float64) error {
+    if p.ext!=nil {return p.extEndStep()}
     completed := make([]int,0,len(p.current))
     for m,i := range p.current {
         if i >= 0 && p.left[i] == 0 {
@@ -187,6 +196,11 @@ func opSolve(data opDataset, sc opScenario, horizon, delta int64, diagnostic boo
     for _,o := range sc.Overrides {
         if o[0] < 0 || o[0] >= int64(n) || o[1] <= 0 { return nil,errors.New("Invalid work override") }
         p.left[o[0]] = o[1]
+    }
+    if data.Extended {
+        for _,v:=range sc.Speeds {if v[1]%delta!=0 || v[2]%delta!=0{return nil,errors.New("Unaligned speed interval")}}
+        for _,v:=range sc.SharedFailures {if v[0]%delta!=0 || v[1]%delta!=0{return nil,errors.New("Unaligned shared failure")}}
+        if err:=p.initExtension();err!=nil{return nil,err}
     }
     for i,o := range data.Operations {
         if p.left[i]%delta != 0 || o.Planned%delta != 0 || o.Release%delta != 0 { return nil,errors.New("Unaligned operation") }
@@ -238,7 +252,7 @@ func opSolve(data opDataset, sc opScenario, horizon, delta int64, diagnostic boo
     if horizon>0 {
         experiment := experimentFile{HorizonS:float64(horizon),DtS:float64(delta),MeasurementWindows:[]float64{float64(horizon)}}
         _,err := runGraphLocalTemporalCapacityModelWithRuntimeAndSink(facility,experiment,resources,arithmetic{},runtime,"",p)
-        if err != nil && !errors.Is(err,opAllDone) { return nil,err }
+        if err != nil && !errors.Is(err,opAllDone) && !errors.Is(err,opDeadlocked) { return nil,err }
         if err == nil { p.boundary(horizon) }
     }
     starts,finishes := make([]any,n),make([]any,n)
@@ -262,11 +276,13 @@ func opSolve(data opDataset, sc opScenario, horizon, delta int64, diagnostic boo
     if complete { completion=cmax } else { bound=horizon }
     mode:="MISSION"
     if diagnostic { mode="DIAGNOSTIC" }
-    return map[string]any{"scenario_id":sc.ID,"engine":"tsfg","mode":mode,"horizon":horizon,
+    row:=map[string]any{"scenario_id":sc.ID,"engine":"tsfg","mode":mode,"horizon":horizon,
         "stopped":p.stopped,"start":starts,"finish":finishes,"remaining":p.left,"state":states,
         "job_finish":jobs,"mission_success":complete,"completion_known":complete,"cmax":completion,
         "completion_lower_bound":bound,"run_status":"OK",
-        "counters":map[string]int{"upstream_steps":p.steps,"dependency_updates":p.updates}},nil
+        "counters":map[string]int{"upstream_steps":p.steps,"dependency_updates":p.updates}}
+    if p.ext!=nil {p.extOutput(row)}
+    return row,nil
 }
 
 func init() {
@@ -278,10 +294,11 @@ func init() {
 func opCommand() error {
     t0:=time.Now()
     if len(os.Args)!=8 { return errors.New("Expected ENGINE DATA SCENARIOS OUTPUT MODE HORIZON DELTA") }
-    if os.Args[1]!="tsfg" || (os.Args[5]!="MISSION" && os.Args[5]!="DIAGNOSTIC") { return errors.New("Invalid engine/mode") }
+    if (os.Args[1]!="tsfg" && os.Args[1]!="tsfg-ext") || (os.Args[5]!="MISSION" && os.Args[5]!="DIAGNOSTIC") { return errors.New("Invalid engine/mode") }
     horizon,err:=strconv.ParseInt(os.Args[6],10,64);if err!=nil{return err}
     delta,err:=strconv.ParseInt(os.Args[7],10,64);if err!=nil{return err}
     data,err:=opReadDataset(os.Args[2]);if err!=nil{return err}
+    if os.Args[1]=="tsfg-ext" {data.Extended=true}
     input,err:=os.ReadFile(os.Args[3]);if err!=nil{return err}
     var scenarios []opScenario;if err=json.Unmarshal(input,&scenarios);err!=nil{return err}
     t1:=time.Now()
