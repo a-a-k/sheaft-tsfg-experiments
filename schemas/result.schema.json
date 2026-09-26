@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": ["scenario_id", "engine", "mode", "horizon", "stopped", "start", "finish", "remaining", "state", "job_finish", "mission_success", "completion_known", "cmax", "completion_lower_bound", "run_status"],
+  "properties": {
+    "scenario_id": {"type": "string", "minLength": 1},
+    "engine": {"enum": ["tsfg", "grid", "des", "dag", "simpy"]},
+    "mode": {"enum": ["MISSION", "DIAGNOSTIC"]},
+    "horizon": {"$ref": "#/$defs/tick"}, "stopped": {"$ref": "#/$defs/tick"},
+    "start": {"type": "array", "items": {"$ref": "#/$defs/nullable_tick"}},
+    "finish": {"type": "array", "items": {"$ref": "#/$defs/nullable_tick"}},
+    "remaining": {"type": "array", "items": {"$ref": "#/$defs/tick"}},
+    "state": {"type": "array", "items": {"enum": ["NOT_STARTED", "PROCESSING", "SUSPENDED", "DONE"]}},
+    "job_finish": {"type": "array", "items": {"$ref": "#/$defs/nullable_tick"}},
+    "mission_success": {"type": "boolean"}, "completion_known": {"type": "boolean"},
+    "cmax": {"$ref": "#/$defs/nullable_tick"}, "completion_lower_bound": {"$ref": "#/$defs/nullable_tick"},
+    "run_status": {"const": "OK"}
+  },
+  "allOf": [{
+    "if": {"properties": {"completion_known": {"const": true}}},
+    "then": {"properties": {"cmax": {"$ref": "#/$defs/tick"}, "completion_lower_bound": {"type": "null"}}},
+    "else": {"properties": {"cmax": {"type": "null"}, "completion_lower_bound": {"$ref": "#/$defs/tick"}}}
+  }],
+  "$defs": {"tick": {"type": "integer", "minimum": 0}, "nullable_tick": {"type": ["integer", "null"], "minimum": 0}}
+}

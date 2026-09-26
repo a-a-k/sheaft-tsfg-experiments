@@ -15,6 +15,7 @@ sys.path.insert(0,str(Path(__file__).resolve().parents[1]))
 from validation.core import NATIVE_ENGINES, run_native
 from validation.checks import calendars, compare, project, service, validate_dataset, validate_result
 from references.simpy_ref import simulate
+from validation.schema import validate as validate_schema
 
 
 def write_csv(path, rows):
@@ -107,6 +108,7 @@ def main():
             false_success=false_failure=mismatches=0
             for sc,ref,row in zip(scenarios,reference,rows):
                 assert row['scenario_id']==sc['id'] and row['completion_known']
+                validate_schema('result',row)
                 validate_result(data,sc,row)
                 mismatches+=sum(a!=b for key in ('start','finish') for a,b in zip(row[key],ref[key]))
                 compare(ref,row)

@@ -10,6 +10,7 @@ import sys
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from references.simpy_ref import simulate
 from validation.checks import compare, project, validate_dataset, validate_result
+from validation.schema import validate as validate_schema
 
 NATIVE_ENGINES = ("tsfg", "grid", "des", "dag")
 
@@ -32,6 +33,8 @@ def instance(rows):
 
 
 def run_native(engine, data, scenarios, horizon, mode, folder, label):
+    validate_schema('dataset',data)
+    validate_schema('scenarios',scenarios)
     dataset = folder / "input.json"
     scenario_file = folder / "scenarios.json"
     dataset.write_text(json.dumps(data))
@@ -41,7 +44,9 @@ def run_native(engine, data, scenarios, horizon, mode, folder, label):
     subprocess.run([binary, engine, str(dataset), str(scenario_file),
                     str(target), mode, str(horizon), "5"], check=True, timeout=120,
                    env={**os.environ, "TSFG_OP_DRIVER": "true", "GOMAXPROCS": "1"})
-    return [json.loads(line) for line in target.read_text().splitlines()]
+    rows=[json.loads(line) for line in target.read_text().splitlines()]
+    for row in rows: validate_schema('result',row)
+    return rows
 
 
 def main():

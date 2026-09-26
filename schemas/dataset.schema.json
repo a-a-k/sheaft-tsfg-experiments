@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Fixed operation schedule, schema 1.1",
+  "type": "object",
+  "required": ["schema_version", "dataset_id", "tick_unit", "operations", "queues", "jobs"],
+  "properties": {
+    "schema_version": {"const": "1.1"},
+    "dataset_id": {"type": "string", "minLength": 1},
+    "tick_unit": {"type": "string", "minLength": 1},
+    "operations": {"type": "array", "minItems": 1, "items": {
+      "type": "object",
+      "required": ["id", "job", "machine", "work", "planned_start", "planned_end", "release", "predecessors", "alternatives"],
+      "properties": {
+        "id": {"$ref": "#/$defs/id"}, "job": {"$ref": "#/$defs/id"}, "machine": {"$ref": "#/$defs/id"},
+        "work": {"type": "integer", "minimum": 1},
+        "planned_start": {"$ref": "#/$defs/id"}, "planned_end": {"$ref": "#/$defs/id"}, "release": {"$ref": "#/$defs/id"},
+        "predecessors": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/id"}},
+        "alternatives": {"type": "array", "minItems": 1, "items": {
+          "type": "object", "required": ["machine", "work"], "additionalProperties": false,
+          "properties": {"machine": {"$ref": "#/$defs/id"}, "work": {"type": "integer", "minimum": 1}}
+        }}
+      }
+    }},
+    "queues": {"type": "array", "minItems": 1, "items": {"type": "array", "items": {"$ref": "#/$defs/id"}}},
+    "jobs": {"type": "array", "minItems": 1, "items": {
+      "type": "object", "required": ["id", "release", "final_operation"],
+      "properties": {"id": {"$ref": "#/$defs/id"}, "release": {"$ref": "#/$defs/id"}, "final_operation": {"$ref": "#/$defs/id"}}
+    }}
+  },
+  "$defs": {"id": {"type": "integer", "minimum": 0}}
+}
