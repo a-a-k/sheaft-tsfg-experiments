@@ -19,6 +19,8 @@ def verify(root):
     assert summary['expected']==summary['actual']==EXPECTED
     assert summary['environment_records']==72
     assert summary['G2_numeric_regression']['status']=='PASS'
+    assert summary['memory_counter_audit']['status']=='PASS'
+    assert summary['memory_comparison_status']=='UNSUPPORTED_AS_ISOLATED_ENGINE_PEAK'
     assert len(summary['witnesses'])==4 and all(w['status']=='PASS' for w in summary['witnesses'])
     assert len(summary['H3'])==16 and len(summary['H4'])==48 and len(summary['H5'])==2
     assert all(r['status']=='completed' and r['conclusion']=='success' for r in summary['runs'].values())

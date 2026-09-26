@@ -47,3 +47,14 @@ jobs:
           path: artifacts/preview/
           retention-days: 90
           compression-level: 1
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: preliminary-documents
+          path: |
+            artifacts/preview/*.md
+            artifacts/preview/*.pdf
+            artifacts/preview/*.png
+            artifacts/preview/*.json
+            artifacts/preview/*.csv
+          retention-days: 90

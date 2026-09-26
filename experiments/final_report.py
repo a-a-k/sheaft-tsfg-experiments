@@ -87,6 +87,7 @@ def main():
     gate=read(root/'core/e3-gate/summary.json')
     audit=read(root/'audit/audit/ozon-reproduction-check.json')
     numeric=read(root/'numeric/g2-numeric/summary.json') if (root/'numeric/g2-numeric/summary.json').exists() else None
+    memory_probe=read(root/'memory/summary.json') if (root/'memory/summary.json').exists() else None
     witnesses=[read(p) for p in sorted((root/'witness').glob('*/witness/summary.json'))]
     diagnostics=read(out/'input-diagnostics.json')
     assert len(witnesses)==4 and all(w['status']=='PASS' for w in witnesses)
@@ -101,6 +102,7 @@ def main():
     assert extended['status']==gate['status']==audit['status']=='PASS'
     if not args.preview:
         assert numeric is not None and numeric['status']=='PASS'
+        assert memory_probe is not None and memory_probe['status']=='PASS'
         assert len(ranking)==2 and {r['family'] for r in ranking}=={'F1','F2'}
         assert all(r['conclusion']=='success' for r in runs.values()),'A campaign failed; report must disclose/reconcile it first'
         assert all_present,(expected,actual)
@@ -109,6 +111,8 @@ def main():
         H4=[],H5=[dict(family=s['family'],series=s['series']) for s in e4],
         E0_aggregation=gate,E1X=extended,ozon_reproduction=audit,ranking=ranking,runs=runs,witnesses=witnesses,
         G2_numeric_regression=numeric,
+        memory_counter_audit=memory_probe,
+        memory_comparison_status='UNSUPPORTED_AS_ISOLATED_ENGINE_PEAK',
         environment_records=len(environments),
         deviations='docs/EXECUTION_DEVIATIONS_RU.md')
     e3_rows=[];strict_deadlines=[]
@@ -261,7 +265,14 @@ def main():
     lines+=['Полные строки времени, RSS, CPU, завершённых сценариев и границ при TIMEOUT '
             'сохранены в main-processes.csv. Измеряется полный одинаковый SCHEDULE. '
             'Контрольные точки префикса внутри K=1000 не подменяют отдельный K=100.','',
-        'Медиана и максимум RSS ниже относятся только к завершённым корректным процессам. '
+        'RSS ниже — ru_maxrss всей истории запуска процесса, а не изолированный пик образа '
+        'движка. Отдельный контроль воспроизвёл влияние состояния до exec: ru_maxrss '
+        '278300 KiB при VmHWM нового образа 10888 KiB. Linux сохраняет учёт ресурсов '
+        'через exec ([getrusage](https://man7.org/linux/man-pages/man2/getrusage.2.html)). '
+        'По этой памяти не принимается вывод о преимуществе движков. Изолированный '
+        'пик памяти всех основных процессов не измерен; исходные значения не исправляются '
+        'вычитанием предполагаемого фона. Замеры времени H3 сохраняются.','',
+        'Медиана и максимум счётчика RSS ниже относятся только к завершённым корректным процессам. '
         'RSS прерванного процесса остаётся наблюдённой памятью до остановки и опубликован '
         'в CSV отдельно; его нельзя считать пиком неизвестного полного исполнения.','']
     memory=[]
@@ -270,7 +281,7 @@ def main():
             selected=[r for r in main_rows if r['engine']==engine and f'-N{n}-' in r['dataset_id']]
             rss=[r['rss_peak_bytes']/2**20 for r in selected if r['completion_validated']]
             memory.append([n,engine,f'{len(rss)}/{len(selected)}',num(statistics.median(rss) if rss else None),num(max_known(rss))])
-    lines+=table(['N','Движок','Полных процессов','Медиана RSS, MiB','Максимум RSS, MiB'],memory)
+    lines+=table(['N','Движок','Полных процессов','Медиана ru_maxrss, MiB','Максимум ru_maxrss, MiB'],memory)
     lines+=['![Парные ускорения E2](H3.png)','',
         '## Агрегирование G1 и G2','',
         f"E3, исправленная G2 v2: {len(e3_rows)} наборов, M0 и 10 воздействий; отдельные MISSION и DIAGNOSTIC. "
