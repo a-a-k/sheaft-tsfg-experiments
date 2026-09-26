@@ -27,12 +27,12 @@ jobs:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
       - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
         with:
-          name: e3-admission
-          run-id: 36247161084
+          name: g2-numeric-regression
+          run-id: 36251071943
           github-token: ${{ github.token }}
           path: admission
-      - name: Require completed G2 hand arithmetic and G1 exact gate
-        run: python -c "import json; assert json.load(open('admission/e3-gate/summary.json'))['status']=='PASS'"
+      - name: Require completed G2 numerical correction and G1 exact gate
+        run: python -c "import json; assert json.load(open('admission/e3-gate/summary.json'))['status']=='PASS'; assert json.load(open('admission/g2-numeric/summary.json'))['status']=='PASS'"
       - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
         with:
           name: e4-summary-${{ matrix.family }}-e85c8fabc3370b7a77fb8b530fcddb435da39163
