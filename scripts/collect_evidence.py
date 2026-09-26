@@ -119,6 +119,8 @@ def main():
                         for entry in archive.infolist():
                             path=PurePosixPath(entry.filename)
                             if path.is_absolute() or '..' in path.parts or '\\' in entry.filename:raise ValueError('Unsafe archive path')
+                            prefixes=selection.get('allow_prefixes')
+                            if prefixes and not any(entry.filename.startswith(prefix) for prefix in prefixes):continue
                             # Reporting needs public JSON/CSV/text, never native binaries or private data.
                             if path.suffix not in ('.json','.csv','.md','.txt'):
                                 keep_witness=role=='witness' and path.suffix=='.gz' and 'measurements' in path.parts

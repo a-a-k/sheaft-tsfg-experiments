@@ -44,6 +44,13 @@ def main():
     args=parser.parse_args();root=args.evidence;out=args.output;out.mkdir(parents=True,exist_ok=True)
     screen=read(root/'screen/summary.json');main_result=read(root/'main/summary.json')
     main_rows=records(root/'main-points');extra_rows=records(root/'extras')
+    environments=[dict(read(p),evidence_path=str(p)) for p in sorted((root/'main-environment').glob('*/build/environment.json'))]
+    assert len(environments)==72
+    assert {r['commit'] for r in main_rows}=={'afb7081898506524e3591af4e727461fc46efa2d'}
+    for dataset in {r['dataset_id'] for r in main_rows}:
+        points=[r for r in main_rows if r['dataset_id']==dataset]
+        assert len({r['input_sha256'] for r in points})==1
+        assert len({r['scenarios_sha256'] for r in points})==1
     e3=[read(p) for p in sorted((root/'e3').glob('*/summary.json'))]
     e4=[read(p) for p in sorted((root/'e4').glob('*/summary.json'))]
     ranking=[read(p) for p in sorted((root/'ranking').glob('*/g2-ranking/summary.json'))]
@@ -68,6 +75,7 @@ def main():
         H1='SUPPORTED_ON_TESTED_EXACT_PROFILE',H2='SUPPORTED_ON_TESTED_EXACT_PROFILE',H3=main_result['decisions'],
         H4=[],H5=[dict(family=s['family'],series=s['series']) for s in e4],
         E0_aggregation=gate,E1X=extended,ozon_reproduction=audit,ranking=ranking,runs=runs,witnesses=witnesses,
+        environment_records=len(environments),
         deviations='docs/EXECUTION_DEVIATIONS_RU.md')
     e3_rows=[];strict_deadlines=[]
     for item in e3:
