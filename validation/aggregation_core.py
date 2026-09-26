@@ -50,6 +50,16 @@ def main():
         assert abs(row['wip_integral']-expected[1])<1e-7,(label,row)
         assert row['material_balance_max_abs']<1e-8
         checks+=3
+    # S1's internal epsilon must not discard legitimate sub-micro-job transfers.
+    # One job, two equal stages sharing one machine: r=1/(2*1000001) jobs/tick.
+    tiny=instance([(0,1000001,0,[],0,0),(0,1000001,1000001,[0],0,0)])
+    source=root/'sub-epsilon.json';source.write_text(json.dumps(tiny))
+    scenario=root/'sub-epsilon-sc.json';scenario.write_text(json.dumps([nominal]))
+    rows,record=run('tsfg-agg',source,scenario,root/'sub-epsilon-out.jsonl',3,delta=1)
+    assert record['status']=='OK'
+    assert abs(rows[0]['fluid_produced']-1/1000001)<1e-15,rows[0]
+    assert rows[0]['kernel_volume_scale']==2**20
+    checks+=2
     for family in ('F1','F2'):
         for density in ('DENSE','SPARSE'):
             data=make_dataset(1000,family,density,902)

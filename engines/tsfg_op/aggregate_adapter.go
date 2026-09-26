@@ -8,6 +8,11 @@ import (
     "sort"
 )
 
+// S1 discards external injections <= its epsilon (1e-6 internal items).
+// Exact power-of-two rescaling keeps that threshold below 1e-12 of one job.
+// All public state and metrics remain in jobs; the original kernel is unchanged.
+const aggKernelVolumeScale = 1048576.0
+
 func opObserve(p *opPolicy,horizon int64) map[string]any {
     type event struct{t int64; change int}
     events:=make([][]event,len(p.data.Queues))
@@ -78,7 +83,7 @@ func(a *aggPolicy) boundary(t int64) {
     for k:=range a.mean {
         capacity:=0.0
         for g:=0;g<a.groups;g++ {capacity+=available[g]*a.share[g][k]}
-        a.refs[k][0]=capacity/a.mean[k]
+        a.refs[k][0]=capacity/a.mean[k]*aggKernelVolumeScale
     }
     a.observe()
 }
@@ -107,14 +112,15 @@ func(a *aggPolicy) HandlesNodeOutput(id string)bool{_,ok:=a.index[id];return ok}
 func(a *aggPolicy) PullNodeInput(id string,available float64)float64 {
     k,ok:=a.index[id];if !ok{return 0}
     amount:=a.injection[k]
-    if amount>available+1e-8 {panic("G2 unexpected finite buffer")}
-    a.injection[k]=0;return amount
+    if amount>available/aggKernelVolumeScale+1e-8 {panic("G2 unexpected finite buffer")}
+    a.injection[k]=0;return amount*aggKernelVolumeScale
 }
 func(a *aggPolicy) RouteNodeOutput(id string,processed,_ float64)(float64,float64) {
+    kernelProcessed:=processed;processed/=aggKernelVolumeScale
     k:=a.index[id];a.volumes[k]-=processed
     if a.volumes[k] < -1e-8 {panic("G2 negative inventory")}
     if k+1==len(a.mean) {a.produced+=processed} else {a.pending[k+1]+=processed}
-    return 0,processed
+    return 0,kernelProcessed
 }
 func(a *aggPolicy) EndStep(_,_,_ float64)error {
     a.stopped=a.stepEnd
@@ -150,9 +156,10 @@ func aggSolve(data opDataset,sc opScenario,horizon,delta int64,diagnostic bool)(
         for k,i:=range route {
             o:=data.Operations[i]
             if o.Release!=release || (k==0 && len(o.Predecessors)!=0) || (k>0 && (len(o.Predecessors)!=1 || o.Predecessors[0]!=route[k-1])) {return nil,errors.New("G2 assembly/non-chain UNSUPPORTED")}
-            a.share[o.Machine/a.width][k]+=float64(work[i]);a.mean[k]+=float64(work[i])/float64(jobs)
+            a.share[o.Machine/a.width][k]+=float64(work[i]);a.mean[k]+=float64(work[i])
         }
     }
+    for k:=range a.mean {a.mean[k]/=float64(jobs)}
     sort.Slice(a.releases,func(i,j int)bool{return a.releases[i]<a.releases[j]})
     for g,row:=range a.share {
         total:=0.0;for _,v:=range row{total+=v}
@@ -174,7 +181,7 @@ func aggSolve(data opDataset,sc opScenario,horizon,delta int64,diagnostic bool)(
     facility:=facilityFile{};resources:=[]resource{}
     for k:=0;k<=stages;k++ {
         id:=fmt.Sprintf("G%d",k)
-        facility.Nodes=append(facility.Nodes,facilityNode{ID:id,Kind:"workstation",FlowRole:"main",Replicas:1,Buffer:facilityBuffer{CapacityItems:float64(jobs)+1}})
+        facility.Nodes=append(facility.Nodes,facilityNode{ID:id,Kind:"workstation",FlowRole:"main",Replicas:1,Buffer:facilityBuffer{CapacityItems:(float64(jobs)+1)*aggKernelVolumeScale}})
         resources=append(resources,resource{ID:id,Capacity:3600,Order:2*k})
         if k<stages {
             a.index[id]=k;runtime.ResourceMultipliers[id]=[]float64{0};a.refs[k]=runtime.ResourceMultipliers[id]
@@ -202,6 +209,7 @@ func aggSolve(data opDataset,sc opScenario,horizon,delta int64,diagnostic bool)(
         "produced":produced,"fluid_produced":a.produced,"released":a.releaseCursor,"incomplete_jobs":jobs-produced,
         "queue_at_D":at,"queue_max":peak,"wip_integral":a.integral,"mission_success":complete,
         "completion_known":complete,"cmax":completion,"completion_lower_bound":bound,"run_status":"OK",
-        "output_profile":"AGG-MISSION","algorithm_id":"tsfg-g2-fluid-s1-v1","material_balance_max_abs":a.maxBalanceError,
+        "output_profile":"AGG-MISSION","algorithm_id":"tsfg-g2-fluid-s1-v2","material_balance_max_abs":a.maxBalanceError,
+        "kernel_volume_scale":aggKernelVolumeScale,
         "counters":map[string]int{"upstream_steps":a.steps,"stages":stages,"individual_states":0}},nil
 }

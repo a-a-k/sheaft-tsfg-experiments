@@ -18,6 +18,7 @@ engine = source / "engine"
 parser = argparse.ArgumentParser()
 parser.add_argument("--upstream-test-evidence", type=Path)
 parser.add_argument("--audit-baseline", action="store_true")
+parser.add_argument("--g2-baseline", action="store_true")
 args = parser.parse_args()
 if args.upstream_test_evidence:
     evidence = json.loads(args.upstream_test_evidence.read_text())
@@ -63,6 +64,23 @@ summary.update(go_version=subprocess.check_output(["go", "version"], text=True).
                source_modified=False, public_binary=False)
 (out / "tsfg-provenance.json").write_text(json.dumps(summary, indent=2) + "\n")
 print(json.dumps(summary))
+if args.g2_baseline:
+    old_ref='1ffd2a2bd69e3c5e7fb0a9cc051b85e85d761617'
+    private_adapter=engine/'cmd/ozon-engine/aggregate_adapter.go'
+    previous=subprocess.check_output(['git','-c',f'safe.directory={Path.cwd()}',
+                                     'show',f'{old_ref}:{aggregate_adapter.as_posix()}'])
+    previous_binary=binary.with_name('tsfg-g2-v1')
+    try:
+        private_adapter.write_bytes(previous)
+        build=subprocess.run(['go','build','-trimpath','-o',str(previous_binary),'./cmd/ozon-engine'],
+                             cwd=engine,capture_output=True,text=True)
+        if build.returncode:raise SystemExit('G2 baseline build failed; private diagnostics omitted')
+        (out/'g2-v1-provenance.json').write_text(json.dumps(dict(
+            source_commit=commit,aggregate_adapter_commit=old_ref,
+            adapter_sha256=hashlib.sha256(previous).hexdigest(),
+            binary_sha256=hashlib.sha256(previous_binary.read_bytes()).hexdigest(),source_modified=False),indent=2))
+    finally:
+        shutil.copyfile(aggregate_adapter,private_adapter)
 if args.audit_baseline:
     baseline_ref = "2ade199735cf49eae328d8402b2b0a984b7d2e49"
     baseline_files = (adapter, extended_adapter, audit_adapter)

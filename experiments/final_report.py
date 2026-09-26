@@ -65,6 +65,7 @@ def main():
     extended=read(root/'core/e1x/summary.json')
     gate=read(root/'core/e3-gate/summary.json')
     audit=read(root/'audit/audit/ozon-reproduction-check.json')
+    numeric=read(root/'numeric/g2-numeric/summary.json') if (root/'numeric/g2-numeric/summary.json').exists() else None
     witnesses=[read(p) for p in sorted((root/'witness').glob('*/witness/summary.json'))]
     diagnostics=read(out/'input-diagnostics.json')
     assert len(witnesses)==4 and all(w['status']=='PASS' for w in witnesses)
@@ -78,12 +79,15 @@ def main():
     assert all(v['status'].startswith('PASS') for v in e3)
     assert extended['status']==gate['status']==audit['status']=='PASS'
     if not args.preview:
+        assert numeric is not None and numeric['status']=='PASS'
+        assert len(ranking)==2 and {r['family'] for r in ranking}=={'F1','F2'}
         assert all(r['conclusion']=='success' for r in runs.values()),'A campaign failed; report must disclose/reconcile it first'
         assert all_present,(expected,actual)
     summary=dict(status='PRELIMINARY_INCOMPLETE' if args.preview else 'COMPLETED_WITH_DISCLOSED_LIMITATIONS',expected=expected,actual=actual,
         H1='SUPPORTED_ON_TESTED_EXACT_PROFILE',H2='SUPPORTED_ON_TESTED_EXACT_PROFILE',H3=main_result['decisions'],
         H4=[],H5=[dict(family=s['family'],series=s['series']) for s in e4],
         E0_aggregation=gate,E1X=extended,ozon_reproduction=audit,ranking=ranking,runs=runs,witnesses=witnesses,
+        G2_numeric_regression=numeric,
         environment_records=len(environments),
         deviations='docs/EXECUTION_DEVIATIONS_RU.md')
     e3_rows=[];strict_deadlines=[]
@@ -113,6 +117,7 @@ def main():
         raw=root/'e3-raw'/f"e3-{metadata['family']}-{metadata['density']}-{metadata['n']}-{metadata['seed']}"/'e3'
         exact_diagnostic=read_rows(raw/'DIAGNOSTIC-G0-des.jsonl')
         fluid_diagnostic=read_rows(raw/'DIAGNOSTIC-G2-tsfg.jsonl')
+        assert all(row['algorithm_id']=='tsfg-g2-fluid-s1-v2' for row in fluid_diagnostic.values())
         for ratio in (1.,1.01):
             deadline=metadata['C0_ticks']*int(round(ratio*100))/100
             assessed=[]
@@ -133,8 +138,8 @@ def main():
             'T_total_s','T_batch_s','prefix_K100_batch_s','T_total_lower_bound_s','process_wall_observed_s','rss_peak_bytes','cpu_s','input_sha256','scenarios_sha256','commit','run_id']
     write_csv(out/'main-processes.csv',main_rows,fields)
     write_csv(out/'supplementary-processes.csv',extra_rows,fields)
-    write_csv(out/'aggregation.csv',e3_rows,list(e3_rows[0]))
-    write_csv(out/'strict-deadlines-post-hoc.csv',strict_deadlines,list(strict_deadlines[0]))
+    write_csv(out/'aggregation.csv',e3_rows,list(e3_rows[0]) if e3_rows else ['dataset_id','accuracy_coverage'])
+    write_csv(out/'strict-deadlines-post-hoc.csv',strict_deadlines,list(strict_deadlines[0]) if strict_deadlines else ['dataset_id','deadline_ratio','scenarios'])
     extra_groups={}
     for row in extra_rows:
         key=(re.sub(r'-s\d+(?=-|$)','',row['dataset_id']),row['K'])
@@ -150,7 +155,7 @@ def main():
             row[engine+'_timeouts']=sum(r['status']=='TIMEOUT' for r in selected)
             row[engine+'_median_total_s']=statistics.median([r['T_total_s'] for r in complete]) if complete else None
         supplementary.append(row)
-    write_csv(out/'supplementary-summary.csv',supplementary,list(supplementary[0]))
+    write_csv(out/'supplementary-summary.csv',supplementary,list(supplementary[0]) if supplementary else ['dataset','K'])
     shutil.copyfile(root/'screen/measurements.csv',out/'screen-processes.csv')
     shutil.copyfile(root/'main/measurements.csv',out/'H3-measurements.csv')
     lines=['# TSFG: проверка исполнения производственного расписания','',
@@ -175,6 +180,13 @@ def main():
     lines+=table(['F1/F2, K=100','Старый адаптер, с','Исправленный, с','DES, с','DAG, с'],[
         ['F1','26,78 / 26,90','18,18 / 18,15','0,84 / 0,84','0,28 / 0,29'],
         ['F2','18,02 / 17,89','12,46 / 12,47','0,93 / 0,94','0,29 / 0,29']])
+    lines+=['В первом G2 отдельно обнаружен численный дефект сопряжения: порог S1 1e-6 '
+            'отбрасывал малые внешние переносы, уже учтённые адаптером. На первом миллионном '
+            'F1 номинальный выпуск достиг 100000 заказов, но остаток не позволял зафиксировать '
+            'полное завершение к 10D. Эта версия сохраняется как e3_v1 с известным дефектом. '
+            'G2 v2 масштабирует внутренние объёмы и мощности на 2^20, возвращая выход в заказы; '
+            'допуски точности не расширены. После отдельного регрессионного допуска повторяется '
+            'вся E3 и ранжирование. Данная ошибка не затрагивает пооперационную H3.','']
     lines+=['Это сравнение конкретных реализаций: Go S1 с универсальным графовым обслуживанием '
             'и C++ DES/DAG. Оно не доказывает предел быстродействия всех реализаций TSFG. '
             'Минимальный C++ GRID остаётся отдельным вспомогательным участником.','',
@@ -225,7 +237,7 @@ def main():
     lines+=table(['N','Движок','Полных процессов','Медиана RSS, MiB','Максимум RSS, MiB'],memory)
     lines+=['![Парные ускорения E2](H3.png)','',
         '## Агрегирование G1 и G2','',
-        f"E3: {len(e3_rows)} наборов, M0 и 10 воздействий; отдельные MISSION и DIAGNOSTIC. "
+        f"E3, исправленная G2 v2: {len(e3_rows)} наборов, M0 и 10 воздействий; отдельные MISSION и DIAGNOSTIC. "
         f"Все 11 сценариев прошли APPROX-MISSION-1 на {sum(r['mission_admitted'] for r in e3_rows)} наборах; "
         f"APPROX-DIAGNOSTIC-1 — на {sum(r['diagnostic_admitted'] for r in e3_rows)}. "
         f"Всего ложных успехов G2: {sum(r['false_successes'] for r in e3_rows)}; "
