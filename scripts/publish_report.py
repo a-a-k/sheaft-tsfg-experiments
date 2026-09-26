@@ -19,6 +19,8 @@ def verify(root):
     assert summary['expected']==summary['actual']==EXPECTED
     assert summary['environment_records']==72
     assert summary['G2_numeric_regression']['status']=='PASS'
+    assert summary['memory_counter_audit']['status']=='PASS'
+    assert summary['memory_comparison_status']=='UNSUPPORTED_AS_ISOLATED_ENGINE_PEAK'
     assert len(summary['witnesses'])==4 and all(w['status']=='PASS' for w in summary['witnesses'])
     assert len(summary['H3'])==16 and len(summary['H4'])==48 and len(summary['H5'])==2
     assert all(r['status']=='completed' and r['conclusion']=='success' for r in summary['runs'].values())
@@ -26,7 +28,7 @@ def verify(root):
     hashes=json.loads((root/'SHA256.json').read_text())
     required={'REPORT_RU.md','REPORT_RU.pdf','summary.json','main-processes.csv','H3-measurements.csv',
               'screen-processes.csv','supplementary-processes.csv','supplementary-summary.csv','aggregation.csv',
-              'strict-deadlines-post-hoc.csv','H3.png','aggregation.png','reserves.png',
+              'strict-deadlines-post-hoc.csv','timeout-ratio-bounds.csv','H3.png','aggregation.png','reserves.png',
               'inputs.zip','inputs-index.json','input-diagnostics.json','evidence.zip','runs.json'}
     assert required<=hashes.keys(),required-hashes.keys()
     assert {p.name for p in root.iterdir() if p.is_file()}==hashes.keys()|{'SHA256.json'}

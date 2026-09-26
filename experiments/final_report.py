@@ -38,6 +38,27 @@ def write_csv(path,rows,fields):
         writer=csv.DictWriter(f,fieldnames=fields,extrasaction='ignore');writer.writeheader();writer.writerows(rows)
 
 
+def timeout_bounds(rows):
+    result=[]
+    for dataset,label in sorted({(r['dataset_id'],r['label']) for r in rows}):
+        group=[r for r in rows if (r['dataset_id'],r['label'])==(dataset,label)]
+        a=[r for r in group if r['engine']=='tsfg']
+        for reference in ('des','dag'):
+            b=[r for r in group if r['engine']==reference]
+            if len(a)!=2 or len(b)!=2:continue
+            if any(r['status'] not in ('OK','TIMEOUT') for r in a+b):continue
+            if any(r['status']=='OK' and not r['completion_validated'] for r in a+b):continue
+            if len({r['input_sha256'] for r in a+b})!=1 or len({r['scenarios_sha256'] for r in a+b})!=1:continue
+            ta,tb=any(r['status']=='TIMEOUT' for r in a),any(r['status']=='TIMEOUT' for r in b)
+            if ta==tb:continue  # All complete, or both sides censored: no one-sided bound here.
+            times=[r['T_total_s'] if r['status']=='OK' else r['T_total_lower_bound_s'] for r in b+a]
+            bound=math.sqrt(times[0]*times[1]/times[2]/times[3])
+            result.append(dict(dataset_id=dataset,label=label,reference=reference,
+                direction='UPPER' if ta else 'LOWER',S_total_bound=bound,
+                eligible_for_H3=False,scope='Process completion time only; censored final correctness is unknown'))
+    return result
+
+
 def main():
     if os.environ.get('GITHUB_ACTIONS')!='true':raise SystemExit('Actions only')
     parser=argparse.ArgumentParser()
@@ -66,6 +87,7 @@ def main():
     gate=read(root/'core/e3-gate/summary.json')
     audit=read(root/'audit/audit/ozon-reproduction-check.json')
     numeric=read(root/'numeric/g2-numeric/summary.json') if (root/'numeric/g2-numeric/summary.json').exists() else None
+    memory_probe=read(root/'memory/summary.json') if (root/'memory/summary.json').exists() else None
     witnesses=[read(p) for p in sorted((root/'witness').glob('*/witness/summary.json'))]
     diagnostics=read(out/'input-diagnostics.json')
     assert len(witnesses)==4 and all(w['status']=='PASS' for w in witnesses)
@@ -80,6 +102,7 @@ def main():
     assert extended['status']==gate['status']==audit['status']=='PASS'
     if not args.preview:
         assert numeric is not None and numeric['status']=='PASS'
+        assert memory_probe is not None and memory_probe['status']=='PASS'
         assert len(ranking)==2 and {r['family'] for r in ranking}=={'F1','F2'}
         assert all(r['conclusion']=='success' for r in runs.values()),'A campaign failed; report must disclose/reconcile it first'
         assert all_present,(expected,actual)
@@ -88,6 +111,8 @@ def main():
         H4=[],H5=[dict(family=s['family'],series=s['series']) for s in e4],
         E0_aggregation=gate,E1X=extended,ozon_reproduction=audit,ranking=ranking,runs=runs,witnesses=witnesses,
         G2_numeric_regression=numeric,
+        memory_counter_audit=memory_probe,
+        memory_comparison_status='UNSUPPORTED_AS_ISOLATED_ENGINE_PEAK',
         environment_records=len(environments),
         deviations='docs/EXECUTION_DEVIATIONS_RU.md')
     e3_rows=[];strict_deadlines=[]
@@ -131,12 +156,14 @@ def main():
     summary['H4']=e3_rows
     summary['strict_deadline_diagnostic_projection']=strict_deadlines
     summary['E2_screen']=screen
+    bounds=timeout_bounds(main_rows);summary['timeout_ratio_bounds']=bounds
     summary['supplementary']=dict(processes=len(extra_rows),complete_correct=sum(r['completion_validated'] for r in extra_rows),
         timeouts=sum(r['status']=='TIMEOUT' for r in extra_rows),
         validated_prefix_scenarios=sum(r.get('validated_prefix_scenarios',0) for r in extra_rows))
     fields=['dataset_id','engine','K','label','status','completion_validated','scenarios_completed','validated_prefix_scenarios',
             'T_total_s','T_batch_s','prefix_K100_batch_s','T_total_lower_bound_s','process_wall_observed_s','rss_peak_bytes','cpu_s','input_sha256','scenarios_sha256','commit','run_id']
     write_csv(out/'main-processes.csv',main_rows,fields)
+    write_csv(out/'timeout-ratio-bounds.csv',bounds,['dataset_id','label','reference','direction','S_total_bound','eligible_for_H3','scope'])
     write_csv(out/'supplementary-processes.csv',extra_rows,fields)
     write_csv(out/'aggregation.csv',e3_rows,list(e3_rows[0]) if e3_rows else ['dataset_id','accuracy_coverage'])
     write_csv(out/'strict-deadlines-post-hoc.csv',strict_deadlines,list(strict_deadlines[0]) if strict_deadlines else ['dataset_id','deadline_ratio','scenarios'])
@@ -216,6 +243,19 @@ def main():
     lines+=table(['Область','N','Эталон','Пар / 9','G, T_batch','G, T_total','Решение'],[
         [f"{d['family']}/{d['density']}",d['n'],d['reference'],len(d['points']),num(d.get('G')),num(d.get('G_total')),d['status']]
         for d in main_result['decisions']])
+    lines+=['Границы отношения полного времени при одностороннем таймауте приведены ниже. '
+            'Для UPPER истинное S_total меньше опубликованной границы, для LOWER — больше. '
+            'В каждой строке диапазон границ отдельных VM; это не доверительный интервал. '
+            'Используются два запуска каждого движка на одной VM. Обе цензурированные '
+            'стороны не дают конечной границы. Эти значения не участвуют в принятии H3 и '
+            'не подтверждают корректность неизвестного окончания прерванного процесса.','']
+    bound_groups={}
+    for r in bounds:
+        key=(re.sub(r'-s\d+$','',r['dataset_id']),r['reference'],r['direction'])
+        bound_groups.setdefault(key,[]).append(r['S_total_bound'])
+    lines+=table(['Область и размер','Эталон','Вид границы','Точек','Минимум','Максимум'],[
+        [dataset,reference,direction,len(values),num(min(values)),num(max(values))]
+        for (dataset,reference,direction),values in sorted(bound_groups.items())])
     lines+=['Номинальные горизонты и фактические пустые промежутки:','']
     lines+=table(['Набор, seed101','C0, с','Нижняя оценка, с','Доля пустого времени','Наибольший пустой интервал, с'],[
         [r['dataset_id'],num(r['C0_ticks']/100),num(r['lower_bound_ticks']/100),num(r['global_idle_fraction']),num(r['longest_global_idle_ticks']/100)]
@@ -225,7 +265,14 @@ def main():
     lines+=['Полные строки времени, RSS, CPU, завершённых сценариев и границ при TIMEOUT '
             'сохранены в main-processes.csv. Измеряется полный одинаковый SCHEDULE. '
             'Контрольные точки префикса внутри K=1000 не подменяют отдельный K=100.','',
-        'Медиана и максимум RSS ниже относятся только к завершённым корректным процессам. '
+        'RSS ниже — ru_maxrss всей истории запуска процесса, а не изолированный пик образа '
+        'движка. Отдельный контроль воспроизвёл влияние состояния до exec: ru_maxrss '
+        '278300 KiB при VmHWM нового образа 10888 KiB. Linux сохраняет учёт ресурсов '
+        'через exec ([getrusage](https://man7.org/linux/man-pages/man2/getrusage.2.html)). '
+        'По этой памяти не принимается вывод о преимуществе движков. Изолированный '
+        'пик памяти всех основных процессов не измерен; исходные значения не исправляются '
+        'вычитанием предполагаемого фона. Замеры времени H3 сохраняются.','',
+        'Медиана и максимум счётчика RSS ниже относятся только к завершённым корректным процессам. '
         'RSS прерванного процесса остаётся наблюдённой памятью до остановки и опубликован '
         'в CSV отдельно; его нельзя считать пиком неизвестного полного исполнения.','']
     memory=[]
@@ -234,7 +281,7 @@ def main():
             selected=[r for r in main_rows if r['engine']==engine and f'-N{n}-' in r['dataset_id']]
             rss=[r['rss_peak_bytes']/2**20 for r in selected if r['completion_validated']]
             memory.append([n,engine,f'{len(rss)}/{len(selected)}',num(statistics.median(rss) if rss else None),num(max_known(rss))])
-    lines+=table(['N','Движок','Полных процессов','Медиана RSS, MiB','Максимум RSS, MiB'],memory)
+    lines+=table(['N','Движок','Полных процессов','Медиана ru_maxrss, MiB','Максимум ru_maxrss, MiB'],memory)
     lines+=['![Парные ускорения E2](H3.png)','',
         '## Агрегирование G1 и G2','',
         f"E3, исправленная G2 v2: {len(e3_rows)} наборов, M0 и 10 воздействий; отдельные MISSION и DIAGNOSTIC. "
@@ -313,7 +360,9 @@ def main():
         'В серии роста оборудования F2 имеет ровно две альтернативы при 20/200/2000 станках. '
         'Дополнительный K=1000 на миллионе операций не запускался в текущем бюджете. '
         'Переналадка, ограниченный транспорт, миграция незавершённой работы, резервный станок '
-        'и новый алгоритм пропуска времени не реализованы и не объявляются проверенными.','',
+        'и новый алгоритм пропуска времени не реализованы и не объявляются проверенными. '
+        'Приближённый Mk01 с грубыми шагами 1 и 0,25 также не запускался; проверенные '
+        'шаги дробно-скоростного E1X — отдельный опыт.','',
         'Выявлено отклонение от §6.2: фактический генератор использует первые 8 байт SHA-256 '
         'для PCG64 вместо 16 в тексте плана. Это записано в manifest и EXECUTION_DEVIATIONS_RU.md. '
         'Файлы после просмотра результатов не заменялись. Все сравниваемые движки получают '

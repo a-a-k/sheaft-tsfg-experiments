@@ -11,6 +11,7 @@
     "ranking_v1": {"id": 36247684531, "artifacts": [{"pattern": "g2-ranking-*", "directory": "ranking-v1", "subdirectories": true}]},
     "core": {"id": 36251071903, "artifacts": [{"pattern": "core-*", "directory": "core"}]},
     "numeric": {"id": 36251071943, "artifacts": [{"pattern": "g2-numeric-regression", "directory": "numeric"}]},
+    "memory": {"id": 36252103124, "artifacts": [{"pattern": "memory-counter", "directory": "memory"}]},
     "audit": {"id": 36234360859, "artifacts": [{"pattern": "tsfg-audit-summary-*", "directory": "audit"}]},
     "witness": {"id": 36248742380, "artifacts": [{"pattern": "witness-*", "directory": "witness", "subdirectories": true}]}
   }
