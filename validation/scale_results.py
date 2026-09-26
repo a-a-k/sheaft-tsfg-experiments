@@ -34,6 +34,9 @@ def main():
                     row=json.loads(line)
                     assert row["scenario_id"]==scenarios[count]["id"]
                     validate_result(data,scenarios[count],row)
+                    if scenarios[count]["id"]=="M0":
+                        assert row["start"]==[o["planned_start"] for o in data["operations"]]
+                        assert row["finish"]==[o["planned_end"] for o in data["operations"]]
                     invariant_checks+=1
                     if reference_file is not None:
                         expected=json.loads(next(reference_file))

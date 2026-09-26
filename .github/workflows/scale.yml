@@ -1,8 +1,13 @@
 name: Scale calibration and screen
 on:
-  push:
-    branches: ['implementation/full-study']
-    paths: ['.github/workflows/scale.yml']
+  workflow_call:
+    inputs:
+      suite:
+        type: string
+        required: true
+      part:
+        type: string
+        required: true
   workflow_dispatch:
     inputs:
       suite:
@@ -62,14 +67,14 @@ jobs:
           go-version: '1.26.0'
           cache: false
       - run: python -m pip install --require-hashes -r requirements.lock
-      - run: python scripts/build_tsfg.py
+      - run: python scripts/build_tsfg.py --upstream-test-evidence docs/results/mk01/tsfg-provenance.json
       - run: python scripts/build.py
       - run: python validation/core.py
       - run: python validation/scale_core.py
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         if: always()
         with:
-          name: scale-admission
+          name: scale-admission-${{ inputs.suite || 'calibration' }}-${{ inputs.part || '0' }}
           path: artifacts/
   measure:
     needs: admission
@@ -90,7 +95,7 @@ jobs:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
       - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
         with:
-          name: scale-admission
+          name: scale-admission-${{ inputs.suite || 'calibration' }}-${{ inputs.part || '0' }}
           path: admission
       - name: Fetch pinned private source
         env:
@@ -110,14 +115,14 @@ jobs:
           SUITE: ${{ inputs.suite || 'calibration' }}
         run: |
           if [ "$SUITE" = main ]; then
-            python experiments/scale_run.py --dataset artifacts/dataset --output artifacts/measurements --k ${{ matrix.k }} --paired --round ${{ matrix.round }}
+            python experiments/scale_run.py --dataset artifacts/dataset --output artifacts/measurements --k ${{ matrix.k }} --paired --round ${{ matrix.round }} --compact-traces
           else
-            python experiments/scale_run.py --dataset artifacts/dataset --output artifacts/measurements --k ${{ matrix.k }}
+            python experiments/scale_run.py --dataset artifacts/dataset --output artifacts/measurements --k ${{ matrix.k }} --compact-traces
           fi
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         if: always()
         with:
-          name: scale-${{ matrix.family }}-${{ matrix.density }}-${{ matrix.n }}-${{ matrix.seed }}-r${{ matrix.round }}
+          name: scale-${{ inputs.suite || 'calibration' }}-${{ matrix.family }}-${{ matrix.density }}-${{ matrix.n }}-${{ matrix.seed }}-r${{ matrix.round }}
           path: artifacts/
           compression-level: 1
           retention-days: 90
@@ -137,15 +142,18 @@ jobs:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
       - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
         with:
-          name: scale-${{ matrix.family }}-${{ matrix.density }}-${{ matrix.n }}-${{ matrix.seed }}-r${{ matrix.round }}
+          name: scale-${{ inputs.suite || 'calibration' }}-${{ matrix.family }}-${{ matrix.density }}-${{ matrix.n }}-${{ matrix.seed }}-r${{ matrix.round }}
           path: artifacts
       - run: python -m pip install --require-hashes -r requirements.lock
-      - run: python validation/scale_results.py --dataset artifacts/dataset --results artifacts/measurements
+      - run: python validation/scale_replay.py --dataset artifacts/dataset --results artifacts/measurements
+      - run: python validation/scale_replay.py --dataset artifacts/dataset --results artifacts/baseline
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         if: always()
         with:
-          name: validated-${{ matrix.family }}-${{ matrix.density }}-${{ matrix.n }}-${{ matrix.seed }}-r${{ matrix.round }}
+          name: validated-${{ inputs.suite || 'calibration' }}-${{ matrix.family }}-${{ matrix.density }}-${{ matrix.n }}-${{ matrix.seed }}-r${{ matrix.round }}
           path: |
             artifacts/measurements/**/measurement.json
             artifacts/measurements/validation.json
             artifacts/dataset/manifest.json
+            artifacts/baseline/**/measurement.json
+            artifacts/baseline/validation.json

@@ -23,6 +23,8 @@ if args.upstream_test_evidence:
     evidence = json.loads(args.upstream_test_evidence.read_text())
     if evidence.get("source_commit") != commit or evidence.get("status") != "PASS" or evidence.get("tests_passed",0) < 157:
         raise SystemExit("Invalid upstream test evidence")
+    if evidence.get("go_version") and evidence["go_version"] != subprocess.check_output(["go","version"],text=True).strip():
+        raise SystemExit("Upstream evidence uses a different Go version")
     summary = dict(evidence, reused_test_evidence=True,
                    evidence_sha256=hashlib.sha256(args.upstream_test_evidence.read_bytes()).hexdigest())
 else:
@@ -63,7 +65,8 @@ if args.audit_baseline:
     baseline_files = (adapter, extended_adapter, audit_adapter)
     try:
         for public in baseline_files:
-            previous = subprocess.check_output(["git", "show", f"{baseline_ref}:{public.as_posix()}"])
+            previous = subprocess.check_output(["git", "-c", f"safe.directory={Path.cwd()}",
+                                                "show", f"{baseline_ref}:{public.as_posix()}"])
             (engine / "cmd/ozon-engine" / public.name).write_bytes(previous)
         previous_binary = binary.with_name("tsfg-baseline")
         result = subprocess.run(["go", "build", "-trimpath", "-o", str(previous_binary), "./cmd/ozon-engine"],

@@ -30,8 +30,8 @@ jobs:
           go-version: '1.26.0'
           cache: false
       - run: python -m pip install --require-hashes -r requirements.lock
-      - name: Upstream regression tests and TSFG adapter build
-        run: python scripts/build_tsfg.py
+      - name: Reuse verified unchanged upstream and build current adapter
+        run: python scripts/build_tsfg.py --upstream-test-evidence docs/results/mk01/tsfg-provenance.json
       - name: Build independent C++ kernels
         run: python scripts/build.py
       - name: E0-core
