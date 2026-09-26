@@ -269,7 +269,10 @@ def main():
             page.text(.94,.025,str(offset//57+1),ha='right',fontsize=8);pdf.savefig(page);plt.close(page)
         for fig in figures:pdf.savefig(fig)
     for fig in figures:plt.close(fig)
-    hashes={p.name:hashlib.sha256(p.read_bytes()).hexdigest() for p in sorted(out.iterdir()) if p.is_file()}
+    hashes={}
+    for p in sorted(out.iterdir()):
+        if p.is_file() and p.name!='SHA256.json':
+            with p.open('rb') as source:hashes[p.name]=hashlib.file_digest(source,'sha256').hexdigest()
     (out/'SHA256.json').write_text(json.dumps(hashes,indent=2))
     print(json.dumps(dict(status=summary['status'],actual=actual,H3=[d['status'] for d in summary['H3']],
         G2_admitted_datasets=sum(r['mission_admitted'] for r in e3_rows))))
