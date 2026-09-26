@@ -138,8 +138,8 @@ def main():
             'T_total_s','T_batch_s','prefix_K100_batch_s','T_total_lower_bound_s','process_wall_observed_s','rss_peak_bytes','cpu_s','input_sha256','scenarios_sha256','commit','run_id']
     write_csv(out/'main-processes.csv',main_rows,fields)
     write_csv(out/'supplementary-processes.csv',extra_rows,fields)
-    write_csv(out/'aggregation.csv',e3_rows,list(e3_rows[0]))
-    write_csv(out/'strict-deadlines-post-hoc.csv',strict_deadlines,list(strict_deadlines[0]))
+    write_csv(out/'aggregation.csv',e3_rows,list(e3_rows[0]) if e3_rows else ['dataset_id','accuracy_coverage'])
+    write_csv(out/'strict-deadlines-post-hoc.csv',strict_deadlines,list(strict_deadlines[0]) if strict_deadlines else ['dataset_id','deadline_ratio','scenarios'])
     extra_groups={}
     for row in extra_rows:
         key=(re.sub(r'-s\d+(?=-|$)','',row['dataset_id']),row['K'])
@@ -155,7 +155,7 @@ def main():
             row[engine+'_timeouts']=sum(r['status']=='TIMEOUT' for r in selected)
             row[engine+'_median_total_s']=statistics.median([r['T_total_s'] for r in complete]) if complete else None
         supplementary.append(row)
-    write_csv(out/'supplementary-summary.csv',supplementary,list(supplementary[0]))
+    write_csv(out/'supplementary-summary.csv',supplementary,list(supplementary[0]) if supplementary else ['dataset','K'])
     shutil.copyfile(root/'screen/measurements.csv',out/'screen-processes.csv')
     shutil.copyfile(root/'main/measurements.csv',out/'H3-measurements.csv')
     lines=['# TSFG: проверка исполнения производственного расписания','',
@@ -237,7 +237,7 @@ def main():
     lines+=table(['N','Движок','Полных процессов','Медиана RSS, MiB','Максимум RSS, MiB'],memory)
     lines+=['![Парные ускорения E2](H3.png)','',
         '## Агрегирование G1 и G2','',
-        f"E3: {len(e3_rows)} наборов, M0 и 10 воздействий; отдельные MISSION и DIAGNOSTIC. "
+        f"E3, исправленная G2 v2: {len(e3_rows)} наборов, M0 и 10 воздействий; отдельные MISSION и DIAGNOSTIC. "
         f"Все 11 сценариев прошли APPROX-MISSION-1 на {sum(r['mission_admitted'] for r in e3_rows)} наборах; "
         f"APPROX-DIAGNOSTIC-1 — на {sum(r['diagnostic_admitted'] for r in e3_rows)}. "
         f"Всего ложных успехов G2: {sum(r['false_successes'] for r in e3_rows)}; "
