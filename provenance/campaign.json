@@ -8,6 +8,7 @@
     "extras": {"id": 36247446499, "artifacts": [{"pattern": "validated-*", "directory": "extras", "subdirectories": true}]},
     "ranking": {"id": 36247684531, "artifacts": [{"pattern": "g2-ranking-*", "directory": "ranking", "subdirectories": true}]},
     "core": {"id": 36247161041, "artifacts": [{"pattern": "core-*", "directory": "core"}]},
-    "audit": {"id": 36234360859, "artifacts": [{"pattern": "tsfg-audit-summary-*", "directory": "audit"}]}
+    "audit": {"id": 36234360859, "artifacts": [{"pattern": "tsfg-audit-summary-*", "directory": "audit"}]},
+    "witness": {"id": 36248742380, "artifacts": [{"pattern": "witness-*", "directory": "witness", "subdirectories": true}]}
   }
 }

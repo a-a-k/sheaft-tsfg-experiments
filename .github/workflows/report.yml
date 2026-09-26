@@ -2,7 +2,7 @@ name: Publishable research report
 on:
   workflow_dispatch:
   workflow_run:
-    workflows: ['Complete E2 campaign', 'E3 exact representation and fluid aggregation', 'Supplementary BURST equipment assembly and K1000', 'G2 resource ranking agreement']
+    workflows: ['Complete E2 campaign', 'E3 exact representation and fluid aggregation', 'Supplementary BURST equipment assembly and K1000', 'G2 resource ranking agreement', 'Full million-operation control traces']
     types: [completed]
   push:
     branches: ['implementation/full-study']
@@ -45,11 +45,11 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: python scripts/collect_evidence.py --output evidence
-      - run: python experiments/final_report.py --evidence evidence --output artifacts/final
       - name: Preserve all 48 public input datasets and checksums
         env:
           GH_TOKEN: ${{ github.token }}
         run: python scripts/collect_evidence.py --output artifacts/final --inputs
+      - run: python experiments/final_report.py --evidence evidence --output artifacts/final
       - name: Preserve compact evidence with the report
         run: |
           python - <<'PY'

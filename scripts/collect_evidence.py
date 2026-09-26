@@ -6,6 +6,7 @@ import json
 import os
 from pathlib import Path,PurePosixPath
 import shutil
+import sys
 import tempfile
 import urllib.error
 import urllib.request
@@ -76,6 +77,10 @@ def main():
     with tempfile.TemporaryDirectory() as temp:
         downloaded=Path(temp)/'artifact.zip'
         if args.inputs:
+            sys.path.insert(0,str(Path(__file__).resolve().parents[1]))
+            from experiments.scale_data import read_binary
+            from experiments.input_diagnostics import describe
+            diagnostics=[]
             items=artifacts(repository,registry['runs']['screen']['id'])
             items=[a for a in items if a['name'].startswith('scale-screen-')]
             assert len(items)==48
@@ -86,6 +91,10 @@ def main():
                         manifest=json.loads(archive.read('dataset/manifest.json'))
                         dataset=manifest['dataset_id']
                         assert '/' not in dataset and '\\' not in dataset and '..' not in dataset
+                        diagnostic_source=Path(temp)/'input.bin'
+                        with archive.open('dataset/input.bin') as source,diagnostic_source.open('wb') as target:
+                            shutil.copyfileobj(source,target)
+                        diagnostics.append(dict(dataset_id=dataset,**describe(read_binary(diagnostic_source))))
                         for name in ('manifest.json','input.bin','operations.jsonl.gz','scenarios-1000.json','sample.json'):
                             with archive.open('dataset/'+name) as source,bundle.open(dataset+'/'+name,'w',force_zip64=True) as target:
                                 hasher=hashlib.sha256()
@@ -93,7 +102,8 @@ def main():
                             if name in manifest['files']:assert hasher.hexdigest()==manifest['files'][name]
                         index.append(dict(dataset_id=dataset,artifact_id=artifact['id'],artifact_sha256=digest,files=manifest['files']))
                     print('Preserved public input:',dataset,flush=True)
-            (args.output/'inputs-index.json').write_text(json.dumps(index,indent=2));return
+            (args.output/'inputs-index.json').write_text(json.dumps(index,indent=2))
+            (args.output/'input-diagnostics.json').write_text(json.dumps(diagnostics,indent=2));return
         for role,item in registry['runs'].items():
             available=artifacts(repository,item['id'])
             for selection in item['artifacts']:
@@ -110,7 +120,8 @@ def main():
                             path=PurePosixPath(entry.filename)
                             if path.is_absolute() or '..' in path.parts or '\\' in entry.filename:raise ValueError('Unsafe archive path')
                             # Reporting needs public JSON/CSV/text, never native binaries or private data.
-                            if path.suffix not in ('.json','.csv','.md','.txt'):continue
+                            if path.suffix not in ('.json','.csv','.md','.txt'):
+                                if not (role=='witness' and path.suffix=='.gz' and 'measurements' in path.parts):continue
                             if any(part.startswith('.private') for part in path.parts):raise ValueError('Unexpected private evidence')
                             target=destination.joinpath(*path.parts);target.parent.mkdir(parents=True,exist_ok=True)
                             with archive.open(entry) as source,target.open('wb') as file:shutil.copyfileobj(source,file)

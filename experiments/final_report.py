@@ -43,6 +43,10 @@ def main():
     extended=read(root/'core/e1x/summary.json')
     gate=read(root/'core/e3-gate/summary.json')
     audit=read(root/'audit/audit/ozon-reproduction-check.json')
+    witnesses=[read(p) for p in sorted((root/'witness').glob('*/witness/summary.json'))]
+    diagnostics=read(out/'input-diagnostics.json')
+    assert len(witnesses)==4 and all(w['status']=='PASS' for w in witnesses)
+    assert len(diagnostics)==48
     runs=read(root/'runs.json')
     expected=dict(screen_processes=144,main_processes=432,e3_datasets=48,e4_families=2,extra_processes=171)
     actual=dict(screen_processes=screen['records'],main_processes=len(main_rows),e3_datasets=len(e3),
@@ -56,7 +60,7 @@ def main():
     summary=dict(status='COMPLETED_WITH_DISCLOSED_LIMITATIONS',expected=expected,actual=actual,
         H1='SUPPORTED_ON_TESTED_EXACT_PROFILE',H2='SUPPORTED_ON_TESTED_EXACT_PROFILE',H3=main_result['decisions'],
         H4=[],H5=[dict(family=s['family'],series=s['series']) for s in e4],
-        E0_aggregation=gate,E1X=extended,ozon_reproduction=audit,ranking=ranking,runs=runs,
+        E0_aggregation=gate,E1X=extended,ozon_reproduction=audit,ranking=ranking,runs=runs,witnesses=witnesses,
         deviations='docs/EXECUTION_DEVIATIONS_RU.md')
     e3_rows=[]
     for item in e3:
@@ -126,6 +130,9 @@ def main():
         'максимальная ошибка индивидуального времени 0,10556 и 0,03 единицы. Более мелкий '
         'шаг не ухудшил ни один из 90 результатов. Буферные исходные планы при необходимости '
         'заменялись заранее допустимым последовательным планом; это не исходный план Mk01.','',
+        'Для публичной ручной проверки дополнительно сохранены 36 полных трасс по миллиону '
+        'операций: F1/F2 × DENSE/SPARSE, seed101, M0/S0000/S0003, три движка. Все массивы '
+        'и физические инварианты совпали. Это отдельные контрольные запуски, не повтор H3.','',
         '## Основное время и память E2','',
         f"Предварительно: 48 наборов, {screen['correct_complete']}/144 полных корректных процессов, "
         f"{screen['timeouts']} таймаутов. Основная серия: {main_result['correct_complete']}/432 полных "
@@ -137,6 +144,12 @@ def main():
     lines+=table(['Область','N','Эталон','Пар / 9','G, T_batch','G, T_total','Решение'],[
         [f"{d['family']}/{d['density']}",d['n'],d['reference'],len(d['points']),num(d.get('G')),num(d.get('G_total')),d['status']]
         for d in main_result['decisions']])
+    lines+=['Номинальные горизонты и фактические пустые промежутки:','']
+    lines+=table(['Набор, seed101','C0, с','Нижняя оценка, с','Доля пустого времени','Наибольший пустой интервал, с'],[
+        [r['dataset_id'],num(r['C0_ticks']/100),num(r['lower_bound_ticks']/100),num(r['global_idle_fraction']),num(r['longest_global_idle_ticks']/100)]
+        for r in diagnostics if r['operations']==1000000 and r['dataset_id'].endswith('-s101')])
+    lines+=['Полные диагностики всех 48 планов, загрузка каждого станка и интервалы между '
+            'границами событий находятся в input-diagnostics.json.','']
     lines+=['Полные строки времени, RSS, CPU, завершённых сценариев и границ при TIMEOUT '
             'сохранены в main-processes.csv. Измеряется полный одинаковый SCHEDULE. '
             'Контрольные точки префикса внутри K=1000 не подменяют отдельный K=100.','',

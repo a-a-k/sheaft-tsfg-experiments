@@ -71,6 +71,14 @@ def main():
                         validate_result(data,scenario,actual)
                         compare(expected,actual)
                         checks+=1
+    from experiments.input_diagnostics import describe
+    for density in ('DENSE','SPARSE','BURST'):
+        sample=make_dataset(100,'F1',density,902)
+        diagnostic=describe(sample)
+        assert diagnostic['lower_bound_ticks']<=diagnostic['C0_ticks']
+        assert 0<=diagnostic['global_idle_fraction']<1
+        if density=='BURST':assert diagnostic['longest_global_idle_ticks']>=sample['metadata']['minimum_gap_ticks']
+        checks+=3
     for machines in (20,200,2000):
         growth=make_dataset(100,'F2','DENSE',902,machines,2)
         assert growth['dataset_id'].endswith('-A2')
