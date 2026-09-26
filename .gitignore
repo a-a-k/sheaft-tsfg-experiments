@@ -1,0 +1,9 @@
+build/
+artifacts/
+.private/
+.venv/
+__pycache__/
+*.pyc
+*.env
+PLAN_REVIEW_RU.md
+
