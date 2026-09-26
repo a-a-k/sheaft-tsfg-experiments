@@ -57,8 +57,12 @@ def main():
     p.add_argument('--output',type=Path,required=True)
     p.add_argument('--check-only',action='store_true')
     p.add_argument('--inputs',action='store_true')
+    p.add_argument('--only-role',help='Collect one already completed role for pipeline admission')
     args=p.parse_args();args.output.mkdir(parents=True,exist_ok=True)
     registry=json.loads(args.registry.read_text());repository=registry['repository'];runs={}
+    if args.only_role:
+        assert not args.inputs
+        registry['runs']={args.only_role:registry['runs'][args.only_role]}
     for role,item in registry['runs'].items():
         actual=api(f"repos/{repository}/actions/runs/{item['id']}")
         runs[role]={k:actual[k] for k in ('id','head_sha','status','conclusion','html_url','run_attempt','created_at','updated_at')}

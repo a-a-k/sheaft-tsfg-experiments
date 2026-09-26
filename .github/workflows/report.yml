@@ -24,6 +24,12 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: python scripts/collect_evidence.py --output evidence --check-only
+      - name: Admit evidence retrieval against the completed original-kernel audit
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python scripts/collect_evidence.py --output retrieval-check --only-role audit
+      - name: Verify replay result survived checked archive retrieval
+        run: python -c "import json; assert json.load(open('retrieval-check/audit/audit/ozon-reproduction-check.json'))['status']=='PASS'"
   report:
     needs: dependencies
     if: needs.dependencies.outputs.ready == 'true'
