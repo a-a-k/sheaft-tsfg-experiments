@@ -1,6 +1,7 @@
 #include "model.hpp"
 #include <chrono>
 #include <cstdlib>
+#include <cstdio>
 #include <fstream>
 #include <iostream>
 #include <sys/resource.h>
@@ -23,9 +24,11 @@ int main(int argc,char** argv) {
         Tick horizon=std::stoll(argv[6]), delta=std::stoll(argv[7]);
         if (horizon<0) throw std::runtime_error("Negative horizon");
         auto t0=Clock::now();
-        std::ifstream datafile(argv[2]), scenariosfile(argv[3]);
-        json data, scenarios; datafile>>data; scenariosfile>>scenarios;
-        Instance in=read_instance(data);
+        std::ifstream datafile(argv[2],std::ios::binary), scenariosfile(argv[3]);
+        json scenarios; scenariosfile>>scenarios;
+        Instance in;
+        if (datafile.peek()=='T') in=read_binary(datafile);
+        else { json data; datafile>>data; in=read_instance(data); }
         auto t1=Clock::now();
         std::unique_ptr<Engine> engine;
         if (name=="grid") engine=make_grid(in);
@@ -36,6 +39,7 @@ int main(int argc,char** argv) {
         std::ofstream output(argv[4]);
         if (!output) throw std::runtime_error("Cannot open result output");
         std::size_t count=0;
+        json prefixes=json::object();
         for (const auto& raw : scenarios) {
             auto begin=Clock::now();
             Scenario sc=read_scenario(in,raw);
@@ -53,8 +57,8 @@ int main(int argc,char** argv) {
                 }
                 states.push_back(state);
             }
-            for (const auto& j : data.at("jobs")) {
-                Tick finish=r.finish.at(j.at("final_operation").get<int>());
+            for (int terminal : in.final_operations) {
+                Tick finish=r.finish.at(terminal);
                 jobs.push_back(finish<0 ? json(nullptr) : json(finish));
             }
             json row={{"scenario_id",sc.id},{"engine",name},{"mode",mode},{"horizon",horizon},
@@ -65,6 +69,14 @@ int main(int argc,char** argv) {
                 {"completion_lower_bound",complete ? json(nullptr) : json(horizon)},
                 {"run_status","OK"},{"counters",r.counters},{"kernel_elapsed_s",seconds(begin,end)}};
             output << row.dump() << '\n'; output.flush(); ++count;
+            if (count==1 || count==10 || count==100 || count==1000)
+                prefixes[std::to_string(count)]=seconds(t2,Clock::now());
+            std::string progress=std::string(argv[4])+".progress.json";
+            { std::ofstream p(progress+".tmp");
+              p << json({{"scenarios_completed",count},{"T_import_s",seconds(t0,t1)},
+                  {"T_build_s",seconds(t1,t2)},{"T_batch_elapsed_s",seconds(t2,Clock::now())},
+                  {"prefix_batch_s",prefixes}}).dump(); }
+            if (std::rename((progress+".tmp").c_str(),progress.c_str())) throw std::runtime_error("Cannot persist progress");
         }
         output.close();
         auto t3=Clock::now();
@@ -73,11 +85,10 @@ int main(int argc,char** argv) {
             {"T_build_s",seconds(t1,t2)},{"T_batch_with_output_s",seconds(t2,t3)},
             {"rss_peak_bytes",static_cast<std::uint64_t>(usage.ru_maxrss)*1024},
             {"cpu_s",usage.ru_utime.tv_sec+usage.ru_utime.tv_usec/1e6+usage.ru_stime.tv_sec+usage.ru_stime.tv_usec/1e6},
-            {"purpose","validation; not a protocol H3 benchmark"}};
+            {"prefix_batch_s",prefixes},{"output_profile","SCHEDULE"}};
         std::ofstream(std::string(argv[4])+".meta.json") << meta.dump(2) << '\n';
         return 0;
     } catch (const std::exception& e) {
         std::cerr<<e.what()<<'\n'; return 2;
     }
 }
-

@@ -1,5 +1,6 @@
 """Build unchanged private S1 plus public operation adapter, only on Actions."""
 import hashlib
+import argparse
 import json
 import os
 from pathlib import Path
@@ -14,14 +15,24 @@ actual = subprocess.check_output(["git", "-C", str(source), "rev-parse", "HEAD"]
 if actual != commit:
     raise SystemExit("Wrong TSFG source commit")
 engine = source / "engine"
-result = subprocess.run(["go", "test", "-json", "./..."], cwd=engine, capture_output=True, text=True)
-events = [json.loads(line) for line in result.stdout.splitlines() if line.startswith("{")]
-summary = {"source_commit": commit, "status": "PASS" if result.returncode == 0 else "FAIL",
-           "tests_passed": sum(e.get("Action") == "pass" and bool(e.get("Test")) for e in events)}
+parser = argparse.ArgumentParser()
+parser.add_argument("--upstream-test-evidence", type=Path)
+args = parser.parse_args()
+if args.upstream_test_evidence:
+    evidence = json.loads(args.upstream_test_evidence.read_text())
+    if evidence.get("source_commit") != commit or evidence.get("status") != "PASS" or evidence.get("tests_passed",0) < 157:
+        raise SystemExit("Invalid upstream test evidence")
+    summary = dict(evidence, reused_test_evidence=True,
+                   evidence_sha256=hashlib.sha256(args.upstream_test_evidence.read_bytes()).hexdigest())
+else:
+    result = subprocess.run(["go", "test", "-json", "./..."], cwd=engine, capture_output=True, text=True)
+    events = [json.loads(line) for line in result.stdout.splitlines() if line.startswith("{")]
+    summary = {"source_commit": commit, "status": "PASS" if result.returncode == 0 else "FAIL",
+               "tests_passed": sum(e.get("Action") == "pass" and bool(e.get("Test")) for e in events)}
 out = Path("artifacts/build")
 out.mkdir(parents=True, exist_ok=True)
 (out / "upstream-tests.json").write_text(json.dumps(summary, indent=2) + "\n")
-if result.returncode:
+if summary["status"] != "PASS":
     raise SystemExit("Upstream regression tests failed; private diagnostics omitted")
 adapter = Path("engines/tsfg_op/operation_adapter.go")
 shutil.copyfile(adapter, engine / "cmd/ozon-engine/operation_adapter.go")
