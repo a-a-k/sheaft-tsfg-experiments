@@ -4,8 +4,13 @@ Fixed manufacturing schedule experiment using the existing Go TSFG kernel from
 S1 with a new operation policy adapter. [Reuse specification](docs/TSFG_REUSE_RU.md)
 amends protocol 1.1 and records exactly which code is reused.
 
-Implementation is in progress. No experimental correctness or performance
-result is claimed until a completed GitHub Actions campaign is linked here.
+The first full correctness campaign passed in
+[GitHub Actions run 36230125852](https://github.com/a-a-k/sheaft-tsfg-experiments/actions/runs/36230125852)
+at commit `1a7941fa1ad7887976f9082b2a8ac3372cf81d4e`: 481 complete trajectories,
+52,910 exact operation-time comparisons and 1,443 deadline classifications per
+engine, with zero mismatches, false successes or false failures. CP-SAT proved
+the baseline optimum C0=40. S1's 157 regression tests and E0 also passed.
+H3 performance and scalability claims have **not** been evaluated.
 
 The first acceptance milestone is E0-core plus Brandimarte Mk01: 481 complete
 trajectories at a 0.05-unit grid and 1,443 deadline classifications per engine.
@@ -16,6 +21,7 @@ All execution takes place on GitHub-hosted runners.
 - [Protocol (Russian)](Sheaft_TSFG_Experiment_Plan_GitHub_Actions_RU.md)
 - [GRID specification (Russian)](TSFG_OP_SPEC_RU.md)
 - [Execution rules](AGENTS.md)
+- [Revised estimate for subsequent stages (Russian)](docs/NEXT_STEPS_RU.md)
 
 S1 is referenced by its content hash in the protocol. The supplied PDF and any
 previous private implementation are not distributed with this repository.
