@@ -65,6 +65,7 @@ def main():
     extended=read(root/'core/e1x/summary.json')
     gate=read(root/'core/e3-gate/summary.json')
     audit=read(root/'audit/audit/ozon-reproduction-check.json')
+    numeric=read(root/'numeric/g2-numeric/summary.json') if (root/'numeric/g2-numeric/summary.json').exists() else None
     witnesses=[read(p) for p in sorted((root/'witness').glob('*/witness/summary.json'))]
     diagnostics=read(out/'input-diagnostics.json')
     assert len(witnesses)==4 and all(w['status']=='PASS' for w in witnesses)
@@ -78,12 +79,14 @@ def main():
     assert all(v['status'].startswith('PASS') for v in e3)
     assert extended['status']==gate['status']==audit['status']=='PASS'
     if not args.preview:
+        assert numeric is not None and numeric['status']=='PASS'
         assert all(r['conclusion']=='success' for r in runs.values()),'A campaign failed; report must disclose/reconcile it first'
         assert all_present,(expected,actual)
     summary=dict(status='PRELIMINARY_INCOMPLETE' if args.preview else 'COMPLETED_WITH_DISCLOSED_LIMITATIONS',expected=expected,actual=actual,
         H1='SUPPORTED_ON_TESTED_EXACT_PROFILE',H2='SUPPORTED_ON_TESTED_EXACT_PROFILE',H3=main_result['decisions'],
         H4=[],H5=[dict(family=s['family'],series=s['series']) for s in e4],
         E0_aggregation=gate,E1X=extended,ozon_reproduction=audit,ranking=ranking,runs=runs,witnesses=witnesses,
+        G2_numeric_regression=numeric,
         environment_records=len(environments),
         deviations='docs/EXECUTION_DEVIATIONS_RU.md')
     e3_rows=[];strict_deadlines=[]
@@ -175,6 +178,13 @@ def main():
     lines+=table(['F1/F2, K=100','Старый адаптер, с','Исправленный, с','DES, с','DAG, с'],[
         ['F1','26,78 / 26,90','18,18 / 18,15','0,84 / 0,84','0,28 / 0,29'],
         ['F2','18,02 / 17,89','12,46 / 12,47','0,93 / 0,94','0,29 / 0,29']])
+    lines+=['В первом G2 отдельно обнаружен численный дефект сопряжения: порог S1 1e-6 '
+            'отбрасывал малые внешние переносы, уже учтённые адаптером. На первом миллионном '
+            'F1 номинальный выпуск достиг 100000 заказов, но остаток не позволял зафиксировать '
+            'полное завершение к 10D. Эта версия сохраняется как e3_v1 с известным дефектом. '
+            'G2 v2 масштабирует внутренние объёмы и мощности на 2^20, возвращая выход в заказы; '
+            'допуски точности не расширены. После отдельного регрессионного допуска повторяется '
+            'вся E3 и ранжирование. Данная ошибка не затрагивает пооперационную H3.','']
     lines+=['Это сравнение конкретных реализаций: Go S1 с универсальным графовым обслуживанием '
             'и C++ DES/DAG. Оно не доказывает предел быстродействия всех реализаций TSFG. '
             'Минимальный C++ GRID остаётся отдельным вспомогательным участником.','',

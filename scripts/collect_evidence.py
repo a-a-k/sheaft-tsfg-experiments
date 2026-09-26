@@ -128,7 +128,7 @@ def main():
                             # Reporting needs public JSON/CSV/text, never native binaries or private data.
                             if path.suffix not in ('.json','.csv','.md','.txt'):
                                 keep_witness=role=='witness' and path.suffix=='.gz' and 'measurements' in path.parts
-                                keep_aggregate=role=='e3' and path.suffix=='.jsonl' and 'e3' in path.parts
+                                keep_aggregate=role in ('e3','e3_v1') and path.suffix=='.jsonl' and 'e3' in path.parts
                                 if not (keep_witness or keep_aggregate):continue
                             if any(part.startswith('.private') for part in path.parts):raise ValueError('Unexpected private evidence')
                             target=destination.joinpath(*path.parts);target.parent.mkdir(parents=True,exist_ok=True)
