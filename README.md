@@ -5,14 +5,21 @@ S1 with a new operation policy adapter. [Reuse specification](docs/TSFG_REUSE_RU
 amends protocol 1.1 and records exactly which code is reused.
 
 The first full correctness campaign passed in
-[GitHub Actions run 36230125852](https://github.com/a-a-k/sheaft-tsfg-experiments/actions/runs/36230125852)
-at commit `1a7941fa1ad7887976f9082b2a8ac3372cf81d4e`: 481 complete trajectories,
+[GitHub Actions run 36230395401](https://github.com/a-a-k/sheaft-tsfg-experiments/actions/runs/36230395401)
+at commit `75776d6c81806fdd2a53c8faf95e8283ef2409f6`: 481 complete trajectories,
 52,910 exact operation-time comparisons and 1,443 deadline classifications per
 engine, with zero mismatches, false successes or false failures. CP-SAT proved
 the baseline optimum C0=40. S1's 157 regression tests and E0 also passed.
 H3 performance and scalability claims have **not** been evaluated.
 
-The first acceptance milestone is E0-core plus Brandimarte Mk01: 481 complete
+[Read the generated report (Russian)](docs/results/mk01/REPORT_RU.md) ·
+[Download all inputs, traces and evidence](https://github.com/a-a-k/sheaft-tsfg-experiments/releases/tag/v0.1.0-mk01)
+
+The release ZIP is the unchanged Actions artifact (SHA-256
+`391b3a42367d96ae6acef94dc423d36e34df9f0208eb6ce4ea970f68ca2d7d6f`).
+Report paths to `input/`, `traces/`, `../build/` and `../e0/` refer to that archive.
+
+The completed first acceptance milestone is E0-core plus Brandimarte Mk01: 481 complete
 trajectories at a 0.05-unit grid and 1,443 deadline classifications per engine.
 The original TSFG plus adapter, independent C++20 DES/DAG, and a small SimPy oracle
 will be compared. The earlier standalone C++ GRID is an auxiliary control only.

@@ -1,0 +1,67 @@
+{
+  "status": "PASS",
+  "trajectories_per_engine": 481,
+  "deadline_checks_per_engine": 1443,
+  "operations": 55,
+  "engines": {
+    "tsfg": {
+      "status": "PASS",
+      "operation_time_mismatches": 0,
+      "false_success": 0,
+      "false_failure": 0,
+      "complete_trajectories": 481,
+      "classifications": 1443,
+      "operation_time_comparisons": 52910
+    },
+    "grid": {
+      "status": "PASS",
+      "operation_time_mismatches": 0,
+      "false_success": 0,
+      "false_failure": 0,
+      "complete_trajectories": 481,
+      "classifications": 1443,
+      "operation_time_comparisons": 52910
+    },
+    "des": {
+      "status": "PASS",
+      "operation_time_mismatches": 0,
+      "false_success": 0,
+      "false_failure": 0,
+      "complete_trajectories": 481,
+      "classifications": 1443,
+      "operation_time_comparisons": 52910
+    },
+    "dag": {
+      "status": "PASS",
+      "operation_time_mismatches": 0,
+      "false_success": 0,
+      "false_failure": 0,
+      "complete_trajectories": 481,
+      "classifications": 1443,
+      "operation_time_comparisons": 52910
+    },
+    "simpy": {
+      "status": "PASS",
+      "operation_time_mismatches": 0,
+      "false_success": 0,
+      "false_failure": 0,
+      "complete_trajectories": 481,
+      "classifications": 1443,
+      "operation_time_comparisons": 52910
+    }
+  },
+  "H3": "NOT_EVALUATED",
+  "source_reuse": "S1 unchanged Go kernel + operation adapter",
+  "critical_resources": [
+    1,
+    3,
+    2
+  ],
+  "control_resources": [
+    4,
+    0,
+    5
+  ],
+  "emergent_pair_misses": 0,
+  "run_url": "https://github.com/a-a-k/sheaft-tsfg-experiments/actions/runs/36230395401"
+}

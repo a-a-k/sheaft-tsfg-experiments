@@ -1,0 +1,10 @@
+{
+  "source_commit": "8510baf28673758f1e437d2dbc5a51ead9843a3b",
+  "status": "PASS",
+  "tests_passed": 157,
+  "go_version": "go version go1.26.0 linux/amd64",
+  "adapter_sha256": "0d55ea63a6738015a111042b3aa6b34b7ece0a1971acfe52fd7ebd7776aa3658",
+  "binary_sha256": "c101d78f7b33efac10dbb0bc42a224d237d57cd675a0862db481286b3ddda3e1",
+  "source_modified": false,
+  "public_binary": false
+}

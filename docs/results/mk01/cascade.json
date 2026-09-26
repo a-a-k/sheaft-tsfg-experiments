@@ -1,0 +1,256 @@
+{
+  "scenario": "M1-5-a50-b20",
+  "cmax": 4800,
+  "baseline_cmax": 4000,
+  "delayed_operations": [
+    {
+      "operation": 2,
+      "job": 0,
+      "machine": 5,
+      "start": 3300,
+      "finish": 3500,
+      "finish_delay": 800,
+      "reasons": [
+        {
+          "kind": "machine_queue_predecessor",
+          "operation": 16
+        }
+      ]
+    },
+    {
+      "operation": 3,
+      "job": 0,
+      "machine": 0,
+      "start": 3500,
+      "finish": 3600,
+      "finish_delay": 800,
+      "reasons": [
+        {
+          "kind": "technological_predecessor",
+          "operation": 2
+        }
+      ]
+    },
+    {
+      "operation": 4,
+      "job": 0,
+      "machine": 2,
+      "start": 3600,
+      "finish": 3700,
+      "finish_delay": 700,
+      "reasons": [
+        {
+          "kind": "technological_predecessor",
+          "operation": 3
+        }
+      ]
+    },
+    {
+      "operation": 5,
+      "job": 0,
+      "machine": 5,
+      "start": 3700,
+      "finish": 4300,
+      "finish_delay": 700,
+      "reasons": [
+        {
+          "kind": "technological_predecessor",
+          "operation": 4
+        }
+      ]
+    },
+    {
+      "operation": 12,
+      "job": 2,
+      "machine": 5,
+      "start": 3500,
+      "finish": 3700,
+      "finish_delay": 800,
+      "reasons": [
+        {
+          "kind": "machine_queue_predecessor",
+          "operation": 2
+        }
+      ]
+    },
+    {
+      "operation": 13,
+      "job": 2,
+      "machine": 0,
+      "start": 3700,
+      "finish": 3800,
+      "finish_delay": 800,
+      "reasons": [
+        {
+          "kind": "technological_predecessor",
+          "operation": 12
+        }
+      ]
+    },
+    {
+      "operation": 14,
+      "job": 2,
+      "machine": 2,
+      "start": 4000,
+      "finish": 4400,
+      "finish_delay": 800,
+      "reasons": [
+        {
+          "kind": "technological_predecessor",
+          "operation": 13
+        },
+        {
+          "kind": "machine_queue_predecessor",
+          "operation": 18
+        }
+      ]
+    },
+    {
+      "operation": 15,
+      "job": 2,
+      "machine": 0,
+      "start": 4400,
+      "finish": 4500,
+      "finish_delay": 800,
+      "reasons": [
+        {
+          "kind": "technological_predecessor",
+          "operation": 14
+        }
+      ]
+    },
+    {
+      "operation": 16,
+      "job": 3,
+      "machine": 5,
+      "start": 2800,
+      "finish": 3300,
+      "finish_delay": 800,
+      "reasons": [
+        {
+          "kind": "machine_unavailable_before_start",
+          "ticks": 800
+        },
+        {
+          "kind": "planned_start_floor"
+        }
+      ]
+    },
+    {
+      "operation": 17,
+      "job": 3,
+      "machine": 1,
+      "start": 3300,
+      "finish": 3900,
+      "finish_delay": 800,
+      "reasons": [
+        {
+          "kind": "technological_predecessor",
+          "operation": 16
+        }
+      ]
+    },
+    {
+      "operation": 18,
+      "job": 3,
+      "machine": 2,
+      "start": 3900,
+      "finish": 4000,
+      "finish_delay": 800,
+      "reasons": [
+        {
+          "kind": "technological_predecessor",
+          "operation": 17
+        }
+      ]
+    },
+    {
+      "operation": 19,
+      "job": 3,
+      "machine": 1,
+      "start": 4500,
+      "finish": 4600,
+      "finish_delay": 800,
+      "reasons": [
+        {
+          "kind": "technological_predecessor",
+          "operation": 18
+        },
+        {
+          "kind": "machine_queue_predecessor",
+          "operation": 30
+        }
+      ]
+    },
+    {
+      "operation": 20,
+      "job": 3,
+      "machine": 5,
+      "start": 4600,
+      "finish": 4800,
+      "finish_delay": 800,
+      "reasons": [
+        {
+          "kind": "technological_predecessor",
+          "operation": 19
+        }
+      ]
+    },
+    {
+      "operation": 26,
+      "job": 4,
+      "machine": 2,
+      "start": 4400,
+      "finish": 4800,
+      "finish_delay": 800,
+      "reasons": [
+        {
+          "kind": "machine_queue_predecessor",
+          "operation": 14
+        }
+      ]
+    },
+    {
+      "operation": 30,
+      "job": 5,
+      "machine": 1,
+      "start": 3900,
+      "finish": 4500,
+      "finish_delay": 800,
+      "reasons": [
+        {
+          "kind": "machine_queue_predecessor",
+          "operation": 17
+        }
+      ]
+    },
+    {
+      "operation": 31,
+      "job": 5,
+      "machine": 0,
+      "start": 4500,
+      "finish": 4600,
+      "finish_delay": 800,
+      "reasons": [
+        {
+          "kind": "technological_predecessor",
+          "operation": 30
+        }
+      ]
+    },
+    {
+      "operation": 32,
+      "job": 5,
+      "machine": 3,
+      "start": 4600,
+      "finish": 4800,
+      "finish_delay": 800,
+      "reasons": [
+        {
+          "kind": "technological_predecessor",
+          "operation": 31
+        }
+      ]
+    }
+  ]
+}
