@@ -10,7 +10,20 @@ at commit `75776d6c81806fdd2a53c8faf95e8283ef2409f6`: 481 complete trajectories,
 52,910 exact operation-time comparisons and 1,443 deadline classifications per
 engine, with zero mismatches, false successes or false failures. CP-SAT proved
 the baseline optimum C0=40. S1's 157 regression tests and E0 also passed.
-H3 performance and scalability claims have **not** been evaluated.
+The subsequent full study is running. The 48-dataset E2 screen completed with
+140 correct complete processes and four timeouts; standalone paired K=100 is
+being evaluated separately. No positive H3 claim is made from this screen.
+
+The [implementation audit](docs/TSFG_AUDIT_RU.md) reproduced the original Ozon
+case and reduced adapter time by 31–32% without changing S1 source. The historical
+2.8–7.4× figure was an analytical scheduling-work estimate, not a paired elapsed
+time comparison with production DES. [Execution deviations](docs/EXECUTION_DEVIATIONS_RU.md)
+are recorded explicitly, including the actual eight-byte seed derivation.
+
+- [E3 aggregation and accuracy specification](docs/AGGREGATION_SPEC_RU.md)
+- [E4 fixed ranking and independent holdout](docs/RESERVE_SPEC_RU.md)
+- [Supplementary BURST, equipment, assembly and K=1000](docs/SUPPLEMENTARY_SPEC_RU.md)
+- [Pinned campaign run registry](provenance/campaign.json)
 
 [Read the generated report (Russian)](docs/results/mk01/REPORT_RU.md) ·
 [Download all inputs, traces and evidence](https://github.com/a-a-k/sheaft-tsfg-experiments/releases/tag/v0.1.0-mk01)

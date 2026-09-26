@@ -2,6 +2,7 @@
 #include <nlohmann/json.hpp>
 #include <algorithm>
 #include <cstdint>
+#include <istream>
 #include <memory>
 #include <stdexcept>
 #include <string>
@@ -16,6 +17,7 @@ struct Instance {
     std::vector<std::vector<int>> queues;
     std::vector<std::vector<int>> successors;
     int jobs{};
+    std::vector<int> final_operations;
 };
 struct Interval { Tick begin, end; };
 struct Scenario {
@@ -42,6 +44,7 @@ std::unique_ptr<Engine> make_dag(const Instance&);
 inline Instance read_instance(const json& j) {
     Instance in;
     in.jobs = j.at("jobs").size();
+    for (const auto& job : j.at("jobs")) in.final_operations.push_back(job.at("final_operation"));
     in.queues = j.at("queues").get<std::vector<std::vector<int>>>();
     for (const auto& x : j.at("operations")) {
         Op o{x.at("id"), x.at("job"), x.at("machine"), x.at("work"),
@@ -66,6 +69,68 @@ inline Instance read_instance(const json& j) {
             in.successors[p].push_back(o.id);
         }
     }
+    return in;
+}
+
+// TSFGBIN1: little-endian, documented in docs/BINARY_FORMAT_RU.md.
+inline std::uint64_t read_uint(std::istream& stream, int bytes) {
+    std::uint64_t value=0;
+    for (int k=0;k<bytes;++k) {
+        int c=stream.get();
+        if (c==std::char_traits<char>::eof()) throw std::runtime_error("Truncated binary input");
+        value |= std::uint64_t(static_cast<unsigned char>(c)) << (8*k);
+    }
+    return value;
+}
+inline Instance read_binary(std::istream& stream) {
+    char magic[8]; stream.read(magic,8);
+    bool grouped=std::string(magic,8)=="TSFGGRP1";
+    if (!grouped && std::string(magic,8)!="TSFGBIN1") throw std::runtime_error("Invalid binary version");
+    int n=read_uint(stream,4), jobs=read_uint(stream,4), machines=read_uint(stream,4);
+    if (n<=0 || n>10000000 || jobs<=0 || jobs>n || machines<=0 || machines>100000)
+        throw std::runtime_error("Invalid binary dimensions");
+    std::vector<Tick> types;
+    if (grouped) {
+        int count=read_uint(stream,4);
+        if(count<=0 || count>n) throw std::runtime_error("Invalid type count");
+        for(int k=0;k<count;++k) {
+            Tick work=read_uint(stream,8);
+            if(work<=0) throw std::runtime_error("Invalid type work");
+            types.push_back(work);
+        }
+    }
+    Instance in; in.jobs=jobs; in.ops.reserve(n); in.successors.resize(n); in.queues.resize(machines);
+    for (int i=0;i<n;++i) {
+        Op o{}; o.id=i; o.job=read_uint(stream,4); o.machine=read_uint(stream,4);
+        o.work=grouped ? types.at(read_uint(stream,4)) : read_uint(stream,8);
+        o.planned=read_uint(stream,8); o.release=read_uint(stream,8);
+        int count=read_uint(stream,4);
+        if (o.job<0 || o.job>=jobs || o.machine<0 || o.machine>=machines || o.work<=0 ||
+            o.planned<0 || o.release<0 || count<0 || count>n) throw std::runtime_error("Invalid binary operation");
+        for (int k=0;k<count;++k) {
+            int p=read_uint(stream,4);
+            if (p<0 || p>=n || p==i) throw std::runtime_error("Invalid binary dependency");
+            o.pred.push_back(p); in.successors[p].push_back(i);
+        }
+        in.ops.push_back(std::move(o));
+    }
+    std::vector<bool> seen(n);
+    for (int m=0;m<machines;++m) {
+        int count=read_uint(stream,4);
+        if (count<0 || count>n) throw std::runtime_error("Invalid binary queue size");
+        for (int k=0;k<count;++k) {
+            int i=read_uint(stream,4);
+            if (i<0 || i>=n || seen[i] || in.ops[i].machine!=m) throw std::runtime_error("Invalid binary queue");
+            seen[i]=true; in.queues[m].push_back(i);
+        }
+    }
+    if (std::find(seen.begin(),seen.end(),false)!=seen.end()) throw std::runtime_error("Missing binary operation");
+    for (int j=0;j<jobs;++j) {
+        int i=read_uint(stream,4);
+        if (i<0 || i>=n || in.ops[i].job!=j) throw std::runtime_error("Invalid binary job terminal");
+        in.final_operations.push_back(i);
+    }
+    if (stream.peek()!=std::char_traits<char>::eof()) throw std::runtime_error("Trailing binary data");
     return in;
 }
 
@@ -99,4 +164,3 @@ inline Scenario read_scenario(const Instance& in, const json& j) {
     }
     return sc;
 }
-

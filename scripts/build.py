@@ -20,6 +20,8 @@ flags = ["-std=c++20", "-O3", "-DNDEBUG", "-Wall", "-Wextra", "-Werror", "-Ivend
 command = ["g++", *flags, "engines/main.cpp", "engines/tsfg_op/grid.cpp",
            "engines/des_ref/des.cpp", "engines/dag_ref/dag.cpp", "-o", str(out / "simulator")]
 subprocess.run(command, check=True)
+subprocess.run(["g++", *flags, "engines/reserve_main.cpp", "engines/des_ref/des.cpp",
+                "engines/dag_ref/dag.cpp", "-o", str(out / "reserve")], check=True)
 environment = {
     "commit": os.environ["GITHUB_SHA"], "run_id": os.environ["GITHUB_RUN_ID"],
     "run_attempt": os.environ.get("GITHUB_RUN_ATTEMPT"),
@@ -31,6 +33,7 @@ environment = {
     "image_version": os.environ.get("ImageVersion"),
     "cpuinfo": Path("/proc/cpuinfo").read_text(),
     "binary_sha256": hashlib.sha256((out / "simulator").read_bytes()).hexdigest(),
+    "reserve_binary_sha256": hashlib.sha256((out / "reserve").read_bytes()).hexdigest(),
     "requirements_sha256": hashlib.sha256(Path("requirements.lock").read_bytes()).hexdigest(),
     "cgroup": {},
 }

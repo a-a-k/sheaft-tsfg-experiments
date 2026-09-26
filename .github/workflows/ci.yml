@@ -30,16 +30,28 @@ jobs:
           go-version: '1.26.0'
           cache: false
       - run: python -m pip install --require-hashes -r requirements.lock
-      - name: Upstream regression tests and TSFG adapter build
-        run: python scripts/build_tsfg.py
+      - name: Parse all public Python entrypoints
+        run: python -m compileall -q experiments validation scripts references
+      - name: Reuse verified unchanged upstream and build current adapter
+        run: python scripts/build_tsfg.py --upstream-test-evidence docs/results/mk01/tsfg-provenance.json
       - name: Build independent C++ kernels
         run: python scripts/build.py
       - name: E0-core
         run: python validation/core.py
+      - name: E2 generator and binary input admission
+        run: python validation/scale_core.py
+      - name: E2 independent replay admission controls
+        run: python validation/replay_core.py
+      - name: E0-extended
+        run: python validation/extended_core.py
+      - name: E3 shared types, observers and fluid conservation
+        run: python validation/aggregation_core.py
       - name: Freeze Mk01 schedule and scenarios
         run: python experiments/mk01.py
       - name: Mk01 complete campaign and report
         run: python experiments/campaign.py
+      - name: E1X extended campaign
+        run: python experiments/extended_campaign.py
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         if: always()
         with:

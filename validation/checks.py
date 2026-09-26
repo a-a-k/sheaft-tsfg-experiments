@@ -38,6 +38,8 @@ def validate_dataset(data):
     pred = [set(o["predecessors"]) for o in ops]
     for o in ops:
         i = o["id"]
+        assert 0 <= o["job"] < len(jobs)
+        assert o["release"] == jobs[o["job"]]["release"]
         assert o["work"] > 0 and o["release"] >= 0
         assert o["planned_start"] >= o["release"]
         assert o["planned_end"] == o["planned_start"] + o["work"]
@@ -68,8 +70,6 @@ def validate_dataset(data):
     assert visited == n, "Cycle in fixed schedule"
     for job in jobs:
         assert ops[job["final_operation"]]["job"] == job["id"]
-        for o in ops:
-            if o["job"] == job["id"]: assert o["release"] == job["release"]
 
 
 def validate_result(data, scenario, result):
