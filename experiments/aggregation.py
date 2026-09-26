@@ -19,8 +19,8 @@ METRICS=('produced','released','incomplete_jobs','queue_at_D','queue_max','wip_i
          'mission_success','completion_known','cmax','completion_lower_bound')
 
 
-def run(engine,source,scenario_file,target,horizon,mode='MISSION',limit=300,profile='AGG-MISSION',delta=100):
-    binary='.private/runtime/tsfg' if engine.startswith('tsfg') else 'artifacts/build/simulator'
+def run(engine,source,scenario_file,target,horizon,mode='MISSION',limit=300,profile='AGG-MISSION',delta=100,binary_override=None):
+    binary=binary_override or ('.private/runtime/tsfg' if engine.startswith('tsfg') else 'artifacts/build/simulator')
     target.parent.mkdir(parents=True,exist_ok=True)
     command=[binary,engine,str(source),str(scenario_file),str(target),mode,str(horizon),str(delta)]
     record=dict(engine=engine,source_sha256=sha256(source),scenario_sha256=sha256(scenario_file),
