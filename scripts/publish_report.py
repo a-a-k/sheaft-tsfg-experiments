@@ -26,7 +26,7 @@ def verify(root):
     hashes=json.loads((root/'SHA256.json').read_text())
     required={'REPORT_RU.md','REPORT_RU.pdf','summary.json','main-processes.csv','H3-measurements.csv',
               'screen-processes.csv','supplementary-processes.csv','supplementary-summary.csv','aggregation.csv',
-              'strict-deadlines-post-hoc.csv','H3.png','aggregation.png','reserves.png',
+              'strict-deadlines-post-hoc.csv','timeout-ratio-bounds.csv','H3.png','aggregation.png','reserves.png',
               'inputs.zip','inputs-index.json','input-diagnostics.json','evidence.zip','runs.json'}
     assert required<=hashes.keys(),required-hashes.keys()
     assert {p.name for p in root.iterdir() if p.is_file()}==hashes.keys()|{'SHA256.json'}

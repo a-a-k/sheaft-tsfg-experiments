@@ -10,15 +10,27 @@ at commit `75776d6c81806fdd2a53c8faf95e8283ef2409f6`: 481 complete trajectories,
 52,910 exact operation-time comparisons and 1,443 deadline classifications per
 engine, with zero mismatches, false successes or false failures. CP-SAT proved
 the baseline optimum C0=40. S1's 157 regression tests and E0 also passed.
-The subsequent full study is running. The 48-dataset E2 screen completed with
+The 48-dataset E2 screen completed with
 140 correct complete processes and four timeouts; standalone paired K=100 is
-being evaluated separately. No positive H3 claim is made from this screen.
+evaluated separately. No positive H3 claim is made from this screen.
+
+The full-study pipeline collects the pinned campaign evidence, generates the
+Russian PDF and tables, and publishes a [release](https://github.com/a-a-k/sheaft-tsfg-experiments/releases)
+only after every required campaign and artifact checksum passes admission.
+The final archive retains timeouts, incomplete H3 decisions and disclosed limitations.
+Preliminary reports have a separate status and cannot pass final publication admission.
 
 The [implementation audit](docs/TSFG_AUDIT_RU.md) reproduced the original Ozon
 case and reduced adapter time by 31–32% without changing S1 source. The historical
 2.8–7.4× figure was an analytical scheduling-work estimate, not a paired elapsed
 time comparison with production DES. [Execution deviations](docs/EXECUTION_DEVIATIONS_RU.md)
 are recorded explicitly, including the actual eight-byte seed derivation.
+
+A subsequent [G2 numerical audit](docs/G2_NUMERICAL_CORRECTION_RU.md) found that
+small fluid transfers could be discarded by the original kernel's internal threshold.
+The corrected coupling rescales internal units without changing S1 or the frozen
+exact H3 participant. All 48 aggregation points and both G2 rankings are repeated;
+the original evidence is retained separately.
 
 - [E3 aggregation and accuracy specification](docs/AGGREGATION_SPEC_RU.md)
 - [E4 fixed ranking and independent holdout](docs/RESERVE_SPEC_RU.md)
