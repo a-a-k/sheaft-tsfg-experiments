@@ -22,13 +22,9 @@ jobs:
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
       - name: Fetch pinned private TSFG source (read only)
-        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
-        with:
-          repository: a-a-k/ozone-tech_mb3r_lab_1084
-          ref: 8510baf28673758f1e437d2dbc5a51ead9843a3b
-          path: .private/upstream
-          ssh-key: ${{ secrets.TSFG_SOURCE_SSH_KEY }}
-          persist-credentials: false
+        env:
+          TSFG_SOURCE_SSH_KEY: ${{ secrets.TSFG_SOURCE_SSH_KEY }}
+        run: python scripts/fetch_tsfg.py
       - uses: actions/setup-go@924ae3a1cded613372ab5595356fb5720e22ba16
         with:
           go-version: '1.26.0'
