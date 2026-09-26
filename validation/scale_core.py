@@ -71,6 +71,14 @@ def main():
                         validate_result(data,scenario,actual)
                         compare(expected,actual)
                         checks+=1
+    for machines in (20,200,2000):
+        growth=make_dataset(100,'F2','DENSE',902,machines,2)
+        assert growth['dataset_id'].endswith('-A2')
+        assert all(len(o['alternatives'])==2 for o in growth['operations'])
+        original=copy.deepcopy(growth['operations'])
+        assert naive_schedule(original,machines)==growth['queues']
+        assert original==growth['operations']
+        checks+=3
     summary=dict(status="PASS",checks=checks,generator_exhaustive_cases=80,
                  controls=["late priority arrival","earliest start before earliest finish"],
                  binary_json_equivalence=["tsfg","des","dag"],families=["F1","F2","F3"],

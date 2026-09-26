@@ -12,7 +12,7 @@ on:
     inputs:
       suite:
         type: choice
-        options: [calibration, screen, main]
+        options: [calibration, screen, main, burst, growth, assembly, extra]
         default: calibration
       part:
         description: 'screen: 0..5; main: 0..8; calibration: 0'
@@ -52,9 +52,25 @@ jobs:
           elif suite=='screen':
               rows=[dict(n=n,family=f,density=d,seed=s,round=0,k=10) for n,f,d,s in itertools.product([1000,10000,100000,1000000],['F1','F2'],['DENSE','SPARSE'],[101,102,103])]
               rows=rows[part*8:(part+1)*8]
-          else:
+          elif suite=='main':
               rows=[dict(n=n,family=f,density=d,seed=s,round=r,k=100) for n,f,d,s,r in itertools.product([100000,1000000],['F1','F2'],['DENSE','SPARSE'],[101,102,103],[0,1,2])]
               rows=rows[part*8:(part+1)*8]
+          elif suite=='burst':
+              rows=[dict(n=n,family=f,density='BURST',seed=s,round=0,k=10) for n,f,s in itertools.product([1000,10000,100000,1000000],['F1','F2'],[101,102,103])]
+              rows=rows[part*8:(part+1)*8]
+          elif suite=='growth':
+              rows=[dict(n=n,machines=m,alternatives=2,family='F2',density='DENSE',seed=s,round=0,k=10) for (n,m),s in itertools.product([(10000,20),(100000,200),(1000000,2000)],[101,102,103])]
+              rows=rows[part*8:(part+1)*8]
+          elif suite=='assembly':
+              rows=[dict(n=n,family='F3',density='DENSE',seed=s,round=0,k=10) for n,s in itertools.product([1000,10000,100000,1000000],[101,102,103])]
+              rows=rows[part*8:(part+1)*8]
+          elif suite=='extra':
+              rows=[dict(n=n,family=f,density=d,seed=101,round=0,k=1000) for n,f,d in itertools.product([1000,10000,100000],['F1','F2'],['DENSE','SPARSE'])]
+              rows=rows[part*8:(part+1)*8]
+          else:raise ValueError(suite)
+          for row in rows:
+              row.setdefault('machines',200)
+              row.setdefault('alternatives',0)
           assert rows
           with open(os.environ['GITHUB_OUTPUT'],'a') as f:f.write('matrix='+json.dumps({'include':rows})+'\n')
           PY
@@ -110,7 +126,7 @@ jobs:
       - run: python scripts/build_tsfg.py --upstream-test-evidence admission/build/upstream-tests.json
       - run: python scripts/build.py
       - name: Freeze dataset and 1000 scenarios
-        run: python experiments/scale_data.py --n ${{ matrix.n }} --family ${{ matrix.family }} --density ${{ matrix.density }} --seed ${{ matrix.seed }} --output artifacts/dataset
+        run: python experiments/scale_data.py --n ${{ matrix.n }} --family ${{ matrix.family }} --density ${{ matrix.density }} --seed ${{ matrix.seed }} --machines ${{ matrix.machines }} --alternatives ${{ matrix.alternatives }} --output artifacts/dataset
       - name: Measure standalone sequential processes
         env:
           SUITE: ${{ inputs.suite || 'calibration' }}

@@ -127,7 +127,7 @@ def naive_schedule(ops, machines):
     return queues
 
 
-def composition(n, family, seed, machines=200):
+def composition(n, family, seed, machines=200, alternatives_count=None):
     assert n % 10 == 0 and machines % 10 == 0
     width = machines // 10
     identity = f"{family}-N{n}-M{machines}-s{seed}"
@@ -142,7 +142,7 @@ def composition(n, family, seed, machines=200):
             if family == "F1":
                 alternatives = catalog[group]
             else:
-                count = min(3 if machines == 200 else 2, width)
+                count = min(alternatives_count or (3 if machines == 200 else 2), width)
                 chosen = routes.choice(width, count, replace=False)
                 base = int(durations.integers(20, 61))
                 alternatives = [dict(machine=group*width+int(m), work=((base*coef+4)//5)*100)
@@ -155,14 +155,16 @@ def composition(n, family, seed, machines=200):
     return ops
 
 
-def make_dataset(n, family, density, seed, machines=200):
+def make_dataset(n, family, density, seed, machines=200, alternatives_count=None):
     identity = f"{family}-{density}-N{n}-M{machines}-s{seed}"
-    ops = composition(n, family, seed, machines)
+    if alternatives_count is not None:identity+=f"-A{alternatives_count}"
+    ops = composition(n, family, seed, machines, alternatives_count)
     queues = schedule(ops, machines)
     c_dense = max(o["planned_end"] for o in ops)
     releases = [0]*(n//10)
     metadata = dict(generator_version=VERSION, family=family, density=density, seed=seed,
                     n=n, machines=machines, C_dense_ticks=c_dense)
+    if alternatives_count is not None:metadata['alternatives_per_operation']=alternatives_count
     if density == "SPARSE":
         releases = [int(r)*100 for r in rng(identity, "arrivals").integers(0, 3*(c_dense//100)+1, n//10)]
     elif density == "BURST":
@@ -285,10 +287,11 @@ def main():
     p.add_argument("--density",choices=["DENSE","SPARSE","BURST"],default="DENSE")
     p.add_argument("--seed",type=int,required=True)
     p.add_argument("--machines",type=int,default=200)
+    p.add_argument("--alternatives",type=int,choices=[0,2,3],default=0)
     p.add_argument("--output",type=Path,required=True)
     args=p.parse_args()
     begin=time.monotonic()
-    data=make_dataset(args.n,args.family,args.density,args.seed,args.machines)
+    data=make_dataset(args.n,args.family,args.density,args.seed,args.machines,args.alternatives or None)
     args.output.mkdir(parents=True,exist_ok=True)
     write_binary(data,args.output/"input.bin")
     # Full alternative sets and schedule provenance; never read by timed engines.
