@@ -1,0 +1,21 @@
+{
+  "H3-measurements.csv": "1dc0ec1b5e6945a73b7983568e8c548f2459d608378f094a896800919f9d486a",
+  "H3.png": "db16f8ec8610420bec0765886cf546ea4330a333f5e3aee1401da49525d598c9",
+  "REPORT_RU.md": "c0e2b40ae45a22632d4edf72bbd7a50c34d5313a76d18d0c2032dd8b4cc7dead",
+  "REPORT_RU.pdf": "2955582001116a769cbc001a19d4b8da7a63d83ea823fb0bb72cfe49f2f1c813",
+  "aggregation.csv": "a2279ffd1f370d60f2464691e5b1c9be6539b7fccae2c15602d64c7693f7f10e",
+  "aggregation.png": "6f00c82b1e1b8fbb0d43877569b8ad3f918cfdd288346b58211db7bcbd11ec10",
+  "evidence.zip": "f709ec5a47655db3cf71669fc752f204ed5bb6f0f286bcb124e3d05b4439f3f0",
+  "input-diagnostics.json": "576168b51e9076a1880984cf784c9883b7097e367392cf5ab16a678d533e11a3",
+  "inputs-index.json": "9f470fbe3352c9f7107f570cefe89a9fb4f9558733410d628cb4bbd44244d28f",
+  "inputs.zip": "02692b0bbe0550e42f538cf578ab745b21aaaec8a48a1c77842951715130fd96",
+  "main-processes.csv": "9f0e10977f1532a9c4608c5c46b610dcca22dce736bf6e4b235dab7dae45a646",
+  "reserves.png": "244a658ab76ad9c949ea0da5a8e54085a2a4814cf93613bf82aecf725cdc66bf",
+  "runs.json": "2b9206da50f90b9c7f759ae18d6c10b14ab3dbd7469e251d416771c858a4afe1",
+  "screen-processes.csv": "e65e8a80078c921fcd6cdab4adff9a2fc74f11454e55217bac98766fe4d81e49",
+  "strict-deadlines-post-hoc.csv": "d7ffb3bacb992d963942848378b2a67c3524002486f0bfde56f5e54b7f6fb0ec",
+  "summary.json": "a8456d5c18982ae7a568ea48d59de13e5e3154c66bc97543f6b888d391ebcf3f",
+  "supplementary-processes.csv": "ed71e44dbfdd20cc8357e99c90a0b588fea73db33066425d66cab81593523c9e",
+  "supplementary-summary.csv": "75d8cbbf33f3a9a5e1ac3ed19138dc2d76a5c8eacfdfa4bc8a17fee3b01de7ad",
+  "timeout-ratio-bounds.csv": "a6f11399045fa4432c5c0c857e994d66b83243ed2ba29fec171dff07d428f44a"
+}
