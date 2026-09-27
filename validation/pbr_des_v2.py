@@ -1,4 +1,5 @@
 """Compare independent C++ DES with analytic cases and the rational oracle."""
+import argparse
 import json
 import os
 from pathlib import Path
@@ -17,6 +18,9 @@ FIELDS = ['start', 'finish', 'remaining', 'state', 'job_finish', 'mission_succes
 
 def main():
     if os.environ.get('GITHUB_ACTIONS') != 'true': raise SystemExit('Actions only')
+    parser=argparse.ArgumentParser()
+    parser.add_argument('--tsfg', action='store_true')
+    args=parser.parse_args()
     root = Path('artifacts/pbr-des')
     root.mkdir(parents=True, exist_ok=True)
     checks = 0
@@ -33,8 +37,15 @@ def main():
             actual = json.loads(output.read_text())
             (folder/f'{mode}-{horizon}-reference.json').write_text(json.dumps(expected, indent=2))
             for field in FIELDS: assert actual[field] == expected[field], (case['name'], mode, horizon, field, actual[field], expected[field])
+            if args.tsfg:
+                tsfg_output=folder/f'{mode}-{horizon}-tsfg.jsonl'
+                subprocess.run(['.private/runtime/tsfg', 'tsfg-ext', str(folder/'input.json'), str(folder/'scenario.json'),
+                    str(tsfg_output), mode, str(horizon), '5'], check=True, timeout=30,
+                    env={**os.environ, 'TSFG_OP_DRIVER':'true', 'GOMAXPROCS':'1'})
+                tsfg=json.loads(tsfg_output.read_text())
+                for field in FIELDS: assert tsfg[field] == expected[field], (case['name'], 'TSFG', mode, horizon, field, tsfg[field], expected[field])
             checks += 1
-    (root/'summary.json').write_text(json.dumps(dict(status='PASS', checks=checks, engines=['DES-EXT', 'Fraction']), indent=2)+'\n')
+    (root/'summary.json').write_text(json.dumps(dict(status='PASS', checks=checks, engines=['DES-EXT', 'Fraction']+(['TSFG-EXT'] if args.tsfg else [])), indent=2)+'\n')
     print(json.dumps(dict(status='PASS', checks=checks)))
 
 

@@ -42,6 +42,8 @@ adapter = Path("engines/tsfg_op/operation_adapter.go")
 shutil.copyfile(adapter, engine / "cmd/ozon-engine/operation_adapter.go")
 extended_adapter = Path("engines/tsfg_op/extended_adapter.go")
 shutil.copyfile(extended_adapter, engine / "cmd/ozon-engine/extended_adapter.go")
+pbr_adapter = Path('engines/tsfg_op/pbr_adapter.go')
+shutil.copyfile(pbr_adapter, engine / 'cmd/ozon-engine/pbr_adapter.go')
 audit_adapter = Path("engines/tsfg_op/audit_adapter.go")
 shutil.copyfile(audit_adapter, engine / "cmd/ozon-engine/audit_adapter.go")
 aggregate_adapter = Path("engines/tsfg_op/aggregate_adapter.go")
@@ -52,12 +54,13 @@ result = subprocess.run(["go", "build", "-trimpath", "-o", str(binary), "./cmd/o
                         cwd=engine, capture_output=True, text=True)
 if result.returncode:
     for line in result.stderr.splitlines():
-        if any(name in line for name in ("operation_adapter.go:", "extended_adapter.go:", "audit_adapter.go:", "aggregate_adapter.go:")):
+        if any(name in line for name in ("operation_adapter.go:", "extended_adapter.go:", "pbr_adapter.go:", "audit_adapter.go:", "aggregate_adapter.go:")):
             print(line)
     raise SystemExit("TSFG build failed; other private diagnostics omitted")
 summary.update(go_version=subprocess.check_output(["go", "version"], text=True).strip(),
                adapter_sha256=hashlib.sha256(adapter.read_bytes()).hexdigest(),
                extended_adapter_sha256=hashlib.sha256(extended_adapter.read_bytes()).hexdigest(),
+               pbr_adapter_sha256=hashlib.sha256(pbr_adapter.read_bytes()).hexdigest(),
                audit_adapter_sha256=hashlib.sha256(audit_adapter.read_bytes()).hexdigest(),
                aggregate_adapter_sha256=hashlib.sha256(aggregate_adapter.read_bytes()).hexdigest(),
                binary_sha256=hashlib.sha256(binary.read_bytes()).hexdigest(),
