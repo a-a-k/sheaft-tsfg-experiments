@@ -17,8 +17,10 @@
   "reserve_region_runs": [36312894404, 36314314805, 36316014401, 36316135286],
   "flow_run": 36311747232,
   "flow_invalid_step_run": 36311526885,
+  "report_preflight_runs": [36316301467, 36316390333],
   "execution_status": "PARTIAL",
-  "work_closed": false,
+  "experiments_closed": false,
+  "publication_status": "PENDING_FINAL_EVIDENCE",
   "outstanding": [
     "Complete 100k PBR round 3 and explicit unavailable-family gates",
     "Million PBR explicit closed main gates after failed nominal admission",

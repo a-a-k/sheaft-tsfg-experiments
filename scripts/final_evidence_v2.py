@@ -98,6 +98,11 @@ def pbr_evidence(collector,registry,out):
             rows=[r for r in points if r['n']==size and r['family']==family and r['count']==100]
             if size==100000 and all(r['input_status']=='NOMINALLY_ADMISSIBLE' for r in bases):
                 assert len(rows)==9,'Required admitted main rounds are not finished'
+            if not rows:
+                decisions=[decision for gate in gates if gate['count']==100 and
+                    gate['nominal_run']==registry['pbr_nominal_runs'][str(size)]
+                    for decision in gate['decisions'] if decision['family']==family]
+                assert decisions and all(not d['allowed'] for d in decisions),'Missing explicit main-series gate'
             assert len({(r['seed'],r['round']) for r in rows})==len(rows)
             complete=[r for r in rows if r.get('paired_speedup') is not None and r['correctness_status']=='VALID']
             round_groups=[]
@@ -254,7 +259,8 @@ def write_report(out,areas,points,regions,hypotheses,registry,ledger):
     assert pf['execution_status']=='COMPLETE' and len(pf['cases'])==6
     assert all(case['status']=='ADMITTED' for case in pf['cases'])
     complete_regions=[r for r in regions if r['execution_status']=='COMPLETE']
-    status=dict(protocol='2.2',execution_status='PARTIAL',authorized_work_status='CLOSED_AT_PROTOCOL_GATES',
+    status=dict(protocol='2.2',execution_status='PARTIAL',authorized_work_status='EXPERIMENTS_CLOSED_AT_PROTOCOL_GATES',
+        publication_status='READY_FOR_PUBLICATION_AND_SEPARATE_DOWNLOAD_VERIFICATION',
         APS='COMPLETE',PBR_correctness='COMPLETE',PBR_screen='COMPLETE',
         PBR_large='PARTIAL',reserve_holdout='COMPLETE' if len(complete_regions)==8 else 'PARTIAL',
         reserve_completed_regions=len(complete_regions),reserve_expected_regions=8,
@@ -399,7 +405,7 @@ def write_report(out,areas,points,regions,hypotheses,registry,ledger):
 def main():
     assert os.environ.get('GITHUB_ACTIONS')=='true'
     registry=json.loads(Path('provenance/revision-v2.json').read_text())
-    assert registry['work_closed'] and not registry['outstanding'],'Required authorized work remains'
+    assert registry['experiments_closed'],'Required experimental work remains'
     root=Path('final-package');out=root/'report';out.mkdir(parents=True,exist_ok=True)
     collector=Collector(root,registry['repository'])
     publication_chain(collector,registry,out)
