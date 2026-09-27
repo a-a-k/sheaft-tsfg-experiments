@@ -5,7 +5,7 @@
     "main": {"id": 36247215750, "artifacts": [{"pattern": "e2-main-report", "directory": "main"}, {"pattern": "validated-main-*", "directory": "main-points", "subdirectories": true}, {"pattern": "scale-main-*", "directory": "main-environment", "subdirectories": true, "allow_prefixes": ["build/"]}]},
     "e3": {"id": 36251242869, "artifacts": [{"pattern": "e3-summary-*", "directory": "e3", "subdirectories": true}, {"pattern": "e3-F*", "directory": "e3-raw", "subdirectories": true}]},
     "e3_v1": {"id": 36247161084, "artifacts": [{"pattern": "e3-summary-*", "directory": "e3-v1", "subdirectories": true}, {"pattern": "e3-F*", "directory": "e3-v1-raw", "subdirectories": true}]},
-    "e4": {"id": 36234852274, "artifacts": [{"pattern": "e4-summary-*", "directory": "e4", "subdirectories": true}]},
+    "e4": {"id": 36234852274, "artifacts": [{"pattern": "e4-summary-*", "directory": "e4", "subdirectories": true}, {"pattern": "e4-F1-*", "directory": "e4-raw", "subdirectories": true}, {"pattern": "e4-F2-*", "directory": "e4-raw", "subdirectories": true}]},
     "extras": {"id": 36247446499, "artifacts": [{"pattern": "validated-*", "directory": "extras", "subdirectories": true}]},
     "ranking": {"id": 36251306989, "artifacts": [{"pattern": "g2-ranking-*", "directory": "ranking", "subdirectories": true}]},
     "ranking_v1": {"id": 36247684531, "artifacts": [{"pattern": "g2-ranking-*", "directory": "ranking-v1", "subdirectories": true}]},
