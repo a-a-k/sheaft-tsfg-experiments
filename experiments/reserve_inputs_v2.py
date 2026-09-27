@@ -64,6 +64,8 @@ def accelerated(data,machine=None):
         op['work']*=10 if op['machine']==machine else 11
         op['planned_end']=op['planned_start']+op['work']
         assert all(op[k]%5==0 for k in ('release','planned_start','work'))
+    for job in result['jobs']:
+        if 'release' in job:job['release']*=11
     result['tick_unit']='0.01/11 second';return result
 
 

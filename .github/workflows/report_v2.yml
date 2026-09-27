@@ -1,0 +1,41 @@
+name: Revision v2 evidence report
+on:
+  push:
+    branches: ['implementation/revision-v2']
+    paths: ['.github/workflows/report_v2.yml']
+  workflow_dispatch:
+permissions:
+  contents: write
+  actions: read
+jobs:
+  report:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - run: python scripts/budget_v2.py --package flow-report --reserve-seconds 1020
+      - run: python scripts/first_package_v2.py
+      - run: python scripts/publish_revision_bundle_v2.py
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: first-package-public-report
+          path: |
+            first-package/report/
+            artifacts/budget/
+  verify:
+    needs: report
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - run: python scripts/publish_revision_bundle_v2.py --download-verify
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: first-package-download-verification
+          path: publication/download-verification.json

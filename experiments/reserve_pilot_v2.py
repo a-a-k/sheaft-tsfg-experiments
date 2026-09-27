@@ -31,7 +31,7 @@ def main():
         elapsed=time.monotonic()-start;costs.append(elapsed);records.extend(out);seeds.append(audit)
         if process['performance_status']!='MEASURED':break
     # Bounds use every possible unique configuration before looking at effects.
-    counts=dict(criticality=200*15,calibration=100,selection=9*100,evaluation=7*1000,diagnostic=7*5)
+    counts=dict(criticality=200*15,calibration=100,selection=10*100,evaluation=7*1000,diagnostic=7*5)
     valid=len(records)==5
     estimate=2*max(costs)*sum(counts.values())+600 if valid else None
     result=dict(family=baseline['family'],n=baseline['n'],law=args.law,task_sha256=task_hash(data),
