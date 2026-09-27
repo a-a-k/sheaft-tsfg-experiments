@@ -22,7 +22,8 @@
     "extended_admission_v2.yml": "pbr-correctness",
     "extended_screen_v2.yml": "pbr-screen",
     "flow_admission_v2.yml": "flow-report",
-    "extended_benchmark_v2.yml": "pbr-large"
+    "extended_benchmark_v2.yml": "pbr-large",
+    "reserve_holdout_v2.yml": "reserves"
   },
   "initial_deviation": "The first archive-preservation push also triggered unchanged legacy CI before v2.2 became available. Its runner time is charged to reuse; subsequent revision pushes skip that legacy campaign."
 }

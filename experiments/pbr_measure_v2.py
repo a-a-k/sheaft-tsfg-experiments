@@ -17,12 +17,12 @@ sys.path.insert(0,str(Path(__file__).resolve().parents[1]))
 from experiments.pbr_screen_v2 import sha,oom_kills
 
 
-def run_one(data_path,scenarios_path,horizon,engine,root,limit,label):
+def run_one(data_path,scenarios_path,horizon,engine,root,limit,label,mode='MISSION'):
     root.mkdir(parents=True,exist_ok=True);raw=root/'output.jsonl'
     command=['.private/runtime/tsfg','tsfg-ext'] if engine=='tsfg' else ['artifacts/build/des-ext']
-    command += [str(data_path),str(scenarios_path),str(raw),'MISSION',str(horizon)]
+    command += [str(data_path),str(scenarios_path),str(raw),mode,str(horizon)]
     if engine=='tsfg':command.append('5')
-    record=dict(engine=engine,label=label,horizon=horizon,limit_seconds=limit,
+    record=dict(engine=engine,label=label,horizon=horizon,mode=mode,limit_seconds=limit,
         source_sha=os.environ['GITHUB_SHA'],run_id=os.environ['GITHUB_RUN_ID'],
         input_sha256=sha(data_path),scenarios_sha256=sha(scenarios_path),
         wait_method='Linux pidfd readiness',correctness_status='UNCHECKED')
