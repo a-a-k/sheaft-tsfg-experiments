@@ -1,5 +1,8 @@
 name: Publish complete APS matrix v2
 on:
+  push:
+    branches: ['implementation/revision-v2']
+    paths: ['.github/workflows/aps_matrix_report_v2.yml']
   workflow_dispatch:
     inputs:
       million_runs:
@@ -14,7 +17,7 @@ jobs:
     timeout-minutes: 12
     env:
       GH_TOKEN: ${{ github.token }}
-      MILLION_RUNS: ${{ inputs.million_runs }}
+      MILLION_RUNS: ${{ inputs.million_runs || '36309782620,36311179606,36311541606,36312092689,36312569263,36312920618,36313419103' }}
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
       - run: python scripts/budget_v2.py --package aps-rest --reserve-seconds 1020
