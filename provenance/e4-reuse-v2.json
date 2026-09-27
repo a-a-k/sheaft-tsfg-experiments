@@ -1,0 +1,21 @@
+{
+  "repository": "a-a-k/sheaft-tsfg-experiments",
+  "run_id": 36234852274,
+  "commit": "e85c8fabc3370b7a77fb8b530fcddb435da39163",
+  "semantics": "P0 fixed assignments and queues; unlimited buffers; speed intervention +10%",
+  "mode": "MISSION",
+  "artifacts": [
+    {
+      "family": "F1",
+      "id": 10903988001,
+      "name": "e4-F1-e85c8fabc3370b7a77fb8b530fcddb435da39163",
+      "sha256": "9883ef3b5a47f1ad8f84d6346c37d74e09518d1ceae1a838ebb8be9778950988"
+    },
+    {
+      "family": "F2",
+      "id": 10904337463,
+      "name": "e4-F2-e85c8fabc3370b7a77fb8b530fcddb435da39163",
+      "sha256": "fa1c410164d91e3902fa9a087f717cc976e7bab8dbe25afe4f4996995c175a85"
+    }
+  ]
+}

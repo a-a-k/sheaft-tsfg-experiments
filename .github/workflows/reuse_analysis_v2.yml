@@ -1,0 +1,33 @@
+name: Preserve and reanalyse complete E4 v2
+on:
+  push:
+    branches: ['implementation/revision-v2']
+    paths:
+      - '.github/workflows/reuse_analysis_v2.yml'
+      - 'scripts/preserve_e4_v2.py'
+      - 'experiments/reuse_e4_v2.py'
+      - 'validation/reuse_e4_v2.py'
+      - 'provenance/e4-reuse-v2.json'
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  preserve:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - name: Verify run, original ZIP digests and raw file hashes
+        run: python scripts/preserve_e4_v2.py --output artifacts/e4-preserved
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: e4-complete-preserved-${{ github.sha }}
+          path: |
+            artifacts/e4-preserved/*.zip
+            artifacts/e4-preserved/evidence-v2.json
+            artifacts/e4-preserved/SHA256.json
+          compression-level: 0
+          retention-days: 90
