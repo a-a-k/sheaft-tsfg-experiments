@@ -1,13 +1,10 @@
 name: Independent reserve holdout v2
 on:
-  push:
-    branches: ['implementation/revision-v2']
-    paths: ['.github/workflows/reserve_holdout_v2.yml']
   workflow_dispatch:
     inputs:
       phase:
         type: choice
-        options: [pilot]
+        options: [pilot, execute]
         default: pilot
       size:
         type: choice
@@ -19,11 +16,24 @@ on:
       f2_run:
         type: string
         default: '36312122851'
+      pilot_run:
+        type: string
+      family:
+        type: choice
+        options: [F1,F2]
+        default: F1
+      law:
+        type: choice
+        options: [independent,common-cause]
+        default: independent
+      ranking_run:
+        type: string
 permissions:
   contents: read
   actions: read
 jobs:
   budget:
+    if: inputs.phase == 'pilot'
     runs-on: ubuntu-24.04
     timeout-minutes: 3
     env:
@@ -67,4 +77,119 @@ jobs:
           path: |
             pilot/
             baseline/
+          compression-level: 1
+  gate:
+    if: inputs.phase == 'execute'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 3
+    outputs:
+      allowed: ${{ steps.plan.outputs.allowed }}
+      selection_minutes: ${{ steps.plan.outputs.selection_minutes }}
+      holdout_minutes: ${{ steps.plan.outputs.holdout_minutes }}
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - run: python scripts/budget_v2.py --package reserves --reserve-seconds 0
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          name: reserve-pilot-${{ inputs.family }}-${{ inputs.law }}
+          run-id: ${{ inputs.pilot_run }}
+          github-token: ${{ github.token }}
+          path: pilot-source
+      - id: plan
+        run: python scripts/reserve_gate_v2.py --pilot pilot-source
+      - env:
+          RESERVED: ${{ steps.plan.outputs.reservation }}
+        run: python scripts/budget_v2.py --package reserves --reserve-seconds "$RESERVED"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: reserve-region-admission
+          path: |
+            gate/
+            artifacts/budget/
+  selection:
+    needs: gate
+    if: needs.gate.outputs.allowed == 'true'
+    runs-on: ubuntu-24.04
+    timeout-minutes: ${{ fromJSON(needs.gate.outputs.selection_minutes) }}
+    outputs:
+      sha256: ${{ steps.frozen.outputs.sha256 }}
+    container:
+      image: python:3.12-bookworm@sha256:dbbe4ceb97851e2e5fa83798b239811f871cb743b259ba3563737349f6bcfaa0
+      options: --cpus=1 --cpuset-cpus=0 --memory=4g --memory-swap=4g
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          name: reserve-pilot-${{ inputs.family }}-${{ inputs.law }}
+          run-id: ${{ inputs.pilot_run }}
+          github-token: ${{ github.token }}
+          path: pilot-source
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        if: inputs.ranking_run != ''
+        with:
+          name: reserve-frozen-selection
+          run-id: ${{ inputs.ranking_run }}
+          github-token: ${{ github.token }}
+          path: previous-selection
+      - run: mkdir -p artifacts/build && g++ -std=c++20 -O3 -DNDEBUG -Wall -Wextra -Werror -Ivendor engines/des_ext/main.cpp -o artifacts/build/des-ext
+      - run: python -m pip install --require-hashes -r requirements.lock
+      - name: Rank, calibrate and select before opening holdout
+        run: |
+          if [ -f previous-selection/ranking.json ]; then
+            python experiments/reserve_select_v2.py --pilot pilot-source --ranking previous-selection/ranking.json
+          else
+            python experiments/reserve_select_v2.py --pilot pilot-source
+          fi
+      - id: frozen
+        run: python -c "import hashlib,os,pathlib; p=pathlib.Path('selection/selection.json'); open(os.environ['GITHUB_OUTPUT'],'a').write('sha256='+hashlib.sha256(p.read_bytes()).hexdigest()+'\n')"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: reserve-frozen-selection
+          path: |
+            selection/selection.json
+            selection/input.json
+            selection/ranking.json
+            selection/namespace.json
+            selection/selection-results.json
+            selection/*-bank.json
+          compression-level: 1
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: reserve-selection-evidence
+          path: selection/*/
+          compression-level: 1
+  holdout:
+    needs: [gate, selection]
+    runs-on: ubuntu-24.04
+    timeout-minutes: ${{ fromJSON(needs.gate.outputs.holdout_minutes) }}
+    container:
+      image: python:3.12-bookworm@sha256:dbbe4ceb97851e2e5fa83798b239811f871cb743b259ba3563737349f6bcfaa0
+      options: --cpus=1 --cpuset-cpus=0 --memory=4g --memory-swap=4g
+    env:
+      SELECTED_SHA: ${{ needs.selection.outputs.sha256 }}
+      OPENBLAS_NUM_THREADS: '1'
+      OMP_NUM_THREADS: '1'
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          name: reserve-frozen-selection
+          path: selected
+      - run: mkdir -p artifacts/build && g++ -std=c++20 -O3 -DNDEBUG -Wall -Wextra -Werror -Ivendor engines/des_ext/main.cpp -o artifacts/build/des-ext
+      - run: python -m pip install --require-hashes -r requirements.lock
+      - run: python scripts/install_stats_v2.py
+      - run: python validation/reserve_stats_v2.py
+      - run: python experiments/reserve_holdout_v2.py --selection selected --expected-sha "$SELECTED_SHA"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: reserve-holdout-evidence
+          path: |
+            holdout/
+            artifacts/stats-environment/versions.json
           compression-level: 1

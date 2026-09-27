@@ -92,6 +92,12 @@ def evaluate(data,scenarios,horizon,mode,root,retain_ids=()):
                     'cmax','completion_lower_bound','run_status','horizon','stopped','resource_wait_integral','blocked_machine_integral')}
                 kept['full_state_sha256']=hashlib.sha256(json.dumps({k:row[k] for k in FIELDS},sort_keys=True,separators=(',',':')).encode()).hexdigest()
                 kept['produced_jobs']=sum(j['produced'] for j in row['job_results'])
+                if row['scenario_id']=='reserve-M0':
+                    processing=[0]*len(data['queues']);blocked=[0]*len(data['queues'])
+                    for op,remaining,finish,released in zip(data['operations'],row['remaining'],row['finish'],row['machine_release']):
+                        processing[op['machine']]+=op['work']-remaining
+                        if finish is not None:blocked[op['machine']]+=max(0,(released if released>=0 else row['stopped'])-finish)
+                    kept.update(processing_by_machine=processing,blocked_by_machine=blocked)
                 compact.write(json.dumps(kept,separators=(',',':'))+'\n');records.append(kept)
                 if row['scenario_id'] in retain_ids:
                     with gzip.open(root/(row['scenario_id']+'-trace.json.gz'),'wb',compresslevel=1) as output:output.write(line)
