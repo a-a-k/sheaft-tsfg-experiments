@@ -24,9 +24,12 @@ type pfPolicy struct {
     multipliers [][]float64
     index map[string]int
     step,before,t,total,produced,integral,balance float64
+    minStep,maxStep float64
     steps int
 }
 func(p *pfPolicy) BeginStep(_ int,t,dt float64) {
+    internalStep:=dt;t/=32;dt/=32
+    if p.steps==0 || dt<p.minStep {p.minStep=dt};p.maxStep=math.Max(p.maxStep,dt)
     p.t=t+dt;p.step=dt;p.before=0;p.steps++
     for i:=range p.q {p.before+=p.q[i];p.done[i]=0}
     last:=len(p.q)-1;rate:=p.data.SinkRate
@@ -38,7 +41,7 @@ func(p *pfPolicy) BeginStep(_ int,t,dt float64) {
     if p.data.Capacity!=nil && sum>0 {factor=math.Min(1,math.Max(0,*p.data.Capacity-p.q[last]+output)/sum)}
     for i:=range p.data.Rates {p.refs[i]*=factor}
     p.refs[last]=output
-    for i,v:=range p.refs {p.multipliers[i][0]=v/dt*aggKernelVolumeScale}
+    for i,v:=range p.refs {p.multipliers[i][0]=v/internalStep*aggKernelVolumeScale}
 }
 func(p *pfPolicy) AvailableInputItems()float64{return 0}
 func(p *pfPolicy) HandlesNodeOutput(id string)bool{_,ok:=p.index[id];return ok}
@@ -85,7 +88,10 @@ func pfSolve(data pfCase,horizon float64)(map[string]any,error) {
             resources=append(resources,resource{ID:edge,Capacity:0,Order:2*i+1,From:id,To:next})
         }
     }
-    experiment:=experimentFile{HorizonS:horizon,DtS:0.005,MeasurementWindows:[]float64{horizon}}
+    // S1 enforces a minimum internal time step. A power-of-two unit change
+    // expresses 0.005 physical seconds as 0.16 internal units, without changing
+    // the original kernel or the frozen physical diagnostic contract.
+    experiment:=experimentFile{HorizonS:horizon*32,DtS:0.005*32,MeasurementWindows:[]float64{horizon*32}}
     _,err:=runGraphLocalTemporalCapacityModelWithRuntimeAndSink(facility,experiment,resources,arithmetic{},runtime,"",p)
     if err!=nil && !errors.Is(err,opAllDone){return nil,err}
     complete:=errors.Is(err,opAllDone);var cmax,bound any
@@ -93,7 +99,8 @@ func pfSolve(data pfCase,horizon float64)(map[string]any,error) {
     return map[string]any{"id":data.ID,"produced":p.produced,"queue_at_D":p.q,"queue_max":p.peak,
         "wip_integral":p.integral,"completion_known":complete,"mission_success":complete,"cmax":cmax,
         "completion_lower_bound":bound,"material_balance_max_abs":p.balance,"steps":p.steps,
-        "delta":0.005,"algorithm":"PF-S1-grid-v2.2","individual_operation_times":"UNSUPPORTED"},nil
+        "delta":0.005,"actual_min_step":p.minStep,"actual_max_step":p.maxStep,"kernel_time_scale":32,
+        "algorithm":"PF-S1-grid-v2.2","individual_operation_times":"UNSUPPORTED"},nil
 }
 func init() {
     if os.Getenv("TSFG_PF_DRIVER")!="true" {return}

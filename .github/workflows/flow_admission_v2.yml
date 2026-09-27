@@ -1,8 +1,5 @@
 name: Six fluid diagnostics v2
 on:
-  push:
-    branches: ['implementation/revision-v2']
-    paths: ['.github/workflows/flow_admission_v2.yml']
   workflow_dispatch:
 permissions:
   contents: read

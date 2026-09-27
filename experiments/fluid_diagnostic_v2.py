@@ -32,6 +32,7 @@ def main():
                 subprocess.run(['.private/runtime/tsfg-pf',str(input_file),str(horizon),str(out)],
                     env={**os.environ,'TSFG_PF_DRIVER':'true','TSFG_OP_DRIVER':'false','GOMAXPROCS':'1'},check=True,timeout=60)
                 s1=json.loads(out.read_text())
+                assert abs(s1['actual_min_step']-.005)<1e-8 and abs(s1['actual_max_step']-.005)<1e-8,'Actual S1 step differs from frozen physical contract'
                 (folder/(label+'-reference.json')).write_text(json.dumps(ref,indent=2)+'\n')
                 errors=dict(produced_abs=abs(s1['produced']-ref['produced']),
                     wip_integral_relative=abs(s1['wip_integral']-ref['wip_integral'])/max(1e-15,ref['wip_integral']),
