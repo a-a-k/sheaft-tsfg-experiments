@@ -1,0 +1,29 @@
+{
+  "protocol": "2.2",
+  "repository": "a-a-k/sheaft-tsfg-experiments",
+  "prior_campaign_release": "v0.2.0-full-study",
+  "e4_release": "revision-v2-e4-1bab7db283f5",
+  "first_package_release": "revision-v2-first-package-7a7dedbed12c",
+  "aps_release": "revision-v2-aps-matrix-68ce2dfe0dfb",
+  "first_package_run": 36313122633,
+  "aps_report_run": 36313712296,
+  "pbr_admission_run": 36310562250,
+  "pbr_screen_runs": [36311024572, 36311244860, 36311541782, 36311760421, 36312122851, 36312383270],
+  "pbr_nominal_runs": {"100000": 36312660828, "1000000": 36313419199},
+  "pbr_pilot_runs": {"100000": 36312920355, "1000000": 36314205507},
+  "pbr_main_runs": [36314314751, 36315293979],
+  "pbr_gate_runs": [],
+  "reserve_pilot_runs": {"10000": 36312457218, "100000": null},
+  "reserve_region_runs": [36312894404, 36314314805],
+  "flow_run": 36311747232,
+  "flow_invalid_step_run": 36311526885,
+  "execution_status": "PARTIAL",
+  "work_closed": false,
+  "outstanding": [
+    "Complete 100k PBR rounds 2/3 and explicit unavailable-family gates",
+    "Million PBR explicit closed main gates after failed nominal admission",
+    "F1 10k common-cause holdout completion",
+    "100k reserve pilot and gates or admitted complete holdouts",
+    "Global 32-member Holm analysis and final evidence publication"
+  ]
+}
