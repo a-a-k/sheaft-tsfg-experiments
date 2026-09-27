@@ -11,9 +11,11 @@ def main():
     root = Path('artifacts/aps-admission')
     root.mkdir(parents=True, exist_ok=True)
     resident_parent = bytearray(128*2**20)
+    for offset in range(0, len(resident_parent), 4096): resident_parent[offset] = 1
     code = '''import json,sys
 from pathlib import Path
 x=bytearray(int(sys.argv[1])*2**20)
+for offset in range(0,len(x),4096): x[offset]=1
 status=dict(line.split(':',1) for line in Path('/proc/self/status').read_text().splitlines() if ':' in line)
 print(json.dumps({'VmHWM_bytes':int(status['VmHWM'].split()[0])*1024,'allocated_bytes':len(x)}))
 '''

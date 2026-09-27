@@ -43,6 +43,8 @@ def main():
         python=sys.version, platform=platform.platform(), allowed_cpus=sorted(os.sched_getaffinity(0)),
         cpuinfo=Path('/proc/cpuinfo').read_text(), limit_seconds=args.limit,
         correctness_status='UNCHECKED', quality_status='QUALITY_UNKNOWN')
+    record['measurement_code_sha256'] = {name: digest(Path(name)) for name in
+        ('planning/list_v1.py', 'planning/aps_format.py', 'experiments/aps_schedule.py', 'scripts/run_aps_v2.py')}
     before = memory_events()
     begin = time.monotonic()
     with (root/'stdout.txt').open('w') as stdout, (root/'stderr.txt').open('w') as stderr:
