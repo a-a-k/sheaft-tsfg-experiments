@@ -164,6 +164,8 @@ def simulate(data, sc, horizon, mode='DIAGNOSTIC'):
         else: state = 'NOT_STARTED'
         states.append(state)
     complete = all(f is not None for f in finishes)
+    if deadlock and mode == 'MISSION':
+        blocked_time += sum(f is not None and released is None for f,released in zip(finishes,releases))*(horizon-t)
     return dict(scenario_id=sc['id'], engine='fraction-pbr-ref', mode=mode, horizon=horizon, stopped=num(t),
         start=list(map(num, starts)), finish=list(map(num, finishes)), remaining=list(map(num, remaining)), state=states,
         job_finish=[num(finishes[j['final_operation']]) for j in data['jobs']],

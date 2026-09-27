@@ -200,7 +200,8 @@ func(p *opPolicy)pbrOutput(row map[string]any) {
     sort.Slice(x.links,func(i,j int)bool{for k:=0;k<6;k++{if x.links[i][k]!=x.links[j][k]{return x.links[i][k]<x.links[j][k]}};return false})
     row["machine_release"]=x.released;row["transfer_at"]=x.transfer;row["buffer_entry"]=x.entry;row["buffer_counts"]=x.used;row["buffer_peaks"]=x.peaks
     row["resource_unit"]=x.assigned;row["resource_owners"]=x.owners;row["resource_ownership"]=x.custody
-    row["resource_wait_integral"]=x.resourceIntegral;row["blocked_machine_integral"]=x.blockedIntegral;row["coupling_witnesses"]=x.links
+    blocked:=x.blockedIntegral;if x.deadlock && !p.diagnostic{for _,i:=range p.current{if i>=0 && p.finish[i]>=0{blocked+=row["horizon"].(int64)-p.stopped}}}
+    row["resource_wait_integral"]=x.resourceIntegral;row["blocked_machine_integral"]=blocked;row["coupling_witnesses"]=x.links
     row["deadlock_proof"]=nil
     states:=row["state"].([]string)
     for i:=range states{if p.finish[i]>=0 && x.released[i]<0{states[i]="BLOCKED_AFTER_PROCESSING"};if p.start[i]>=0 && p.finish[i]<0 && x.need[i]>=0 && !p.pbrUnitUp(x.need[i],x.assigned[i],p.stopped){states[i]="SUSPENDED"}}

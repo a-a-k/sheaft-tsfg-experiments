@@ -12,6 +12,7 @@ from experiments.extended_campaign import full_scenarios
 from experiments.pbr_cases_v2 import r5
 from references.pbr_ref import simulate
 from validation.pbr_des_v2 import FIELDS
+from validation.pbr_checks import validate
 
 
 def convert(old,capacity,shared=False):
@@ -51,6 +52,7 @@ def series(data,scenarios,folder,missions=False):
         ref=simulate(data,sc,horizon)
         references.append(ref)
         for name,rows in results.items():
+            validate(data,sc,rows[k])
             assert rows[k]['scenario_id']==sc['id']
             for field in FIELDS:
                 assert rows[k][field]==ref[field],(data['dataset_id'],sc['id'],name,field,rows[k][field],ref[field])
@@ -62,6 +64,7 @@ def series(data,scenarios,folder,missions=False):
             for k,sc in enumerate(scenarios):
                 ref=simulate(data,sc,deadline,'MISSION')
                 for name,rows in actual.items():
+                    validate(data,sc,rows[k])
                     for field in FIELDS:assert rows[k][field]==ref[field],(sc['id'],name,deadline,field)
         for k,ref in enumerate(references):
             expected=ref['cmax'] is not None and ref['cmax']<=deadline

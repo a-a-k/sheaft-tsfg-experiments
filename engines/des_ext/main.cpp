@@ -214,6 +214,7 @@ struct PBR {
             t=next;
         }
         json starts=json::array(),finishes=json::array(),jobs=json::array(),states=json::array();
+        if(deadlock && !diagnostic)for(int i:current)if(i>=0 && finish[i]>=0)blocked_integral+=H-t;
         std::sort(links.begin(),links.end());
         for(int i=0;i<n;++i) {
             starts.push_back(start[i]<0?json(nullptr):json(start[i]));finishes.push_back(finish[i]<0?json(nullptr):json(finish[i]));

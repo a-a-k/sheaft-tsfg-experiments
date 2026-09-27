@@ -9,6 +9,7 @@ import sys
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from experiments.pbr_cases_v2 import manual_cases
 from references.pbr_ref import simulate
+from validation.pbr_checks import validate
 
 FIELDS = ['start', 'finish', 'remaining', 'state', 'job_finish', 'mission_success', 'completion_known',
           'cmax', 'completion_lower_bound', 'run_status', 'stopped', 'machine_release', 'transfer_at',
@@ -35,6 +36,7 @@ def main():
             subprocess.run(['artifacts/build/des-ext', str(folder/'input.json'), str(folder/'scenario.json'),
                             str(output), mode, str(horizon)], check=True, timeout=20)
             actual = json.loads(output.read_text())
+            validate(case['data'],case['scenario'],actual)
             (folder/f'{mode}-{horizon}-reference.json').write_text(json.dumps(expected, indent=2))
             for field in FIELDS: assert actual[field] == expected[field], (case['name'], mode, horizon, field, actual[field], expected[field])
             if args.tsfg:
@@ -43,6 +45,7 @@ def main():
                     str(tsfg_output), mode, str(horizon), '5'], check=True, timeout=30,
                     env={**os.environ, 'TSFG_OP_DRIVER':'true', 'GOMAXPROCS':'1'})
                 tsfg=json.loads(tsfg_output.read_text())
+                validate(case['data'],case['scenario'],tsfg)
                 for field in FIELDS: assert tsfg[field] == expected[field], (case['name'], 'TSFG', mode, horizon, field, tsfg[field], expected[field])
             checks += 1
     (root/'summary.json').write_text(json.dumps(dict(status='PASS', checks=checks, engines=['DES-EXT', 'Fraction']+(['TSFG-EXT'] if args.tsfg else [])), indent=2)+'\n')
