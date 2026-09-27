@@ -1,0 +1,26 @@
+name: PBR exact admission v2
+on:
+  push:
+    branches: ['implementation/revision-v2']
+    paths: ['.github/workflows/extended_admission_v2.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  rational-controls:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - run: python scripts/budget_v2.py --package pbr-correctness --reserve-seconds 300
+      - run: python validation/pbr_reference_v2.py
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: pbr-rational-controls
+          path: |
+            artifacts/pbr-reference/
+            artifacts/budget/
