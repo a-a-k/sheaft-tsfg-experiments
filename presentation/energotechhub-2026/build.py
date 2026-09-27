@@ -106,12 +106,10 @@ def text(s, value, x, y, w, h, size=22, color='ink', bold=False, align=None, lin
         p.space_before, p.space_after, p.line_spacing = Pt(0), Pt(0), 1.04
         if align is not None:
             p.alignment = align
-        if link:
-            for r in p.runs:
-                r.hyperlink.address = link
-                r.font.name, r.font.size, r.font.bold = FONT, Pt(actual), bold
-                r.font.color.rgb = rgb(color)
-                r.font.underline = False
+    if link:
+        # A shape link preserves the authored text colour in LibreOffice PDF.
+        # Run-level links are forcibly recoloured blue by that exporter.
+        box.click_action.hyperlink.address = link
     manifest[-1]['texts'].append(value)
     return box
 
@@ -345,6 +343,9 @@ def verify():
     data=json.loads((OUT/'deck-manifest.json').read_text(encoding='utf-8'))
     doc=fitz.open(OUT/f'{STEM}.pdf')
     assert len(doc)==len(data)==17
+    pdf_links=[link.get('uri','') for page in doc for link in page.get_links()]
+    assert 'mailto:contact@mb3r-lab.org' in pdf_links, pdf_links
+    assert AWARD in pdf_links and REPORT in pdf_links
     issues=[]
     thumbs=[]
     previews=OUT/'previews';previews.mkdir(exist_ok=True)
@@ -371,7 +372,7 @@ def verify():
         sheet.paste(im,(x,y))
         draw.text((x,y+275),f'{i+1:02}',fill=(16,40,49))
     sheet.save(OUT/'Обзор_слайдов.png')
-    result=dict(status='PASS' if not issues else 'FAIL',slides=len(doc),issues=issues,
+    result=dict(status='PASS' if not issues else 'FAIL',slides=len(doc),issues=issues,links=len(pdf_links),
                 source_commit=os.environ.get('GITHUB_SHA'),run_id=os.environ.get('GITHUB_RUN_ID'))
     (OUT/'verification.json').write_text(json.dumps(result,ensure_ascii=False,indent=2),encoding='utf-8')
     hashes={p.name:hashlib.sha256(p.read_bytes()).hexdigest() for p in OUT.iterdir() if p.is_file() and p.name!='SHA256.json'}
