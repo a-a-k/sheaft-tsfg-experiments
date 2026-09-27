@@ -1,0 +1,10 @@
+{
+  "bootstrap-F1-independent.npy": "66ee30dcd9a3da185e5101a97f72af46dbc0a0f182c770374a3c89614549c32b",
+  "bootstrap-F1-common-cause.npy": "a34ee16e4cd2c07298be749df048ba7211637080a51f298a8cab47bbf76309d3",
+  "evidence-v2.json": "79a6a393ec1e79e5df116b6b467738ee801f30b338bb969f0ccd2f1ced7a8e5d",
+  "bootstrap-F2-independent.npy": "70703f3257847ae653dc9d02e89b8b2aaf544a8b3730cec40423c9383f12d6b1",
+  "bootstrap-F2-common-cause.npy": "2da2532471dd355ea28fbaf98ea995686735376816d04311699746694a7ee4ba",
+  "summary.json": "d76b6a0c373cbcb0344092190168f2b4ce8dc3c3e92cc2625097b971b7895fd3",
+  "e4-output-reanalysis.csv": "90fde706e7f82f6358860c2aa5a2e96962d502926bc425237d5dc1b9e3b0eaa5",
+  "REUSE_REPORT_V2_RU.md": "8bb1f351947d10f65a4c76dba0caaa2ddaecfb6c8514bfa8680aa40036707c67"
+}

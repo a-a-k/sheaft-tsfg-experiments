@@ -1,0 +1,65 @@
+{
+  "sources": [
+    {
+      "run_id": 36308210267,
+      "artifact_id": 10928033454,
+      "artifact_sha256": "f104edf69dc424091c873e750552ce7500541bbe435cef3cef076ed90cf7c245"
+    },
+    {
+      "run_id": 36308617954,
+      "artifact_id": 10928475488,
+      "artifact_sha256": "4028c6b3558682cad55572422e2ac9b80373af92a7760be1a91ecc4604c057f5"
+    },
+    {
+      "run_id": 36308875750,
+      "artifact_id": 10927869960,
+      "artifact_sha256": "992ddbd9c6d9354a5e5e2fbcc10e50c3835246894fd5d65ef2807f62dc3ca8fc"
+    },
+    {
+      "run_id": 36309164491,
+      "artifact_id": 10928174237,
+      "artifact_sha256": "2a12274dd1b5d094a341928e300612f8e9d2d8be8afafd37deb8949efd901d05"
+    },
+    {
+      "run_id": 36309782620,
+      "artifact_id": 10928482273,
+      "artifact_sha256": "02691c4ea63e56f9495307880b9aab133309d6f45d970e7a0ea4c71f97d87422"
+    },
+    {
+      "run_id": 36307972828,
+      "artifact_id": 10927922865,
+      "name": "aps-inputs-index-100k",
+      "artifact_sha256": "6c7a0d3ed29945bb05fe5d89ae36af2a2642493ace5525ff75c11a8166e3c82b",
+      "source_sha": "4fcaa51e6cd6a12a8e944253fa87ceceecf2e55b"
+    },
+    {
+      "run_id": 36309476853,
+      "artifact_id": 10929115039,
+      "name": "aps-inputs-index-1m",
+      "artifact_sha256": "fe12f5ccab56ff1140cc89fade200a77870e41222246fe52c34d6a7dc78eee2a",
+      "source_sha": "2f36440b28fca9ae7bb2855e590c313c7db03e85"
+    },
+    {
+      "run_id": 36309476853,
+      "artifact_id": 10929110020,
+      "name": "aps-inputs-1m",
+      "artifact_sha256": "3e15191038052d2837fe0d8c77b3b370ca98beff01b59fdb792106abc3fd5dab",
+      "source_sha": "2f36440b28fca9ae7bb2855e590c313c7db03e85"
+    },
+    {
+      "run_id": 36309782620,
+      "artifact_id": 10928244541,
+      "name": "aps-measured-7da427c20a18493fc96885727e4bce62ed39d495539124667756d9c3b1b5c194",
+      "artifact_sha256": "23797b6c75b0b079dfb7b65d239489de4d1bf0e66a2f53a598e2c56efab17e0f",
+      "source_sha": "13e62e7982ccab2185fc9e76bb5b03cd319f505f"
+    },
+    {
+      "run_id": 36309782620,
+      "artifact_id": 10927704881,
+      "name": "aps-measured-f4d3493769bc5a04430961781d02ad8ce6adacbdeacaf1d53f7e2d4099c44818",
+      "artifact_sha256": "6ab1023f49245ab2cdbf571b64bcdab444c0d067356d760d85ac83a5bfd006ba",
+      "source_sha": "13e62e7982ccab2185fc9e76bb5b03cd319f505f"
+    }
+  ],
+  "publication_source": "c2c51bbdecce44221f4c8b06956d1c735b78a5fe"
+}

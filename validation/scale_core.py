@@ -1,4 +1,5 @@
 """Generator and binary adapter admission gate, run on Actions."""
+import argparse
 import copy
 import json
 import os
@@ -15,6 +16,9 @@ from validation.checks import compare, validate_dataset, validate_result
 def main():
     if os.environ.get("GITHUB_ACTIONS")!="true":
         raise SystemExit("Actions only")
+    parser=argparse.ArgumentParser()
+    parser.add_argument('--engines', nargs='+', choices=['dag','des','tsfg'], default=['dag','des','tsfg'])
+    args=parser.parse_args()
     root=Path("artifacts/scale-core")
     root.mkdir(parents=True,exist_ok=True)
     checks=0
@@ -58,7 +62,7 @@ def main():
             (folder/"input.json").write_text(json.dumps(data))
             reference=None
             horizon=data["metadata"]["D_ticks"]
-            for engine in ("dag","des","tsfg"):
+            for engine in args.engines:
                 for extension in ("bin","json"):
                     target=folder/f"{engine}-{extension}.jsonl"
                     binary=".private/runtime/tsfg" if engine=="tsfg" else "artifacts/build/simulator"
@@ -89,7 +93,7 @@ def main():
         checks+=3
     summary=dict(status="PASS",checks=checks,generator_exhaustive_cases=80,
                  controls=["late priority arrival","earliest start before earliest finish"],
-                 binary_json_equivalence=["tsfg","des","dag"],families=["F1","F2","F3"],
+                 binary_json_equivalence=args.engines,families=["F1","F2","F3"],
                  densities=["DENSE","SPARSE","BURST"])
     (root/"summary.json").write_text(json.dumps(summary,indent=2))
     print(json.dumps(summary))

@@ -9,6 +9,9 @@ def number(value):
 
 
 def simulate(data, sc, horizon, mode="DIAGNOSTIC"):
+    if data.get('semantics') == 'PBR-EXACT-v2.2':
+        from references.pbr_ref import simulate as pbr_simulate
+        return pbr_simulate(data, sc, horizon, mode)
     ops=data["operations"];n=len(ops);m=len(data["queues"])
     queues=[deque(q) for q in data["queues"]]
     stores=[set() for _ in range(m)]

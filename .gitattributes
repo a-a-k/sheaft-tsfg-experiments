@@ -1,4 +1,6 @@
 # Preserve the bytes of the checksum-identified Actions documents on checkout.
 docs/results/full-study/** -text
+docs/results/revision-v2/** -text
+docs/results/revision-v2/**/*.csv whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
 # Python's CSV writer uses CRLF; retain it as part of the published checksum.
 docs/results/full-study/*.csv whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol

@@ -25,6 +25,7 @@ type opInput struct {
     Planned int64 `json:"planned_start"`
     Release int64 `json:"release"`
     Predecessors []int `json:"predecessors"`
+    ResourcePool *int `json:"resource_pool"`
 }
 type opDataset struct {
     Operations []opInput `json:"operations"`
@@ -34,6 +35,9 @@ type opDataset struct {
     BufferCapacity int `json:"buffer_capacity"`
     SharedOperations []int `json:"shared_operations"`
     BaseSpeed []int64 `json:"base_speed_percent"`
+    Semantics string `json:"semantics"`
+    BufferCapacities []json.RawMessage `json:"buffer_capacities"`
+    ResourcePools []struct { ID int `json:"id"`; Capacity int `json:"capacity"` } `json:"resource_pools"`
 }
 
 func opReadDataset(path string) (opDataset,error) {
@@ -94,6 +98,7 @@ type opScenario struct {
     Overrides [][2]int64 `json:"work_overrides"`
     Speeds [][4]int64 `json:"speed_intervals"`
     SharedFailures [][2]int64 `json:"shared_failures"`
+    ResourceFailures [][4]int64 `json:"resource_failures"`
 }
 type opPolicy struct {
     data opDataset
@@ -111,6 +116,7 @@ type opPolicy struct {
     steps, updates, completed int
     diagnostic bool
     ext *opExtension
+    pbr *pbrExtension
 }
 var opAllDone = errors.New("operation profile completed")
 
@@ -124,6 +130,7 @@ func (p *opPolicy) available(m int, t int64) bool {
     return p.cursor[m] == len(p.down[m]) || t < p.down[m][p.cursor[m]][0]
 }
 func (p *opPolicy) boundary(t int64) {
+    if p.pbr!=nil {p.pbrBoundary(t);return}
     if p.ext!=nil {p.extBoundary(t);return}
     p.stopped = t
     for m, queue := range p.data.Queues {
@@ -143,6 +150,7 @@ func (p *opPolicy) boundary(t int64) {
 func (p *opPolicy) BeginStep(_ int, t, step float64) {
     p.boundary(opExact(t))
     p.stepEnd = opExact(t+step)
+    if p.pbr!=nil {p.pbrMetrics(opExact(t),p.stepEnd)}
     p.steps++
 }
 func (p *opPolicy) AvailableInputItems() float64 { return 0 }
@@ -166,6 +174,7 @@ func (p *opPolicy) RouteNodeOutput(id string, processed, _ float64) (float64,flo
     return 0,processed
 }
 func (p *opPolicy) EndStep(_,_,_ float64) error {
+    if p.pbr!=nil {return p.pbrEndStep()}
     if p.ext!=nil {return p.extEndStep()}
     completed := p.completionScratch[:0]
     for m,i := range p.current {
@@ -210,7 +219,10 @@ func opSolve(data opDataset, sc opScenario, horizon, delta int64, diagnostic boo
         if o[0] < 0 || o[0] >= int64(n) || o[1] <= 0 { return nil,errors.New("Invalid work override") }
         p.left[o[0]] = o[1]
     }
-    if data.Extended {
+    if data.Semantics=="PBR-EXACT-v2.2" {
+        if delta!=5 || horizon%5!=0 {return nil,errors.New("PBR-EXACT-v2.2 requires delta=5 and aligned horizon")}
+        if err:=p.initPBR();err!=nil{return nil,err}
+    } else if data.Extended {
         for _,v:=range sc.Speeds {if v[1]%delta!=0 || v[2]%delta!=0{return nil,errors.New("Unaligned speed interval")}}
         for _,v:=range sc.SharedFailures {if v[0]%delta!=0 || v[1]%delta!=0{return nil,errors.New("Unaligned shared failure")}}
         if err:=p.initExtension();err!=nil{return nil,err}
@@ -307,6 +319,7 @@ func opSolve(data opDataset, sc opScenario, horizon, delta int64, diagnostic boo
         "counters":map[string]int{"upstream_steps":p.steps,"dependency_updates":p.updates},
         "algorithm_id":"tsfg-op-grid-s1-cached-v1"}
     if p.ext!=nil {p.extOutput(row)}
+    if p.pbr!=nil {p.pbrOutput(row)}
     row["phase_seconds"]=map[string]float64{"adapter_prepare":prepareSeconds,
         "upstream_with_policy":upstreamSeconds,"result_prepare":time.Since(resultStarted).Seconds()}
     return row,nil
@@ -363,6 +376,7 @@ func opCommand() error {
         "construction_policy":"original graph and policy rebuilt per scenario; included in batch"}
     if os.Args[1]=="tsfg-agg" || os.Getenv("TSFG_OUTPUT_PROFILE")=="AGG-MISSION" {meta["output_profile"]="AGG-MISSION"}
     meta["engine"]=os.Args[1]
+    if data.Semantics=="PBR-EXACT-v2.2" {peak,e:=pbrVmHWM();if e!=nil{return e};meta["VmHWM_bytes"]=peak;meta["memory_counter"]="/proc/self/status VmHWM after exec"}
     encoded,err:=json.MarshalIndent(meta,"","  ");if err!=nil{return err}
     if err=os.WriteFile(os.Args[4]+".meta.json",encoded,0600);err!=nil{return err}
     return nil

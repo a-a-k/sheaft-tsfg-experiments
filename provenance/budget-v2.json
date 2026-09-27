@@ -1,0 +1,31 @@
+{
+  "version": "2.2",
+  "total_runner_seconds": 172800,
+  "packages": {
+    "reuse": 3600,
+    "aps-first": 14400,
+    "pbr-correctness": 7200,
+    "pbr-screen": 10800,
+    "aps-rest": 43200,
+    "pbr-large": 57600,
+    "reserves": 28800,
+    "flow-report": 7200
+  },
+  "campaign_start_run_id": 36307149804,
+  "branch": "implementation/revision-v2",
+  "workflow_packages": {
+    "ci.yml": "reuse",
+    "reuse_analysis_v2.yml": "reuse",
+    "aps_schedule_benchmark.yml": "aps-first",
+    "aps_first_report_v2.yml": "aps-first",
+    "aps_remaining_v2.yml": "aps-rest",
+    "aps_matrix_report_v2.yml": "aps-rest",
+    "extended_admission_v2.yml": "pbr-correctness",
+    "extended_screen_v2.yml": "pbr-screen",
+    "flow_admission_v2.yml": "flow-report",
+    "extended_benchmark_v2.yml": "pbr-large",
+    "reserve_holdout_v2.yml": "reserves",
+    "report_v2.yml": "flow-report"
+  },
+  "initial_deviation": "The first archive-preservation push also triggered unchanged legacy CI before v2.2 became available. Its runner time is charged to reuse; subsequent revision pushes skip that legacy campaign."
+}

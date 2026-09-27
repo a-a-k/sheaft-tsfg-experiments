@@ -1,0 +1,43 @@
+name: Publish complete APS matrix v2
+on:
+  workflow_dispatch:
+    inputs:
+      million_runs:
+        type: string
+        required: true
+permissions:
+  contents: write
+  actions: read
+jobs:
+  report:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    env:
+      GH_TOKEN: ${{ github.token }}
+      MILLION_RUNS: ${{ inputs.million_runs || '36309782620,36311179606,36311541606,36312092689,36312569263,36312920618,36313419103' }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - run: python scripts/budget_v2.py --package aps-rest --reserve-seconds 1020
+      - run: python scripts/aps_matrix_report_v2.py --million-runs "$MILLION_RUNS"
+      - run: python scripts/publish_revision_bundle_v2.py --root aps-matrix --kind aps-matrix --report APS_MATRIX_REPORT_RU.md
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: aps-matrix-public-report
+          path: |
+            aps-matrix/report/
+            artifacts/budget/
+  verify:
+    needs: report
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - run: python scripts/publish_revision_bundle_v2.py --kind aps-matrix --download-verify
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: aps-matrix-download-verification
+          path: publication/download-verification.json

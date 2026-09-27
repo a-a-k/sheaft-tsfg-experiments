@@ -1,0 +1,18 @@
+{
+  "execution_status": "PARTIAL",
+  "first_APS_package": "COMPLETE",
+  "diagnostic_valid": 10,
+  "hundred_thousand_valid": 30,
+  "million_valid": 2,
+  "million_expected_after_deduplication": 30,
+  "presentation_N_seconds": null,
+  "outstanding": [
+    "28 remaining million-operation APS measurements and validation",
+    "36 preliminary PBR results and admission estimates",
+    "Admitted large PBR series",
+    "Independent reserve holdout",
+    "Six PF diagnostics",
+    "Final completeness audit"
+  ],
+  "interpretation": "First APS package completed; the revision campaign remains PARTIAL."
+}

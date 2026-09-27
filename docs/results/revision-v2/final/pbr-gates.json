@@ -1,0 +1,435 @@
+[
+  {
+    "run_id": 36312920355,
+    "cases": [
+      {
+        "case": "F1-DENSE-N100000-M200-s101-PBR"
+      },
+      {
+        "case": "F1-DENSE-N100000-M200-s102-PBR"
+      },
+      {
+        "case": "F1-DENSE-N100000-M200-s103-PBR"
+      }
+    ],
+    "count": 10,
+    "round": 0,
+    "nominal_run": 36312660828,
+    "decisions": [
+      {
+        "family": "F1",
+        "allowed": true,
+        "status": "ADMITTED",
+        "nominal_statuses": {
+          "101": "NOMINALLY_ADMISSIBLE",
+          "102": "NOMINALLY_ADMISSIBLE",
+          "103": "NOMINALLY_ADMISSIBLE"
+        }
+      },
+      {
+        "family": "F2",
+        "allowed": false,
+        "status": "NOT_RUN_BUDGET_GATE",
+        "nominal_statuses": {
+          "101": "NO_ADMISSIBLE_INPUT",
+          "102": "NO_ADMISSIBLE_INPUT",
+          "103": "NO_ADMISSIBLE_INPUT"
+        }
+      }
+    ],
+    "evidence": [
+      {
+        "id": 10928853965,
+        "sha256": "c5fbf759bfea6de738f1deaed23ae7edb287eda5467dbe583f1cdbef501c762c"
+      },
+      {
+        "id": 10929339610,
+        "sha256": "4f102739da9b3492103b3916f32bf55cb33606c61bb8f171c72e5e5cfd96545d"
+      },
+      {
+        "id": 10929578046,
+        "sha256": "944f1f50d7e5ebd58ce430291fbed5b054cd3977966ecada7e2a1941f8831467"
+      },
+      {
+        "id": 10929636971,
+        "sha256": "9369123b39c86e8ca6f451d5f9443622958e52c760d588f23c466b0ecff2637d"
+      },
+      {
+        "id": 10930040173,
+        "sha256": "bd47b1a12e3dfcf32302c97741cd7829beb2e03c19a7956edbcfe7fc25772aef"
+      },
+      {
+        "id": 10929063730,
+        "sha256": "ef71d77366957a7919db4acfb41014ec0b82702247cfef4705dd1efcf1642feb"
+      }
+    ],
+    "reservation_seconds": 4140
+  },
+  {
+    "run_id": 36314205507,
+    "cases": [],
+    "count": 10,
+    "round": 0,
+    "nominal_run": 36313419199,
+    "decisions": [
+      {
+        "family": "F1",
+        "allowed": false,
+        "status": "NOT_RUN_BUDGET_GATE",
+        "nominal_statuses": {
+          "101": "COMPUTATION_INCOMPLETE",
+          "102": "NOMINALLY_ADMISSIBLE",
+          "103": "COMPUTATION_INCOMPLETE"
+        }
+      },
+      {
+        "family": "F2",
+        "allowed": false,
+        "status": "NOT_RUN_BUDGET_GATE",
+        "nominal_statuses": {
+          "101": "NO_ADMISSIBLE_INPUT",
+          "102": "NO_ADMISSIBLE_INPUT",
+          "103": "NO_ADMISSIBLE_INPUT"
+        }
+      }
+    ],
+    "evidence": [
+      {
+        "id": 10930405125,
+        "sha256": "a9560162421f9038ae96f75c168abea96d284fa781e2d1d1cde90b4fdb92bf47"
+      },
+      {
+        "id": 10930665188,
+        "sha256": "e1681b54f9909261076f3af643bf4bc72cb85e199a28c9e4a57a23200b0d49ab"
+      },
+      {
+        "id": 10929314412,
+        "sha256": "5078839c756b432a96492e5ecdb562005c3082a22de8f0597e818f58149f75cf"
+      },
+      {
+        "id": 10929797295,
+        "sha256": "b31feeed1ccf364fa23ae2754e3b2998f120f4bd3a6af203bbb17a64f64767aa"
+      },
+      {
+        "id": 10929619210,
+        "sha256": "46bfa8482e68d5800fda12317aac7c0b8bc99b381901130742894100a559cc17"
+      },
+      {
+        "id": 10930271320,
+        "sha256": "3791e619d283b621cec51d0db8405aa51b0fc497827a91fe2444b16fe2a4974f"
+      }
+    ],
+    "reservation_seconds": 360
+  },
+  {
+    "run_id": 36314314751,
+    "cases": [
+      {
+        "case": "F1-DENSE-N100000-M200-s101-PBR"
+      },
+      {
+        "case": "F1-DENSE-N100000-M200-s102-PBR"
+      },
+      {
+        "case": "F1-DENSE-N100000-M200-s103-PBR"
+      }
+    ],
+    "count": 100,
+    "round": 1,
+    "nominal_run": 36312660828,
+    "decisions": [
+      {
+        "family": "F1",
+        "allowed": true,
+        "status": "ADMITTED",
+        "nominal_statuses": {
+          "101": "NOMINALLY_ADMISSIBLE",
+          "102": "NOMINALLY_ADMISSIBLE",
+          "103": "NOMINALLY_ADMISSIBLE"
+        }
+      }
+    ],
+    "evidence": [
+      {
+        "id": 10928853965,
+        "sha256": "c5fbf759bfea6de738f1deaed23ae7edb287eda5467dbe583f1cdbef501c762c"
+      },
+      {
+        "id": 10929339610,
+        "sha256": "4f102739da9b3492103b3916f32bf55cb33606c61bb8f171c72e5e5cfd96545d"
+      },
+      {
+        "id": 10929578046,
+        "sha256": "944f1f50d7e5ebd58ce430291fbed5b054cd3977966ecada7e2a1941f8831467"
+      },
+      {
+        "id": 10929636971,
+        "sha256": "9369123b39c86e8ca6f451d5f9443622958e52c760d588f23c466b0ecff2637d"
+      },
+      {
+        "id": 10930040173,
+        "sha256": "bd47b1a12e3dfcf32302c97741cd7829beb2e03c19a7956edbcfe7fc25772aef"
+      },
+      {
+        "id": 10929063730,
+        "sha256": "ef71d77366957a7919db4acfb41014ec0b82702247cfef4705dd1efcf1642feb"
+      }
+    ],
+    "reservation_seconds": 8100
+  },
+  {
+    "run_id": 36315293979,
+    "cases": [
+      {
+        "case": "F1-DENSE-N100000-M200-s101-PBR"
+      },
+      {
+        "case": "F1-DENSE-N100000-M200-s102-PBR"
+      },
+      {
+        "case": "F1-DENSE-N100000-M200-s103-PBR"
+      }
+    ],
+    "count": 100,
+    "round": 2,
+    "nominal_run": 36312660828,
+    "decisions": [
+      {
+        "family": "F1",
+        "allowed": true,
+        "status": "ADMITTED",
+        "reason": "ADMITTED",
+        "nominal_statuses": {
+          "101": "NOMINALLY_ADMISSIBLE",
+          "102": "NOMINALLY_ADMISSIBLE",
+          "103": "NOMINALLY_ADMISSIBLE"
+        }
+      }
+    ],
+    "evidence": [
+      {
+        "id": 10928853965,
+        "sha256": "c5fbf759bfea6de738f1deaed23ae7edb287eda5467dbe583f1cdbef501c762c"
+      },
+      {
+        "id": 10929339610,
+        "sha256": "4f102739da9b3492103b3916f32bf55cb33606c61bb8f171c72e5e5cfd96545d"
+      },
+      {
+        "id": 10929578046,
+        "sha256": "944f1f50d7e5ebd58ce430291fbed5b054cd3977966ecada7e2a1941f8831467"
+      },
+      {
+        "id": 10929636971,
+        "sha256": "9369123b39c86e8ca6f451d5f9443622958e52c760d588f23c466b0ecff2637d"
+      },
+      {
+        "id": 10930040173,
+        "sha256": "bd47b1a12e3dfcf32302c97741cd7829beb2e03c19a7956edbcfe7fc25772aef"
+      },
+      {
+        "id": 10929063730,
+        "sha256": "ef71d77366957a7919db4acfb41014ec0b82702247cfef4705dd1efcf1642feb"
+      }
+    ],
+    "reservation_seconds": 8100
+  },
+  {
+    "run_id": 36316184886,
+    "cases": [
+      {
+        "case": "F1-DENSE-N100000-M200-s101-PBR"
+      },
+      {
+        "case": "F1-DENSE-N100000-M200-s102-PBR"
+      },
+      {
+        "case": "F1-DENSE-N100000-M200-s103-PBR"
+      }
+    ],
+    "count": 100,
+    "round": 3,
+    "nominal_run": 36312660828,
+    "decisions": [
+      {
+        "family": "F1",
+        "allowed": true,
+        "status": "ADMITTED",
+        "reason": "ADMITTED",
+        "nominal_statuses": {
+          "101": "NOMINALLY_ADMISSIBLE",
+          "102": "NOMINALLY_ADMISSIBLE",
+          "103": "NOMINALLY_ADMISSIBLE"
+        }
+      }
+    ],
+    "evidence": [
+      {
+        "id": 10928853965,
+        "sha256": "c5fbf759bfea6de738f1deaed23ae7edb287eda5467dbe583f1cdbef501c762c"
+      },
+      {
+        "id": 10929339610,
+        "sha256": "4f102739da9b3492103b3916f32bf55cb33606c61bb8f171c72e5e5cfd96545d"
+      },
+      {
+        "id": 10929578046,
+        "sha256": "944f1f50d7e5ebd58ce430291fbed5b054cd3977966ecada7e2a1941f8831467"
+      },
+      {
+        "id": 10929636971,
+        "sha256": "9369123b39c86e8ca6f451d5f9443622958e52c760d588f23c466b0ecff2637d"
+      },
+      {
+        "id": 10930040173,
+        "sha256": "bd47b1a12e3dfcf32302c97741cd7829beb2e03c19a7956edbcfe7fc25772aef"
+      },
+      {
+        "id": 10929063730,
+        "sha256": "ef71d77366957a7919db4acfb41014ec0b82702247cfef4705dd1efcf1642feb"
+      }
+    ],
+    "reservation_seconds": 8100
+  },
+  {
+    "run_id": 36317118478,
+    "cases": [],
+    "count": 100,
+    "round": 1,
+    "nominal_run": 36312660828,
+    "decisions": [
+      {
+        "family": "F2",
+        "allowed": false,
+        "status": "NOT_RUN_BUDGET_GATE",
+        "reason": "NO_ADMISSIBLE_INPUT",
+        "nominal_statuses": {
+          "101": "NO_ADMISSIBLE_INPUT",
+          "102": "NO_ADMISSIBLE_INPUT",
+          "103": "NO_ADMISSIBLE_INPUT"
+        }
+      }
+    ],
+    "evidence": [
+      {
+        "id": 10928853965,
+        "sha256": "c5fbf759bfea6de738f1deaed23ae7edb287eda5467dbe583f1cdbef501c762c"
+      },
+      {
+        "id": 10929339610,
+        "sha256": "4f102739da9b3492103b3916f32bf55cb33606c61bb8f171c72e5e5cfd96545d"
+      },
+      {
+        "id": 10929578046,
+        "sha256": "944f1f50d7e5ebd58ce430291fbed5b054cd3977966ecada7e2a1941f8831467"
+      },
+      {
+        "id": 10929636971,
+        "sha256": "9369123b39c86e8ca6f451d5f9443622958e52c760d588f23c466b0ecff2637d"
+      },
+      {
+        "id": 10930040173,
+        "sha256": "bd47b1a12e3dfcf32302c97741cd7829beb2e03c19a7956edbcfe7fc25772aef"
+      },
+      {
+        "id": 10929063730,
+        "sha256": "ef71d77366957a7919db4acfb41014ec0b82702247cfef4705dd1efcf1642feb"
+      }
+    ],
+    "reservation_seconds": 360
+  },
+  {
+    "run_id": 36317214949,
+    "cases": [],
+    "count": 100,
+    "round": 1,
+    "nominal_run": 36313419199,
+    "decisions": [
+      {
+        "family": "F1",
+        "allowed": false,
+        "status": "NOT_RUN_BUDGET_GATE",
+        "reason": "NOMINAL_ADMISSION_INCOMPLETE",
+        "nominal_statuses": {
+          "101": "COMPUTATION_INCOMPLETE",
+          "102": "NOMINALLY_ADMISSIBLE",
+          "103": "COMPUTATION_INCOMPLETE"
+        }
+      }
+    ],
+    "evidence": [
+      {
+        "id": 10930405125,
+        "sha256": "a9560162421f9038ae96f75c168abea96d284fa781e2d1d1cde90b4fdb92bf47"
+      },
+      {
+        "id": 10930665188,
+        "sha256": "e1681b54f9909261076f3af643bf4bc72cb85e199a28c9e4a57a23200b0d49ab"
+      },
+      {
+        "id": 10929314412,
+        "sha256": "5078839c756b432a96492e5ecdb562005c3082a22de8f0597e818f58149f75cf"
+      },
+      {
+        "id": 10929797295,
+        "sha256": "b31feeed1ccf364fa23ae2754e3b2998f120f4bd3a6af203bbb17a64f64767aa"
+      },
+      {
+        "id": 10929619210,
+        "sha256": "46bfa8482e68d5800fda12317aac7c0b8bc99b381901130742894100a559cc17"
+      },
+      {
+        "id": 10930271320,
+        "sha256": "3791e619d283b621cec51d0db8405aa51b0fc497827a91fe2444b16fe2a4974f"
+      }
+    ],
+    "reservation_seconds": 360
+  },
+  {
+    "run_id": 36317290210,
+    "cases": [],
+    "count": 100,
+    "round": 1,
+    "nominal_run": 36313419199,
+    "decisions": [
+      {
+        "family": "F2",
+        "allowed": false,
+        "status": "NOT_RUN_BUDGET_GATE",
+        "reason": "NO_ADMISSIBLE_INPUT",
+        "nominal_statuses": {
+          "101": "NO_ADMISSIBLE_INPUT",
+          "102": "NO_ADMISSIBLE_INPUT",
+          "103": "NO_ADMISSIBLE_INPUT"
+        }
+      }
+    ],
+    "evidence": [
+      {
+        "id": 10930405125,
+        "sha256": "a9560162421f9038ae96f75c168abea96d284fa781e2d1d1cde90b4fdb92bf47"
+      },
+      {
+        "id": 10930665188,
+        "sha256": "e1681b54f9909261076f3af643bf4bc72cb85e199a28c9e4a57a23200b0d49ab"
+      },
+      {
+        "id": 10929314412,
+        "sha256": "5078839c756b432a96492e5ecdb562005c3082a22de8f0597e818f58149f75cf"
+      },
+      {
+        "id": 10929797295,
+        "sha256": "b31feeed1ccf364fa23ae2754e3b2998f120f4bd3a6af203bbb17a64f64767aa"
+      },
+      {
+        "id": 10929619210,
+        "sha256": "46bfa8482e68d5800fda12317aac7c0b8bc99b381901130742894100a559cc17"
+      },
+      {
+        "id": 10930271320,
+        "sha256": "3791e619d283b621cec51d0db8405aa51b0fc497827a91fe2444b16fe2a4974f"
+      }
+    ],
+    "reservation_seconds": 360
+  }
+]

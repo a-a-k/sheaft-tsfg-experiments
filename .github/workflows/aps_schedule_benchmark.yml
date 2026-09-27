@@ -1,0 +1,238 @@
+name: APS BASIC scheduling v2
+on:
+  workflow_dispatch:
+    inputs:
+      phase:
+        type: choice
+        options: [prepare, prepare-million, diagnostic, hundred, million]
+        default: prepare
+        required: true
+      inputs_run:
+        type: string
+        description: Successful prepared input run
+      admission_run:
+        type: string
+        description: Successful APS correctness and public build run
+      diagnostic_run:
+        type: string
+        description: Successful diagnostic batch, required before 100k
+      hundred_runs:
+        type: string
+        description: Three successful 100k run IDs separated by commas, required for million
+      repeat:
+        type: choice
+        options: ['0', '1', '2', '3']
+        default: '0'
+permissions:
+  contents: read
+  actions: read
+jobs:
+  budget:
+    if: inputs.phase == 'prepare' || inputs.phase == 'prepare-million' || github.event_name == 'push'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 3
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - run: python scripts/budget_v2.py --package aps-first --reserve-seconds 1980
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: aps-budget-${{ github.sha }}
+          path: artifacts/budget/
+  prepare:
+    needs: budget
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    container:
+      image: python:3.12-bookworm@sha256:dbbe4ceb97851e2e5fa83798b239811f871cb743b259ba3563737349f6bcfaa0
+      options: --cpus=1 --cpuset-cpus=0 --memory=4g --memory-swap=4g
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - name: Convert all historical 100k routes; deduplicate semantic hashes
+        run: python scripts/prepare_aps_v2.py --size ${{ inputs.phase == 'prepare-million' && 1000000 || 100000 }} --output artifacts/aps-inputs
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: aps-inputs-${{ inputs.phase == 'prepare-million' && '1m' || '100k' }}
+          path: artifacts/aps-inputs/
+          compression-level: 1
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: aps-inputs-index-${{ inputs.phase == 'prepare-million' && '1m' || '100k' }}
+          path: artifacts/aps-inputs/aps-inputs-index.json
+  correctness:
+    needs: budget
+    if: inputs.phase != 'prepare-million'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    container:
+      image: python:3.12-bookworm@sha256:dbbe4ceb97851e2e5fa83798b239811f871cb743b259ba3563737349f6bcfaa0
+      options: --cpus=1 --cpuset-cpus=0 --memory=4g --memory-swap=4g
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - run: python -m pip install --require-hashes -r requirements.lock
+      - run: python scripts/build.py
+      - run: python validation/scale_core.py --engines dag des
+      - run: python validation/aps_memory.py
+      - run: python validation/aps_schedule.py --admission --output artifacts/aps-admission
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: aps-admission-and-public-build
+          path: |
+            artifacts/aps-admission/
+            artifacts/build/
+  batch:
+    if: inputs.phase == 'diagnostic' || inputs.phase == 'hundred' || inputs.phase == 'million'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 3
+    outputs:
+      matrix: ${{ steps.plan.outputs.matrix || steps.million.outputs.matrix }}
+      count: ${{ inputs.phase == 'million' && steps.million.outputs.count || 10 }}
+    env:
+      GH_TOKEN: ${{ github.token }}
+      INPUTS_RUN: ${{ inputs.inputs_run }}
+      ADMISSION_RUN: ${{ inputs.admission_run }}
+      PHASE: ${{ inputs.phase }}
+      REPEAT: ${{ inputs.repeat }}
+      HUNDRED_RUNS: ${{ inputs.hundred_runs }}
+      DIAGNOSTIC_RUN: ${{ inputs.diagnostic_run }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          name: aps-inputs-index-${{ inputs.phase == 'million' && '1m' || '100k' }}
+          run-id: ${{ inputs.inputs_run }}
+          github-token: ${{ github.token }}
+          path: batch
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        if: inputs.phase == 'hundred'
+        with:
+          name: aps-batch-report
+          run-id: ${{ inputs.diagnostic_run }}
+          github-token: ${{ github.token }}
+          path: batch/diagnostic
+      - id: plan
+        if: inputs.phase != 'million'
+        run: python scripts/aps_batch_v2.py plan --root batch --phase "$PHASE" --repeat "$REPEAT" --inputs-run "$INPUTS_RUN" --admission-run "$ADMISSION_RUN"
+      - id: million
+        if: inputs.phase == 'million'
+        run: python scripts/aps_million_gate_v2.py --root batch --hundred-runs "$HUNDRED_RUNS" --diagnostic-run "$DIAGNOSTIC_RUN"
+      - env:
+          RESERVED: ${{ steps.plan.outputs.reservation || steps.million.outputs.reservation }}
+        run: python scripts/budget_v2.py --package aps-first --reserve-seconds "$RESERVED"
+      - run: python validation/aps_memory.py
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: aps-batch-manifest
+          path: |
+            batch/
+            artifacts/budget/
+            artifacts/aps-admission/memory-counter.json
+  measure:
+    needs: batch
+    if: needs.batch.outputs.count != '0'
+    runs-on: ubuntu-24.04
+    timeout-minutes: ${{ inputs.phase == 'million' && 50 || inputs.phase == 'diagnostic' && 3 || 6 }}
+    strategy:
+      fail-fast: false
+      max-parallel: 4
+      matrix: ${{ fromJSON(needs.batch.outputs.matrix) }}
+    container:
+      image: python:3.12-bookworm@sha256:dbbe4ceb97851e2e5fa83798b239811f871cb743b259ba3563737349f6bcfaa0
+      options: --cpus=1 --cpuset-cpus=0 --memory=4g --memory-swap=4g
+    env:
+      PHASE: ${{ inputs.phase }}
+      TASK: ${{ matrix.task }}
+      REPEAT: ${{ matrix.repeat }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          name: aps-inputs-${{ inputs.phase == 'million' && '1m' || '100k' }}
+          run-id: ${{ inputs.inputs_run }}
+          github-token: ${{ github.token }}
+          path: aps-inputs
+      - name: Isolated complete planning process
+        run: |
+          if [ "$PHASE" = diagnostic ]; then file=diagnostic-10k.jsonl; limit=60; elif [ "$PHASE" = million ]; then file=task.jsonl; limit=2700; else file=task.jsonl; limit=180; fi
+          python scripts/run_aps_v2.py --input "aps-inputs/$TASK/$file" --output result --limit "$limit" --repeat "$REPEAT"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: aps-measured-${{ matrix.task }}
+          path: result/
+          compression-level: 1
+  validate:
+    needs: [batch, measure]
+    if: always() && needs.batch.result == 'success' && needs.batch.outputs.count != '0'
+    runs-on: ubuntu-24.04
+    timeout-minutes: ${{ inputs.phase == 'million' && 8 || 5 }}
+    strategy:
+      fail-fast: false
+      max-parallel: 4
+      matrix: ${{ fromJSON(needs.batch.outputs.matrix) }}
+    container:
+      image: python:3.12-bookworm@sha256:dbbe4ceb97851e2e5fa83798b239811f871cb743b259ba3563737349f6bcfaa0
+      options: --cpus=1 --cpuset-cpus=0 --memory=4g --memory-swap=4g
+    env:
+      PHASE: ${{ inputs.phase }}
+      TASK: ${{ matrix.task }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          name: aps-inputs-${{ inputs.phase == 'million' && '1m' || '100k' }}
+          run-id: ${{ inputs.inputs_run }}
+          github-token: ${{ github.token }}
+          path: aps-inputs
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          name: aps-admission-and-public-build
+          run-id: ${{ inputs.admission_run }}
+          github-token: ${{ github.token }}
+          path: artifacts
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          name: aps-measured-${{ matrix.task }}
+          path: result
+      - run: python -m pip install --require-hashes -r requirements.lock
+      - name: Independent constraints, quality bound and DAG replay
+        run: |
+          chmod +x artifacts/build/simulator
+          if [ "$PHASE" = diagnostic ]; then file=diagnostic-10k.jsonl; else file=task.jsonl; fi
+          python scripts/aps_batch_v2.py validate --root result --task "aps-inputs/$TASK/$file"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: aps-validated-${{ matrix.task }}
+          path: |
+            result/validated.json
+            result/validation/quality.json
+            result/validation/replay/
+          compression-level: 1
+  report:
+    needs: [batch, validate]
+    if: always() && needs.batch.result == 'success' && needs.batch.outputs.count != '0'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          pattern: aps-validated-*
+          path: collected
+      - env:
+          EXPECTED: ${{ needs.batch.outputs.count }}
+        run: python scripts/aps_batch_v2.py report --root collected --output report --expected "$EXPECTED"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: aps-batch-report
+          path: report/

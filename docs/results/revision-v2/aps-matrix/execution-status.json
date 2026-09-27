@@ -1,0 +1,16 @@
+{
+  "execution_status": "COMPLETE",
+  "scope": "Full deduplicated APS-BASIC matrix",
+  "campaign_execution_status": "PARTIAL",
+  "unique_tasks_per_size": 10,
+  "repeats_per_task": 3,
+  "validated_primary_processes": 60,
+  "diagnostic_processes": 10,
+  "presentation_N_seconds": 74.7277512,
+  "N_definition": "Maximum of the three-repeat medians across every unique required million-operation input",
+  "BFG_published_seconds": 2700,
+  "ratio_of_published_vendor_time_to_measured_N": 36.13115551642614,
+  "measured_result": "Complete APS-BASIC matrix with independent validation and quality bounds",
+  "market_hypothesis": "Sheaft способен сократить время построения крупных производственных планов по сравнению с классом APS; первый рыночный ориентир — BFG APS",
+  "market_extrapolation_assumption": "Representativeness of BFG for other APS products and comparability of tasks and quality have not been experimentally established"
+}

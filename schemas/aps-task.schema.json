@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "APS-BASIC-catalog-v1 JSONL header",
+  "description": "Record grammar and streaming constraints are defined in docs/APS_SPEC_V1_RU.md; this schema covers the mandatory first line.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema", "machines", "tick_unit"],
+  "properties": {
+    "schema": {"const": "APS-BASIC-catalog-v1"},
+    "machines": {"type": "integer", "minimum": 1},
+    "tick_unit": {"type": "string", "minLength": 1}
+  }
+}

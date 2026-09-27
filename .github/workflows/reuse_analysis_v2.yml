@@ -1,0 +1,87 @@
+name: Preserve and reanalyse complete E4 v2
+on:
+  push:
+    branches: ['implementation/revision-v2']
+    paths:
+      - '.github/workflows/reuse_analysis_v2.yml'
+      - 'scripts/preserve_e4_v2.py'
+      - 'experiments/reuse_e4_v2.py'
+      - 'validation/reuse_e4_v2.py'
+      - 'provenance/e4-reuse-v2.json'
+      - 'scripts/publish_e4_v2.py'
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  preserve:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    container:
+      image: python:3.12-bookworm@sha256:dbbe4ceb97851e2e5fa83798b239811f871cb743b259ba3563737349f6bcfaa0
+      options: --cpus=1 --cpuset-cpus=0 --memory=4g --memory-swap=4g
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - name: Reserve the complete 25 minute workflow group
+        run: python scripts/budget_v2.py --package reuse --reserve-seconds 1500
+      - name: Verify run, original ZIP digests and raw file hashes
+        run: python scripts/preserve_e4_v2.py --output artifacts/e4-preserved
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: e4-complete-preserved-${{ github.sha }}
+          path: |
+            artifacts/e4-preserved/*.zip
+            artifacts/e4-preserved/evidence-v2.json
+            artifacts/e4-preserved/SHA256.json
+          compression-level: 0
+          retention-days: 90
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: e4-budget-${{ github.sha }}
+          path: artifacts/budget/
+      - run: python -m pip install --require-hashes -r requirements.lock
+      - name: Analytic checks of the reanalysis
+        run: python validation/reuse_e4_v2.py
+      - name: Paired effects from existing produced_jobs, no simulation
+        run: python experiments/reuse_e4_v2.py --source artifacts/e4-preserved --output artifacts/e4-reanalysis
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: e4-output-reanalysis-${{ github.sha }}
+          path: artifacts/e4-reanalysis/
+          retention-days: 90
+  publish:
+    needs: preserve
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    permissions:
+      contents: write
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          name: e4-complete-preserved-${{ github.sha }}
+          path: publication-input/raw
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          name: e4-output-reanalysis-${{ github.sha }}
+          path: publication-input/analysis
+      - run: python scripts/publish_e4_v2.py
+  verify-release-download:
+    needs: publish
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - run: python scripts/publish_e4_v2.py --download-verify
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: e4-release-download-verification
+          path: publication/download-verification.json

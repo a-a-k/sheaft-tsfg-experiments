@@ -1,15 +1,12 @@
 name: Core correctness
 on:
-  push:
-    branches: [main, 'implementation/**']
-    paths-ignore: ['**.md']
-  pull_request:
   workflow_dispatch:
 permissions:
   contents: read
 jobs:
   core:
-    if: github.event_name != 'pull_request'
+    # This is the complete legacy simulation campaign, not a lightweight check.
+    # Publication must not silently rerun it outside the v2.2 package budgets.
     runs-on: ubuntu-24.04
     timeout-minutes: 20
     container:

@@ -1,0 +1,122 @@
+{
+  "schema": "evidence-v2",
+  "source_run": {
+    "id": 36234852274,
+    "head_sha": "e85c8fabc3370b7a77fb8b530fcddb435da39163",
+    "html_url": "https://github.com/a-a-k/sheaft-tsfg-experiments/actions/runs/36234852274",
+    "run_attempt": 1,
+    "conclusion": "success"
+  },
+  "entries": [
+    {
+      "family": "F1",
+      "id": 10903988001,
+      "name": "e4-F1-e85c8fabc3370b7a77fb8b530fcddb435da39163",
+      "sha256": "9883ef3b5a47f1ad8f84d6346c37d74e09518d1ceae1a838ebb8be9778950988",
+      "status": "REUSED_UNCHANGED",
+      "reason": "Complete pinned archive retained byte for byte; saved output only",
+      "input_sha256": "9a79e3f6347df40eeab14ace787b6ee58b854bf24971bdeab0dd3821969ead8c",
+      "files": {
+        "e4/F1/REPORT_RU.md": "c279d34e9f05f55c66a078f80b0976ba8ed8d271bf310b915aafa9228b219e83",
+        "e4/F1/dataset-metadata.json": "207e0731f1ce24c4098fdd6f279fe2bb09fc5f82306aedbdab44dc34cdc283b5",
+        "e4/F1/evaluation-common-cause.json": "2a935f69038dc4656f02813b5524b4cd6339b7adef8d21e4d709b12a4f204d8f",
+        "e4/F1/evaluation-independent.json": "a1f564f9211014be9e9073486c9bfe0ea92553b9aee9308741aec6d0e44e64f9",
+        "e4/F1/frozen-interventions.json": "f99c0f2643481010b9f3b83a30e6d2be9d0bf2e5dbaf95fed3db9c41340d3a3c",
+        "e4/F1/input.bin": "9a79e3f6347df40eeab14ace787b6ee58b854bf24971bdeab0dd3821969ead8c",
+        "e4/F1/ranking.json": "39b28f92b01e21973aa1a81f28e5dd908724954a03988f648dff40a2b5b85e7f",
+        "e4/F1/scenarios-common-cause.json": "5016883c4760e76504121c49922b21ba12d2e009274a003445a2f334b1440b57",
+        "e4/F1/scenarios-independent.json": "7f2c8e55fc6ae6bc1d724f14d4ebfc6eff6d82d1deec170712b8d62f24f7fa53",
+        "e4/F1/summary.json": "30357447677e0184409e7ddda13930e6b18a28aa67a934024c5c09282037d376"
+      },
+      "mode": "MISSION",
+      "semantics": "P0 fixed assignments and queues; unlimited buffers; speed intervention +10%",
+      "engines": [
+        "DAG-REF",
+        "DES-REF"
+      ],
+      "engine_commit": "e85c8fabc3370b7a77fb8b530fcddb435da39163",
+      "output": [
+        "outcomes",
+        "produced_jobs",
+        "cmax_scaled_ticks"
+      ]
+    },
+    {
+      "family": "F2",
+      "id": 10904337463,
+      "name": "e4-F2-e85c8fabc3370b7a77fb8b530fcddb435da39163",
+      "sha256": "fa1c410164d91e3902fa9a087f717cc976e7bab8dbe25afe4f4996995c175a85",
+      "status": "REUSED_UNCHANGED",
+      "reason": "Complete pinned archive retained byte for byte; saved output only",
+      "input_sha256": "2860fea535bec04bcf6129532b6266f940fd9ee866744edd8069b32c882278c8",
+      "files": {
+        "e4/F2/REPORT_RU.md": "60862a533faa15065d537945b6b56737aec153309b362f849f989c25fd30ec64",
+        "e4/F2/dataset-metadata.json": "db48fbb54cf3c4074dc683c259fe856387cc378c184377791d89c27e6923e309",
+        "e4/F2/evaluation-common-cause.json": "a3b441f2126813bdca90d8700365ecf5e258fa5325e027bea2c7858e7756b467",
+        "e4/F2/evaluation-independent.json": "0e0bdd375905a0a6636460f93b8f653ac05f54a13ca58c990a0e17279ebbf1f0",
+        "e4/F2/frozen-interventions.json": "e0c02618fa869f1b777338d618c0c210485b54454844a2d0a81f6375899d8ed5",
+        "e4/F2/input.bin": "2860fea535bec04bcf6129532b6266f940fd9ee866744edd8069b32c882278c8",
+        "e4/F2/ranking.json": "52cc9e963c3d8c5783abc85a6937f64d60c502cbad401fcab1f0740d2d4bae28",
+        "e4/F2/scenarios-common-cause.json": "a7793c12dd8ec588caed6d06227e4ab9e1826262629552eb749caff405b57d7b",
+        "e4/F2/scenarios-independent.json": "6f8a0c4c5b7b4320c5180bccfe6988f0626358207eaa200242523cbf7ccb3e90",
+        "e4/F2/summary.json": "d4a2c1dac75dca2ab31d0d835700141a1afc0b456db3c22bd296aee0bea43481"
+      },
+      "mode": "MISSION",
+      "semantics": "P0 fixed assignments and queues; unlimited buffers; speed intervention +10%",
+      "engines": [
+        "DAG-REF",
+        "DES-REF"
+      ],
+      "engine_commit": "e85c8fabc3370b7a77fb8b530fcddb435da39163",
+      "output": [
+        "outcomes",
+        "produced_jobs",
+        "cmax_scaled_ticks"
+      ]
+    },
+    {
+      "status": "DERIVED_FROM_SAVED_OUTPUT",
+      "family": "F1",
+      "law": "independent",
+      "artifact_id": 10903988001,
+      "input_sha256": "9a79e3f6347df40eeab14ace787b6ee58b854bf24971bdeab0dd3821969ead8c",
+      "output_sha256": "a1f564f9211014be9e9073486c9bfe0ea92553b9aee9308741aec6d0e44e64f9",
+      "semantics": "P0 v1.1",
+      "engine_commit": "e85c8fabc3370b7a77fb8b530fcddb435da39163",
+      "reason": "Paired output differences derived without simulation"
+    },
+    {
+      "status": "DERIVED_FROM_SAVED_OUTPUT",
+      "family": "F1",
+      "law": "common-cause",
+      "artifact_id": 10903988001,
+      "input_sha256": "9a79e3f6347df40eeab14ace787b6ee58b854bf24971bdeab0dd3821969ead8c",
+      "output_sha256": "2a935f69038dc4656f02813b5524b4cd6339b7adef8d21e4d709b12a4f204d8f",
+      "semantics": "P0 v1.1",
+      "engine_commit": "e85c8fabc3370b7a77fb8b530fcddb435da39163",
+      "reason": "Paired output differences derived without simulation"
+    },
+    {
+      "status": "DERIVED_FROM_SAVED_OUTPUT",
+      "family": "F2",
+      "law": "independent",
+      "artifact_id": 10904337463,
+      "input_sha256": "2860fea535bec04bcf6129532b6266f940fd9ee866744edd8069b32c882278c8",
+      "output_sha256": "0e0bdd375905a0a6636460f93b8f653ac05f54a13ca58c990a0e17279ebbf1f0",
+      "semantics": "P0 v1.1",
+      "engine_commit": "e85c8fabc3370b7a77fb8b530fcddb435da39163",
+      "reason": "Paired output differences derived without simulation"
+    },
+    {
+      "status": "DERIVED_FROM_SAVED_OUTPUT",
+      "family": "F2",
+      "law": "common-cause",
+      "artifact_id": 10904337463,
+      "input_sha256": "2860fea535bec04bcf6129532b6266f940fd9ee866744edd8069b32c882278c8",
+      "output_sha256": "a3b441f2126813bdca90d8700365ecf5e258fa5325e027bea2c7858e7756b467",
+      "semantics": "P0 v1.1",
+      "engine_commit": "e85c8fabc3370b7a77fb8b530fcddb435da39163",
+      "reason": "Paired output differences derived without simulation"
+    }
+  ]
+}
