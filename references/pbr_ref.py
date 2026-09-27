@@ -26,13 +26,13 @@ def simulate(data, sc, horizon, mode='DIAGNOSTIC'):
     assert all(len(o['predecessors']) <= 1 for o in ops) and all(len(c) <= 1 for c in children)
     order = sorted(range(n), key=lambda i: (ops[i]['planned_start'], ops[i]['job'], i, ops[i]['machine']))
     future = set()
-    for o in ops: future.update((F(o['release']), F(o['planned_start'])))
     for _, a, b in sc.get('failures', []): future.update((F(a), F(b)))
     for _, _, a, b in failures: future.update((F(a), F(b)))
     t = F(0)
     peaks = [0]*m
     resource_wait, blocked_time = F(0), F(0)
     links = []
+    link_index = {}
     ownership = []
     ownership_index = [None]*n
     deadlock = False
@@ -119,6 +119,9 @@ def simulate(data, sc, horizon, mode='DIAGNOSTIC'):
         running = [i for i in machine if i is not None and finishes[i] is None]
         # Future input events are an intentionally conservative deadlock guard.
         future_events = [v for v in future if v > t]
+        for i, op in enumerate(ops):
+            if starts[i] is None and all(finishes[p] is not None for p in op['predecessors']):
+                future_events.extend(F(v) for v in (op['release'], op['planned_start']) if v > t)
         if t == horizon or (mode == 'DIAGNOSTIC' and complete): break
         if not complete and not running and not future_events:
             deadlock = True
@@ -126,7 +129,7 @@ def simulate(data, sc, horizon, mode='DIAGNOSTIC'):
         if complete:
             t = F(horizon)
             break
-        next_t = min([F(horizon), *[v for v in future if v > t],
+        next_t = min([F(horizon), *future_events,
                       *[t+remaining[i] for i in running if processing(i)]])
         assert next_t > t
         waiting = [i for i in order if needs[i] is not None and can_start(i, own=True, ignore_resource=True)
@@ -139,8 +142,12 @@ def simulate(data, sc, horizon, mode='DIAGNOSTIC'):
             for p in ops[i]['predecessors']:
                 if p in blocked and transfers[i] is None and capacities[k] != 'unbounded' and len(buffers[k]) >= capacities[k]:
                     item = [t, next_t, p, i, k, needs[i]]
-                    if links and links[-1][1] == t and links[-1][2:] == item[2:]: links[-1][1] = next_t
-                    else: links.append(item)
+                    key = tuple(item[2:])
+                    previous = link_index.get(key)
+                    if previous is not None and links[previous][1] == t: links[previous][1] = next_t
+                    else:
+                        link_index[key] = len(links)
+                        links.append(item)
         for i in running:
             if processing(i): remaining[i] -= next_t-t
         t = next_t
@@ -169,5 +176,5 @@ def simulate(data, sc, horizon, mode='DIAGNOSTIC'):
         resource_owners=[[-1 if v is None else v for v in row] for row in owners],
         resource_ownership=[[num(v) if v is not None else -1 for v in row] for row in ownership],
         resource_wait_integral=num(resource_wait), blocked_machine_integral=num(blocked_time),
-        coupling_witnesses=[[num(v) for v in row] for row in links],
+        coupling_witnesses=[[num(v) for v in row] for row in sorted(links)],
         deadlock_proof=dict(no_running_operations=not running, no_future_changes=not future_events) if deadlock else None)

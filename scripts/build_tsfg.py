@@ -88,6 +88,7 @@ if args.audit_baseline:
     baseline_ref = "2ade199735cf49eae328d8402b2b0a984b7d2e49"
     baseline_files = (adapter, extended_adapter, audit_adapter)
     try:
+        (engine / 'cmd/ozon-engine/pbr_adapter.go').unlink()
         for public in baseline_files:
             previous = subprocess.check_output(["git", "-c", f"safe.directory={Path.cwd()}",
                                                 "show", f"{baseline_ref}:{public.as_posix()}"])
@@ -104,3 +105,4 @@ if args.audit_baseline:
     finally:
         for public in baseline_files:
             shutil.copyfile(public, engine / "cmd/ozon-engine" / public.name)
+        shutil.copyfile(pbr_adapter, engine / 'cmd/ozon-engine/pbr_adapter.go')

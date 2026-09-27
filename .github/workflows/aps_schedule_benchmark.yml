@@ -4,7 +4,7 @@ on:
     inputs:
       phase:
         type: choice
-        options: [prepare, diagnostic, hundred]
+        options: [prepare, prepare-million, diagnostic, hundred]
         default: prepare
         required: true
       inputs_run:
@@ -25,7 +25,7 @@ permissions:
   actions: read
 jobs:
   budget:
-    if: inputs.phase == 'prepare' || github.event_name == 'push'
+    if: inputs.phase == 'prepare' || inputs.phase == 'prepare-million' || github.event_name == 'push'
     runs-on: ubuntu-24.04
     timeout-minutes: 3
     env:
@@ -50,20 +50,21 @@ jobs:
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
       - name: Convert all historical 100k routes; deduplicate semantic hashes
-        run: python scripts/prepare_aps_v2.py --size 100000 --output artifacts/aps-inputs
+        run: python scripts/prepare_aps_v2.py --size ${{ inputs.phase == 'prepare-million' && 1000000 || 100000 }} --output artifacts/aps-inputs
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         if: always()
         with:
-          name: aps-inputs-100k
+          name: aps-inputs-${{ inputs.phase == 'prepare-million' && '1m' || '100k' }}
           path: artifacts/aps-inputs/
           compression-level: 1
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         if: always()
         with:
-          name: aps-inputs-index-100k
+          name: aps-inputs-index-${{ inputs.phase == 'prepare-million' && '1m' || '100k' }}
           path: artifacts/aps-inputs/aps-inputs-index.json
   correctness:
     needs: budget
+    if: inputs.phase != 'prepare-million'
     runs-on: ubuntu-24.04
     timeout-minutes: 10
     container:

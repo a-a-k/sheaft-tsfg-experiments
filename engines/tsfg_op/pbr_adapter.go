@@ -63,6 +63,7 @@ type pbrExtension struct {
     custody [][5]int64
     custodyIndex []int
     links [][6]int64
+    linkIndex map[[4]int64]int
     resourceIntegral,blockedIntegral int64
     visits int64
 }
@@ -73,7 +74,7 @@ func(p *opPolicy)initPBR()error {
         rank:make([]int,n),order:make([]int,n),released:make([]int64,n),transfer:make([]int64,n),entry:make([]int64,n),
         buffered:make([]bool,n),releaseTimer:make([]bool,n),planTimer:make([]bool,n),bufferWait:make([]*pbrTree,m),
         readySet:map[int]bool{},nextSet:map[int]bool{},cursor:-1,custody:make([][5]int64,0),links:make([][6]int64,0),
-        custodyIndex:make([]int,n),owners:make([][]int,0)}
+        custodyIndex:make([]int,n),owners:make([][]int,0),linkIndex:map[[4]int64]int{}}
     p.pbr=x
     for k:=range x.capacities{x.capacities[k]=-1;if p.data.BufferCapacity>0{x.capacities[k]=p.data.BufferCapacity}}
     if len(p.data.BufferCapacities)>0 {
@@ -191,11 +192,12 @@ func(p *opPolicy)pbrMetrics(t,end int64) {
     for _,tree:=range x.resourceWait{x.resourceIntegral+=int64(pbrSize(tree))*dt}
     for _,i:=range p.current{if i>=0 && p.finish[i]>=0{x.blockedIntegral+=dt}}
     for r,tree:=range x.resourceWait{pbrWalk(tree,func(position int){i:=x.order[position];m:=p.data.Operations[i].Machine;for _,prev:=range p.data.Operations[i].Predecessors{
-        if p.finish[prev]>=0 && x.released[prev]<0 && x.transfer[i]<0 && x.capacities[m]>=0 && x.used[m]>=x.capacities[m]{v:=[6]int64{t,end,int64(prev),int64(i),int64(m),int64(r)};same:=len(x.links)>0;if same{last:=x.links[len(x.links)-1];same=last[1]==t;for k:=2;k<6;k++{same=same && last[k]==v[k]}};if same{x.links[len(x.links)-1][1]=end}else{x.links=append(x.links,v)}}
+        if p.finish[prev]>=0 && x.released[prev]<0 && x.transfer[i]<0 && x.capacities[m]>=0 && x.used[m]>=x.capacities[m]{v:=[6]int64{t,end,int64(prev),int64(i),int64(m),int64(r)};key:=[4]int64{int64(prev),int64(i),int64(m),int64(r)};previous,found:=x.linkIndex[key];if found && x.links[previous][1]==t{x.links[previous][1]=end}else{x.linkIndex[key]=len(x.links);x.links=append(x.links,v)}}
     }})}
 }
 func(p *opPolicy)pbrOutput(row map[string]any) {
     x:=p.pbr;row["engine"]="tsfg-ext";row["algorithm_id"]="TSFG-EXT-v2.2"
+    sort.Slice(x.links,func(i,j int)bool{for k:=0;k<6;k++{if x.links[i][k]!=x.links[j][k]{return x.links[i][k]<x.links[j][k]}};return false})
     row["machine_release"]=x.released;row["transfer_at"]=x.transfer;row["buffer_entry"]=x.entry;row["buffer_counts"]=x.used;row["buffer_peaks"]=x.peaks
     row["resource_unit"]=x.assigned;row["resource_owners"]=x.owners;row["resource_ownership"]=x.custody
     row["resource_wait_integral"]=x.resourceIntegral;row["blocked_machine_integral"]=x.blockedIntegral;row["coupling_witnesses"]=x.links

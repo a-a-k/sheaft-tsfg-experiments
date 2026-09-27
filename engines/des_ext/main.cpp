@@ -4,6 +4,7 @@
 #include <cstdlib>
 #include <fstream>
 #include <iostream>
+#include <map>
 #include <numeric>
 #include <queue>
 #include <set>
@@ -27,6 +28,7 @@ struct PBR {
     std::vector<std::array<Tick,5>> custody;
     std::vector<int> custody_index;
     std::vector<std::array<Tick,6>> links;
+    std::map<std::array<Tick,4>,std::size_t> link_index;
     Tick wait_integral=0,blocked_integral=0;
     std::uint64_t boundaries=0,visits=0;
 
@@ -203,14 +205,16 @@ struct PBR {
                 int i=order[position],k=in.ops[i].machine;
                 for(int p:in.ops[i].pred)if(finish[p]>=0 && released[p]<0 && transfer[i]<0 && cap[k]>=0 && used[k]>=cap[k]) {
                     std::array<Tick,6> link{t,next,p,i,k,r};
-                    if(!links.empty() && links.back()[1]==t && std::equal(link.begin()+2,link.end(),links.back().begin()+2))links.back()[1]=next;
-                    else links.push_back(link);
+                    std::array<Tick,4> key{p,i,k,r};auto previous=link_index.find(key);
+                    if(previous!=link_index.end() && links[previous->second][1]==t)links[previous->second][1]=next;
+                    else {link_index[key]=links.size();links.push_back(link);}
                 }
             }
             for(int i:current)if(i>=0 && finish[i]<0 && processing(i))left[i]-=elapsed;
             t=next;
         }
         json starts=json::array(),finishes=json::array(),jobs=json::array(),states=json::array();
+        std::sort(links.begin(),links.end());
         for(int i=0;i<n;++i) {
             starts.push_back(start[i]<0?json(nullptr):json(start[i]));finishes.push_back(finish[i]<0?json(nullptr):json(finish[i]));
             states.push_back(finish[i]>=0?(released[i]>=0?"DONE":"BLOCKED_AFTER_PROCESSING"):
