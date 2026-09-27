@@ -6,6 +6,7 @@ import json
 import os
 from pathlib import Path
 import subprocess
+import time
 import zipfile
 
 REPO = 'a-a-k/sheaft-tsfg-experiments'
@@ -73,10 +74,15 @@ def main():
     pages = json.loads(gh('api', f'repos/{REPO}/releases?per_page=100', '--paginate', '--slurp'))
     matches = [r for page in pages for r in page if r['tag_name'] == tag]
     if not matches:
-        gh('release', 'create', tag, '--repo', REPO, '--target', os.environ['GITHUB_SHA'], '--draft',
-           '--prerelease', '--title', 'E4: complete source archive and output reanalysis', '--notes-file', str(notes))
-    current = next(r for page in json.loads(gh('api', f'repos/{REPO}/releases?per_page=100', '--paginate', '--slurp'))
-                   for r in page if r['tag_name'] == tag)
+        payload = root / 'release-request.json'
+        payload.write_text(json.dumps(dict(tag_name=tag, target_commitish=os.environ['GITHUB_SHA'],
+            draft=True, prerelease=True, name='E4: complete source archive and output reanalysis',
+            body=notes.read_text(encoding='utf-8'))))
+        # Retain the ID returned by POST: a newly created draft need not be
+        # immediately visible in a cached paginated list response.
+        current = json.loads(gh('api', f'repos/{REPO}/releases', '--method', 'POST', '--input', str(payload)))
+    else:
+        current = matches[0]
     expected = {**hashes, 'SHA256.json': sha(root / 'SHA256.json')}
     existing = {a['name']: a for a in current['assets']}
     assert existing.keys() <= expected.keys()
@@ -85,8 +91,10 @@ def main():
     if missing:
         assert current['draft']
         gh('release', 'upload', tag, '--repo', REPO, *missing)
-    current = next(r for page in json.loads(gh('api', f'repos/{REPO}/releases?per_page=100', '--paginate', '--slurp'))
-                   for r in page if r['tag_name'] == tag)
+    for attempt in range(6):
+        current = json.loads(gh('api', f'repos/{REPO}/releases/{current["id"]}?check={time.time_ns()}'))
+        if len(current['assets']) == len(expected): break
+        time.sleep(2)
     assert {a['name']: a.get('digest') for a in current['assets']} == {n: 'sha256:' + h for n, h in expected.items()}
     if current['draft']:
         gh('release', 'edit', tag, '--repo', REPO, '--draft=false', '--latest=false')
