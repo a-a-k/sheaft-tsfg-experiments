@@ -12,18 +12,16 @@
   "pbr_nominal_runs": {"100000": 36312660828, "1000000": 36313419199},
   "pbr_pilot_runs": {"100000": 36312920355, "1000000": 36314205507},
   "pbr_main_runs": [36314314751, 36315293979, 36316184886],
-  "pbr_gate_runs": [],
+  "pbr_gate_runs": [36317118478, 36317214949, 36317290210],
   "reserve_pilot_runs": {"10000": 36312457218, "100000": 36315865327},
   "reserve_region_runs": [36312894404, 36314314805, 36316014401, 36316135286],
   "flow_run": 36311747232,
   "flow_invalid_step_run": 36311526885,
   "report_preflight_runs": [36316301467, 36316390333],
   "execution_status": "PARTIAL",
-  "experiments_closed": false,
+  "experiments_closed": true,
   "publication_status": "PENDING_FINAL_EVIDENCE",
   "outstanding": [
-    "Complete 100k PBR round 3 and explicit unavailable-family gates",
-    "Million PBR explicit closed main gates after failed nominal admission",
     "Global 32-member Holm analysis and final evidence publication"
   ]
 }
