@@ -267,7 +267,9 @@ def write_report(out,areas,points,regions,hypotheses,registry,ledger):
         PF='COMPLETE_DIAGNOSTICS',APS_presentation_N_seconds=aps['presentation_N_seconds'],
         correctness_scope='Exact admitted core/extended comparisons; observed large trajectory prefixes only when a process timed out',
         incomplete_obligations=[dict(series='PBR',n=a['n'],family=a['family'],
-            reason=a['nominal_statuses'],missing_complete_pairs=9-a['complete_correct_pairs']) for a in areas if a['execution_status']!='COMPLETE']+
+            reason=dict(timeouts=a['timeouts'],not_run_processes=a['not_run_processes'],
+                nominal_statuses=a['nominal_statuses']),missing_complete_pairs=9-a['complete_correct_pairs'])
+            for a in areas if a['execution_status']!='COMPLETE']+
             [dict(series='reserve',n=r['n'],family=r['family'],law=r['law'],reason=r['reason']) for r in regions if r['execution_status']!='COMPLETE'])
     dump(out/'execution-status.json',status)
     text=['# Sheaft v2.2: итог исполнения и границы результатов','',
