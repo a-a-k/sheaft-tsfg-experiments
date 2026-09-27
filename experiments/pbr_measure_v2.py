@@ -62,6 +62,9 @@ def main():
     environment=dict(source_sha=os.environ['GITHUB_SHA'],run_id=os.environ['GITHUB_RUN_ID'],
         python=sys.version,platform=platform.platform(),allowed_cpus=sorted(os.sched_getaffinity(0)),
         cpuinfo=Path('/proc/cpuinfo').read_text(),
+        measurement_code_sha256=sha(Path(__file__)),
+        versions={name:subprocess.check_output(command,text=True) for name,command in
+            [('go',['go','version']),('g++',['g++','--version'])]},
         cgroup={n:Path('/sys/fs/cgroup',n).read_text().strip() for n in ('cpu.max','memory.max','memory.swap.max')},
         engine_code={n:sha(Path(n)) for n in ('engines/des_ext/main.cpp','engines/tsfg_op/pbr_adapter.go','engines/tsfg_op/operation_adapter.go')})
     (root/'environment.json').write_text(json.dumps(environment,indent=2)+'\n')

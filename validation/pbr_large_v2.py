@@ -19,6 +19,10 @@ def main():
     nominal=json.loads((args.input/'nominal-admission.json').read_text())
     data=json.loads((args.input/'input.json').read_text())
     measured=json.loads((args.measured/'measurements.json').read_text());count=measured['count']
+    environment=json.loads((args.measured/'environment.json').read_text())
+    (root/'environment.json').write_bytes((args.measured/'environment.json').read_bytes())
+    measured['CPU_model']=next(line.split(':',1)[1].strip() for line in environment['cpuinfo'].splitlines() if line.startswith('model name'))
+    measured['environment_sha256']=hashlib.sha256((root/'environment.json').read_bytes()).hexdigest()
     scenarios=json.loads((args.input/f'scenarios-{count}.json').read_text());assert len(scenarios)==count
     signature_sets=[];metadata=[];all_valid=True
     for i,process in enumerate(measured['processes']):
