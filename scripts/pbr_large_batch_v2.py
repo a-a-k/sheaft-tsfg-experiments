@@ -32,7 +32,9 @@ def plan(args):
         selected=[s for s in summaries if s['family']==family]
         allowed=len(selected)==3 and {s['seed'] for s in selected}=={101,102,103} and all(
             s['input_status']=='NOMINALLY_ADMISSIBLE' and s['correctness_status']=='VALID' for s in selected)
-        if args.phase=='measure' and selected[0]['n']==1000000:
+        reason='ADMITTED' if allowed else ('NO_ADMISSIBLE_INPUT' if all(
+            s['input_status']=='NO_ADMISSIBLE_INPUT' for s in selected) else 'NOMINAL_ADMISSION_INCOMPLETE')
+        if allowed and args.phase=='measure' and selected[0]['n']==1000000:
             assert args.pilot_run
             pilot=api(f'repos/{repo}/actions/runs/{args.pilot_run}')
             assert pilot['status']=='completed' and pilot['path']=='.github/workflows/extended_benchmark_v2.yml'
@@ -43,8 +45,10 @@ def plan(args):
             gates=[r for r in rows if r['family']==family]
             allowed &= len(gates)==3 and all(r.get('million_admitted') and r['count']==10 and r['n']==1000000 and
                 any(s['id']==r['id'] and s['task_sha256']==r['task_sha256'] for s in selected) for r in gates)
+            if not allowed:reason='MILLION_K10_TIME_OR_CORRECTNESS_GATE'
             evidence.append(dict(pilot_run=args.pilot_run,artifact_id=item['id'],sha256=digest))
         decisions.append(dict(family=family,allowed=allowed,status='ADMITTED' if allowed else 'NOT_RUN_BUDGET_GATE',
+            reason=reason,
             nominal_statuses={s['seed']:s['input_status'] for s in selected}))
         if allowed:cases.extend(dict(case=s['id']) for s in selected)
     count=10 if args.phase=='pilot' else 100
