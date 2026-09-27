@@ -1,0 +1,51 @@
+{
+  "status": "PASS",
+  "buffer_regression": {
+    "1": {
+      "status": "PASS",
+      "scenarios": 481,
+      "deadline_checks_per_engine": 1443,
+      "mission_state_comparisons": 0
+    },
+    "2": {
+      "status": "PASS",
+      "scenarios": 481,
+      "deadline_checks_per_engine": 1443,
+      "mission_state_comparisons": 0
+    },
+    "4": {
+      "status": "PASS",
+      "scenarios": 481,
+      "deadline_checks_per_engine": 1443,
+      "mission_state_comparisons": 0
+    }
+  },
+  "shared_regression": {
+    "status": "PASS",
+    "scenarios": 15,
+    "deadline_checks_per_engine": 45,
+    "mission_state_comparisons": 0
+  },
+  "combined": {
+    "1": {
+      "status": "PASS",
+      "scenarios": 45,
+      "deadline_checks_per_engine": 135,
+      "mission_state_comparisons": 135
+    },
+    "2": {
+      "status": "PASS",
+      "scenarios": 45,
+      "deadline_checks_per_engine": 135,
+      "mission_state_comparisons": 135
+    },
+    "4": {
+      "status": "PASS",
+      "scenarios": 45,
+      "deadline_checks_per_engine": 135,
+      "mission_state_comparisons": 135
+    }
+  },
+  "combined_trajectories_per_engine": 135,
+  "combined_deadline_checks_per_engine": 405
+}

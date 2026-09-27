@@ -1,0 +1,686 @@
+{
+  "execution_status": "COMPLETE",
+  "cases": [
+    {
+      "id": "serial-healthy",
+      "status": "ADMITTED",
+      "observations": [
+        {
+          "label": "diagnostic",
+          "horizon": 100,
+          "errors": {
+            "produced_abs": 0.0,
+            "wip_integral_relative": 0.0008000000000543877,
+            "cmax_abs": 0.005000000000555005,
+            "queue_at_D_abs": [
+              0.0,
+              0.0
+            ],
+            "queue_max_abs": [
+              0.0,
+              0.04000000000174708
+            ]
+          },
+          "queue_tolerances": [
+            5.0,
+            1
+          ],
+          "physical_valid": true,
+          "accuracy_pass": true,
+          "false_success": false,
+          "false_failure": false
+        },
+        {
+          "label": "D-minus",
+          "horizon": 19.95,
+          "errors": {
+            "produced_abs": 0.0,
+            "wip_integral_relative": 0.0008000000000543877,
+            "cmax_abs": 0.005000000000555005,
+            "queue_at_D_abs": [
+              0.0,
+              0.0
+            ],
+            "queue_max_abs": [
+              0.0,
+              0.04000000000174708
+            ]
+          },
+          "queue_tolerances": [
+            5.0,
+            1
+          ],
+          "physical_valid": true,
+          "accuracy_pass": true,
+          "false_success": false,
+          "false_failure": false
+        },
+        {
+          "label": "D",
+          "horizon": 20,
+          "errors": {
+            "produced_abs": 0.0,
+            "wip_integral_relative": 0.0008000000000543877,
+            "cmax_abs": 0.005000000000555005,
+            "queue_at_D_abs": [
+              0.0,
+              0.0
+            ],
+            "queue_max_abs": [
+              0.0,
+              0.04000000000174708
+            ]
+          },
+          "queue_tolerances": [
+            5.0,
+            1
+          ],
+          "physical_valid": true,
+          "accuracy_pass": true,
+          "false_success": false,
+          "false_failure": false
+        },
+        {
+          "label": "D-plus",
+          "horizon": 20.05,
+          "errors": {
+            "produced_abs": 0.0,
+            "wip_integral_relative": 0.0008000000000543877,
+            "cmax_abs": 0.005000000000555005,
+            "queue_at_D_abs": [
+              0.0,
+              0.0
+            ],
+            "queue_max_abs": [
+              0.0,
+              0.04000000000174708
+            ]
+          },
+          "queue_tolerances": [
+            5.0,
+            1
+          ],
+          "physical_valid": true,
+          "accuracy_pass": true,
+          "false_success": false,
+          "false_failure": false
+        }
+      ]
+    },
+    {
+      "id": "serial-capacity",
+      "status": "ADMITTED",
+      "observations": [
+        {
+          "label": "diagnostic",
+          "horizon": 100,
+          "errors": {
+            "produced_abs": 0.0,
+            "wip_integral_relative": 0.00037868162685398323,
+            "cmax_abs": 0.004999999998911875,
+            "queue_at_D_abs": [
+              0.0,
+              0.0
+            ],
+            "queue_max_abs": [
+              0.0,
+              0.019999999995235385
+            ]
+          },
+          "queue_tolerances": [
+            5.0,
+            3.4000000000000004
+          ],
+          "physical_valid": true,
+          "accuracy_pass": true,
+          "false_success": false,
+          "false_failure": false
+        },
+        {
+          "label": "D-minus",
+          "horizon": 39.95,
+          "errors": {
+            "produced_abs": 0.0,
+            "wip_integral_relative": 0.00037868162685398323,
+            "cmax_abs": 0.004999999998911875,
+            "queue_at_D_abs": [
+              0.0,
+              0.0
+            ],
+            "queue_max_abs": [
+              0.0,
+              0.019999999995235385
+            ]
+          },
+          "queue_tolerances": [
+            5.0,
+            3.4000000000000004
+          ],
+          "physical_valid": true,
+          "accuracy_pass": true,
+          "false_success": false,
+          "false_failure": false
+        },
+        {
+          "label": "D",
+          "horizon": 40,
+          "errors": {
+            "produced_abs": 0.0,
+            "wip_integral_relative": 0.00037868162685398323,
+            "cmax_abs": 0.004999999998911875,
+            "queue_at_D_abs": [
+              0.0,
+              0.0
+            ],
+            "queue_max_abs": [
+              0.0,
+              0.019999999995235385
+            ]
+          },
+          "queue_tolerances": [
+            5.0,
+            3.4000000000000004
+          ],
+          "physical_valid": true,
+          "accuracy_pass": true,
+          "false_success": false,
+          "false_failure": false
+        },
+        {
+          "label": "D-plus",
+          "horizon": 40.05,
+          "errors": {
+            "produced_abs": 0.0,
+            "wip_integral_relative": 0.00037868162685398323,
+            "cmax_abs": 0.004999999998911875,
+            "queue_at_D_abs": [
+              0.0,
+              0.0
+            ],
+            "queue_max_abs": [
+              0.0,
+              0.019999999995235385
+            ]
+          },
+          "queue_tolerances": [
+            5.0,
+            3.4000000000000004
+          ],
+          "physical_valid": true,
+          "accuracy_pass": true,
+          "false_success": false,
+          "false_failure": false
+        }
+      ]
+    },
+    {
+      "id": "serial-deadline",
+      "status": "ADMITTED",
+      "observations": [
+        {
+          "label": "diagnostic",
+          "horizon": 100,
+          "errors": {
+            "produced_abs": 0.0,
+            "wip_integral_relative": 0.0008000000000543877,
+            "cmax_abs": 0.005000000000555005,
+            "queue_at_D_abs": [
+              0.0,
+              0.0
+            ],
+            "queue_max_abs": [
+              0.0,
+              0.04000000000174708
+            ]
+          },
+          "queue_tolerances": [
+            5.0,
+            1
+          ],
+          "physical_valid": true,
+          "accuracy_pass": true,
+          "false_success": false,
+          "false_failure": false
+        },
+        {
+          "label": "D-minus",
+          "horizon": 12.45,
+          "errors": {
+            "produced_abs": 0.04000000000000625,
+            "wip_integral_relative": 0.00079665274649772,
+            "cmax_abs": null,
+            "queue_at_D_abs": [
+              0.0,
+              0.040000000006367775
+            ],
+            "queue_max_abs": [
+              0.0,
+              0.04000000000174708
+            ]
+          },
+          "queue_tolerances": [
+            5.0,
+            1
+          ],
+          "physical_valid": true,
+          "accuracy_pass": true,
+          "false_success": false,
+          "false_failure": false
+        },
+        {
+          "label": "D",
+          "horizon": 12.5,
+          "errors": {
+            "produced_abs": 0.04000000000000625,
+            "wip_integral_relative": 0.0007998400000544279,
+            "cmax_abs": null,
+            "queue_at_D_abs": [
+              0.0,
+              0.0400000000064247
+            ],
+            "queue_max_abs": [
+              0.0,
+              0.04000000000174708
+            ]
+          },
+          "queue_tolerances": [
+            5.0,
+            1
+          ],
+          "physical_valid": true,
+          "accuracy_pass": true,
+          "false_success": false,
+          "false_failure": true
+        },
+        {
+          "label": "D-plus",
+          "horizon": 12.55,
+          "errors": {
+            "produced_abs": 0.0,
+            "wip_integral_relative": 0.0008000000000543877,
+            "cmax_abs": 0.005000000000555005,
+            "queue_at_D_abs": [
+              0.0,
+              0.0
+            ],
+            "queue_max_abs": [
+              0.0,
+              0.04000000000174708
+            ]
+          },
+          "queue_tolerances": [
+            5.0,
+            1
+          ],
+          "physical_valid": true,
+          "accuracy_pass": true,
+          "false_success": false,
+          "false_failure": false
+        }
+      ]
+    },
+    {
+      "id": "merge-healthy",
+      "status": "ADMITTED",
+      "observations": [
+        {
+          "label": "diagnostic",
+          "horizon": 100,
+          "errors": {
+            "produced_abs": 0.0,
+            "wip_integral_relative": 0.0009999999999751026,
+            "cmax_abs": 0.005000000000164206,
+            "queue_at_D_abs": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "queue_max_abs": [
+              0.0,
+              0.0,
+              0.0
+            ]
+          },
+          "queue_tolerances": [
+            2.0,
+            3.0,
+            0.25
+          ],
+          "physical_valid": true,
+          "accuracy_pass": true,
+          "false_success": false,
+          "false_failure": false
+        },
+        {
+          "label": "D-minus",
+          "horizon": 19.95,
+          "errors": {
+            "produced_abs": 0.0,
+            "wip_integral_relative": 0.0009999999999751026,
+            "cmax_abs": 0.005000000000164206,
+            "queue_at_D_abs": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "queue_max_abs": [
+              0.0,
+              0.0,
+              0.0
+            ]
+          },
+          "queue_tolerances": [
+            2.0,
+            3.0,
+            0.25
+          ],
+          "physical_valid": true,
+          "accuracy_pass": true,
+          "false_success": false,
+          "false_failure": false
+        },
+        {
+          "label": "D",
+          "horizon": 20,
+          "errors": {
+            "produced_abs": 0.0,
+            "wip_integral_relative": 0.0009999999999751026,
+            "cmax_abs": 0.005000000000164206,
+            "queue_at_D_abs": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "queue_max_abs": [
+              0.0,
+              0.0,
+              0.0
+            ]
+          },
+          "queue_tolerances": [
+            2.0,
+            3.0,
+            0.25
+          ],
+          "physical_valid": true,
+          "accuracy_pass": true,
+          "false_success": false,
+          "false_failure": false
+        },
+        {
+          "label": "D-plus",
+          "horizon": 20.05,
+          "errors": {
+            "produced_abs": 0.0,
+            "wip_integral_relative": 0.0009999999999751026,
+            "cmax_abs": 0.005000000000164206,
+            "queue_at_D_abs": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "queue_max_abs": [
+              0.0,
+              0.0,
+              0.0
+            ]
+          },
+          "queue_tolerances": [
+            2.0,
+            3.0,
+            0.25
+          ],
+          "physical_valid": true,
+          "accuracy_pass": true,
+          "false_success": false,
+          "false_failure": false
+        }
+      ]
+    },
+    {
+      "id": "merge-capacity",
+      "status": "ADMITTED",
+      "observations": [
+        {
+          "label": "diagnostic",
+          "horizon": 100,
+          "errors": {
+            "produced_abs": 0.0,
+            "wip_integral_relative": 0.00037868162689607765,
+            "cmax_abs": 0.004999999998911875,
+            "queue_at_D_abs": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "queue_max_abs": [
+              0.0,
+              0.0,
+              0.0
+            ]
+          },
+          "queue_tolerances": [
+            2.0,
+            3.0,
+            0.25
+          ],
+          "physical_valid": true,
+          "accuracy_pass": true,
+          "false_success": false,
+          "false_failure": false
+        },
+        {
+          "label": "D-minus",
+          "horizon": 39.95,
+          "errors": {
+            "produced_abs": 0.0,
+            "wip_integral_relative": 0.00037868162689607765,
+            "cmax_abs": 0.004999999998911875,
+            "queue_at_D_abs": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "queue_max_abs": [
+              0.0,
+              0.0,
+              0.0
+            ]
+          },
+          "queue_tolerances": [
+            2.0,
+            3.0,
+            0.25
+          ],
+          "physical_valid": true,
+          "accuracy_pass": true,
+          "false_success": false,
+          "false_failure": false
+        },
+        {
+          "label": "D",
+          "horizon": 40,
+          "errors": {
+            "produced_abs": 0.0,
+            "wip_integral_relative": 0.00037868162689607765,
+            "cmax_abs": 0.004999999998911875,
+            "queue_at_D_abs": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "queue_max_abs": [
+              0.0,
+              0.0,
+              0.0
+            ]
+          },
+          "queue_tolerances": [
+            2.0,
+            3.0,
+            0.25
+          ],
+          "physical_valid": true,
+          "accuracy_pass": true,
+          "false_success": false,
+          "false_failure": false
+        },
+        {
+          "label": "D-plus",
+          "horizon": 40.05,
+          "errors": {
+            "produced_abs": 0.0,
+            "wip_integral_relative": 0.00037868162689607765,
+            "cmax_abs": 0.004999999998911875,
+            "queue_at_D_abs": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "queue_max_abs": [
+              0.0,
+              0.0,
+              0.0
+            ]
+          },
+          "queue_tolerances": [
+            2.0,
+            3.0,
+            0.25
+          ],
+          "physical_valid": true,
+          "accuracy_pass": true,
+          "false_success": false,
+          "false_failure": false
+        }
+      ]
+    },
+    {
+      "id": "merge-deadline",
+      "status": "ADMITTED",
+      "observations": [
+        {
+          "label": "diagnostic",
+          "horizon": 100,
+          "errors": {
+            "produced_abs": 0.0,
+            "wip_integral_relative": 0.0009999999999751026,
+            "cmax_abs": 0.005000000000164206,
+            "queue_at_D_abs": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "queue_max_abs": [
+              0.0,
+              0.0,
+              0.0
+            ]
+          },
+          "queue_tolerances": [
+            2.0,
+            3.0,
+            0.25
+          ],
+          "physical_valid": true,
+          "accuracy_pass": true,
+          "false_success": false,
+          "false_failure": false
+        },
+        {
+          "label": "D-minus",
+          "horizon": 9.95,
+          "errors": {
+            "produced_abs": 0.05000000000505622,
+            "wip_integral_relative": 0.0009947748693467898,
+            "cmax_abs": null,
+            "queue_at_D_abs": [
+              0.0,
+              0.0,
+              0.05000000000013283
+            ],
+            "queue_max_abs": [
+              0.0,
+              0.0,
+              0.0
+            ]
+          },
+          "queue_tolerances": [
+            2.0,
+            3.0,
+            0.25
+          ],
+          "physical_valid": true,
+          "accuracy_pass": true,
+          "false_success": false,
+          "false_failure": false
+        },
+        {
+          "label": "D",
+          "horizon": 10,
+          "errors": {
+            "produced_abs": 0.0500000000051557,
+            "wip_integral_relative": 0.0009997499999750516,
+            "cmax_abs": null,
+            "queue_at_D_abs": [
+              0.0,
+              0.0,
+              0.05000000000020392
+            ],
+            "queue_max_abs": [
+              0.0,
+              0.0,
+              0.0
+            ]
+          },
+          "queue_tolerances": [
+            2.0,
+            3.0,
+            0.25
+          ],
+          "physical_valid": true,
+          "accuracy_pass": true,
+          "false_success": false,
+          "false_failure": true
+        },
+        {
+          "label": "D-plus",
+          "horizon": 10.05,
+          "errors": {
+            "produced_abs": 0.0,
+            "wip_integral_relative": 0.0009999999999751026,
+            "cmax_abs": 0.005000000000164206,
+            "queue_at_D_abs": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "queue_max_abs": [
+              0.0,
+              0.0,
+              0.0
+            ]
+          },
+          "queue_tolerances": [
+            2.0,
+            3.0,
+            0.25
+          ],
+          "physical_valid": true,
+          "accuracy_pass": true,
+          "false_success": false,
+          "false_failure": false
+        }
+      ]
+    }
+  ],
+  "expected_cases": 6,
+  "correctness_status": "VALID",
+  "approximation_status": "ADMITTED",
+  "false_successes": 0,
+  "random_scenarios": 0,
+  "false_success_probability_bound": "NOT_ESTIMABLE",
+  "speed_hypothesis": "NOT_APPLICABLE",
+  "individual_operation_times": "UNSUPPORTED",
+  "scope": "Six deterministic continuous homogeneous fluid cases; no discrete manufacturing equivalence claim"
+}

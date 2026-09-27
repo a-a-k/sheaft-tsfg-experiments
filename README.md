@@ -1,6 +1,10 @@
 # Sheaft / TSFG manufacturing execution experiment
 
 Revision 2.2 is in progress; the original campaign below remains preserved.
+The [first package report](docs/results/revision-v2/first-package/FIRST_PACKAGE_REPORT_RU.md)
+now includes all 36 PBR preliminary inputs (30 completed K10 campaigns and six
+nominal deadlocks), exact combined Mk01 checks and the six fluid diagnostics.
+[Complete first-package traces and verified archive](https://github.com/a-a-k/sheaft-tsfg-experiments/releases/tag/revision-v2-first-package-7a7dedbed12c).
 The [first APS report](docs/results/revision-v2/aps-first/APS_FIRST_REPORT_RU.md)
 contains 30 validated 100k measurements and the first two validated million-operation
 plans: F1 in 75.51 s and F2 in 32.51 s, one repeat each. The complete million matrix
