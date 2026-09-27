@@ -19,6 +19,7 @@
     "aps_schedule_benchmark.yml": "aps-first",
     "aps_first_report_v2.yml": "aps-first",
     "aps_remaining_v2.yml": "aps-rest",
+    "aps_matrix_report_v2.yml": "aps-rest",
     "extended_admission_v2.yml": "pbr-correctness",
     "extended_screen_v2.yml": "pbr-screen",
     "flow_admission_v2.yml": "flow-report",

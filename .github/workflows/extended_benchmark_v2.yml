@@ -148,6 +148,8 @@ jobs:
       PILOT: ${{ inputs.pilot_run || '0' }}
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          fetch-depth: 0
       - id: plan
         run: python scripts/pbr_large_batch_v2.py plan --root batch --phase "$PHASE" --family "$FAMILY" --round "$ROUND" --nominal-run "$NOMINAL" --pilot-run "$PILOT"
       - env:

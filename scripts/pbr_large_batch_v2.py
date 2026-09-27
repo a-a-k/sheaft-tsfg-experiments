@@ -3,6 +3,7 @@ import argparse
 import json
 import os
 from pathlib import Path
+import subprocess
 import sys
 import tempfile
 import zipfile
@@ -15,6 +16,9 @@ def plan(args):
     root=args.root;root.mkdir(parents=True,exist_ok=True);repo=os.environ['GITHUB_REPOSITORY']
     run=api(f'repos/{repo}/actions/runs/{args.nominal_run}')
     assert run['status']=='completed' and run['path']=='.github/workflows/extended_benchmark_v2.yml'
+    for name in ('engines/des_ext/main.cpp','engines/tsfg_op/operation_adapter.go','engines/tsfg_op/pbr_adapter.go'):
+        original=subprocess.check_output(['git','-c',f'safe.directory={Path.cwd()}','show',f'{run["head_sha"]}:{name}'])
+        assert original==Path(name).read_bytes(),'Engine changed after nominal admission: '+name
     items=[a for a in artifacts(repo,args.nominal_run) if a['name'].startswith('pbr-nominal-admission-') and not a['expired']]
     assert len(items)==6
     summaries=[];evidence=[]
@@ -37,7 +41,8 @@ def plan(args):
                 path=Path(temp)/'report.zip';digest=artifact_download(repo,item,path)
                 with zipfile.ZipFile(path) as bundle:rows=json.loads(bundle.read('pbr-points.json'))
             gates=[r for r in rows if r['family']==family]
-            allowed &= len(gates)==3 and all(r.get('million_admitted') and r['count']==10 for r in gates)
+            allowed &= len(gates)==3 and all(r.get('million_admitted') and r['count']==10 and r['n']==1000000 and
+                any(s['id']==r['id'] and s['task_sha256']==r['task_sha256'] for s in selected) for r in gates)
             evidence.append(dict(pilot_run=args.pilot_run,artifact_id=item['id'],sha256=digest))
         decisions.append(dict(family=family,allowed=allowed,status='ADMITTED' if allowed else 'NOT_RUN_BUDGET_GATE',
             nominal_statuses={s['seed']:s['input_status'] for s in selected}))
