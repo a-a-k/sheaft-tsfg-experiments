@@ -1,0 +1,41 @@
+name: Publish first APS million results v2
+on:
+  push:
+    branches: ['implementation/revision-v2']
+    paths: ['.github/workflows/aps_first_report_v2.yml']
+  workflow_dispatch:
+permissions:
+  contents: write
+  actions: read
+jobs:
+  publish:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - run: python scripts/budget_v2.py --package aps-first --reserve-seconds 780
+      - run: python scripts/aps_first_report_v2.py
+      - run: python scripts/publish_aps_first_v2.py
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: aps-first-public-report
+          path: |
+            publication-input/report/
+            artifacts/budget/
+  verify:
+    needs: publish
+    runs-on: ubuntu-24.04
+    timeout-minutes: 3
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - run: python scripts/publish_aps_first_v2.py --download-verify
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: aps-first-download-verification
+          path: publication/download-verification.json
