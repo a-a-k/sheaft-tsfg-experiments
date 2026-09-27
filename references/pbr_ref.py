@@ -166,9 +166,15 @@ def simulate(data, sc, horizon, mode='DIAGNOSTIC'):
     complete = all(f is not None for f in finishes)
     if deadlock and mode == 'MISSION':
         blocked_time += sum(f is not None and released is None for f,released in zip(finishes,releases))*(horizon-t)
+    job_results=[]
+    for j,job in enumerate(data['jobs']):
+        end=num(finishes[job['final_operation']])
+        job_results.append(dict(job_id=j,finish=end,completion_lower_bound=None if end is not None else horizon,
+            produced=end is not None,status='COMPLETE' if end is not None else 'DEADLOCK' if deadlock else 'CENSORED'))
     return dict(scenario_id=sc['id'], engine='fraction-pbr-ref', mode=mode, horizon=horizon, stopped=num(t),
         start=list(map(num, starts)), finish=list(map(num, finishes)), remaining=list(map(num, remaining)), state=states,
         job_finish=[num(finishes[j['final_operation']]) for j in data['jobs']],
+        job_results=job_results,
         mission_success=complete, completion_known=complete, cmax=num(max(finishes)) if complete else None,
         completion_lower_bound=None if complete else horizon, run_status='DEADLOCK' if deadlock else 'OK' if complete else 'CENSORED',
         machine_release=[-1 if v is None else num(v) for v in releases],

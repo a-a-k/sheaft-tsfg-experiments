@@ -90,6 +90,8 @@ def validate(data,scenario,row):
     assert row['mission_success']==row['completion_known']==complete
     assert row['cmax']==(max(finish) if complete else None)
     assert row['job_finish']==[finish[j['final_operation']] for j in data['jobs']]
+    assert row['job_results']==[dict(job_id=j,finish=c,completion_lower_bound=None if c is not None else row['horizon'],
+        produced=c is not None,status='COMPLETE' if c is not None else row['run_status']) for j,c in enumerate(row['job_finish'])]
     assert row['completion_lower_bound']==(None if complete else row['horizon'])
     interval_end=row['horizon'] if row['mode']=='MISSION' else stop
     blocked=sum((row['machine_release'][i] if row['machine_release'][i]>=0 else interval_end)-c

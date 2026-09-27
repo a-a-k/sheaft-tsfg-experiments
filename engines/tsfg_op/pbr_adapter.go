@@ -5,8 +5,13 @@ import (
     "container/heap"
     "encoding/json"
     "errors"
+    "os"
     "sort"
+    "strconv"
+    "strings"
 )
+
+func pbrVmHWM()(int64,error){raw,err:=os.ReadFile("/proc/self/status");if err!=nil{return 0,err};for _,line:=range strings.Split(string(raw),"\n"){parts:=strings.Fields(line);if len(parts)==3 && parts[0]=="VmHWM:" && parts[2]=="kB"{v,e:=strconv.ParseInt(parts[1],10,64);return v*1024,e}};return 0,errors.New("VmHWM unavailable")}
 
 type pbrRanks []int
 func (q pbrRanks) Len()int{return len(q)}
@@ -206,5 +211,6 @@ func(p *opPolicy)pbrOutput(row map[string]any) {
     states:=row["state"].([]string)
     for i:=range states{if p.finish[i]>=0 && x.released[i]<0{states[i]="BLOCKED_AFTER_PROCESSING"};if p.start[i]>=0 && p.finish[i]<0 && x.need[i]>=0 && !p.pbrUnitUp(x.need[i],x.assigned[i],p.stopped){states[i]="SUSPENDED"}}
     if x.deadlock && p.stopped<row["horizon"].(int64){row["run_status"]="DEADLOCK";row["deadlock_proof"]=map[string]bool{"no_running_operations":true,"no_future_changes":true}}else if p.completed<len(p.data.Operations){row["run_status"]="CENSORED"}
+    jobs:=make([]map[string]any,len(p.data.Jobs));for j,job:=range p.data.Jobs{var finish,bound any;status:="COMPLETE";produced:=p.finish[job.Final]>=0;if produced{finish=p.finish[job.Final]}else{bound=row["horizon"];status=row["run_status"].(string)};jobs[j]=map[string]any{"job_id":j,"finish":finish,"completion_lower_bound":bound,"produced":produced,"status":status}};row["job_results"]=jobs
     row["counters"].(map[string]int)["candidate_visits"]=int(x.visits)
 }

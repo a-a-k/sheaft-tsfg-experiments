@@ -1,6 +1,7 @@
 // Independent PBR event-driven reference. No TSFG transition code is shared.
 #include "../model.hpp"
 #include <array>
+#include <chrono>
 #include <cstdlib>
 #include <fstream>
 #include <iostream>
@@ -8,6 +9,7 @@
 #include <numeric>
 #include <queue>
 #include <set>
+#include <sstream>
 #include <tuple>
 
 struct PBR {
@@ -221,11 +223,14 @@ struct PBR {
             states.push_back(finish[i]>=0?(released[i]>=0?"DONE":"BLOCKED_AFTER_PROCESSING"):
                 start[i]<0?"NOT_STARTED":processing(i)?"PROCESSING":"SUSPENDED");
         }
-        for(int i:in.final_operations)jobs.push_back(finishes[i]);
+        json job_results=json::array();
+        for(int i:in.final_operations){jobs.push_back(finishes[i]);job_results.push_back({{"job_id",job_results.size()},
+            {"finish",finishes[i]},{"completion_lower_bound",finish[i]>=0?json(nullptr):json(H)},
+            {"produced",finish[i]>=0},{"status",finish[i]>=0?"COMPLETE":deadlock?"DEADLOCK":"CENSORED"}});}
         json pools=json::array();
         for(int r=0;r<int(pool_capacity.size());++r) {json row=json::array();for(int u=0;u<pool_capacity[r];++u)row.push_back(owners[pool_base[r]+u]);pools.push_back(row);}
         return json{{"scenario_id",sc.id},{"engine","des-ext"},{"algorithm_id","DES-EXT-v2.2"},{"mode",diagnostic?"DIAGNOSTIC":"MISSION"},
-            {"horizon",H},{"stopped",t},{"start",starts},{"finish",finishes},{"remaining",left},{"state",states},{"job_finish",jobs},
+            {"horizon",H},{"stopped",t},{"start",starts},{"finish",finishes},{"remaining",left},{"state",states},{"job_finish",jobs},{"job_results",job_results},
             {"mission_success",done==n},{"completion_known",done==n},{"cmax",done==n?json(*std::max_element(finish.begin(),finish.end())):json(nullptr)},
             {"completion_lower_bound",done==n?json(nullptr):json(H)},{"run_status",deadlock?"DEADLOCK":done==n?"OK":"CENSORED"},
             {"machine_release",released},{"transfer_at",transfer},{"buffer_entry",entered},{"buffer_counts",used},{"buffer_peaks",peak},
@@ -240,11 +245,22 @@ int main(int argc,char** argv) {
     try {
         if(!std::getenv("GITHUB_ACTIONS") || std::string(std::getenv("GITHUB_ACTIONS"))!="true")throw std::runtime_error("Actions only");
         if(argc!=6)throw std::runtime_error("des-ext DATA SCENARIOS OUTPUT MODE HORIZON");
+        auto begin=std::chrono::steady_clock::now();
         std::ifstream input(argv[1]),scenarios(argv[2]);json data,rows;input>>data;scenarios>>rows;
         auto in=read_instance(data);std::string mode=argv[4];
+        auto imported=std::chrono::steady_clock::now();
         if(mode!="MISSION" && mode!="DIAGNOSTIC")throw std::runtime_error("Unknown mode");
         std::ofstream output(argv[3]);if(!output)throw std::runtime_error("Output unavailable");
         for(const auto& row:rows) {PBR engine(in,data,row,std::stoll(argv[5]),mode=="DIAGNOSTIC");output<<engine.solve().dump()<<'\n';output.flush();}
+        output.close();auto closed=std::chrono::steady_clock::now();
+        std::ifstream status("/proc/self/status");std::string line;std::int64_t peak=0;
+        while(std::getline(status,line))if(line.starts_with("VmHWM:")){std::istringstream field(line.substr(6));field>>peak;peak*=1024;}
+        if(peak<=0)throw std::runtime_error("VmHWM unavailable");
+        std::ofstream meta(std::string(argv[3])+".meta.json");
+        meta<<json{{"engine","DES-EXT-v2.2"},{"scenarios_completed",rows.size()},{"VmHWM_bytes",peak},
+            {"memory_counter","/proc/self/status VmHWM after exec"},
+            {"T_import_s",std::chrono::duration<double>(imported-begin).count()},
+            {"T_batch_with_output_s",std::chrono::duration<double>(closed-imported).count()}}.dump();
         return 0;
     } catch(const std::exception& error) {std::cerr<<error.what()<<'\n';return 2;}
 }

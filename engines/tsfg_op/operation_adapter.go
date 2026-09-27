@@ -376,6 +376,7 @@ func opCommand() error {
         "construction_policy":"original graph and policy rebuilt per scenario; included in batch"}
     if os.Args[1]=="tsfg-agg" || os.Getenv("TSFG_OUTPUT_PROFILE")=="AGG-MISSION" {meta["output_profile"]="AGG-MISSION"}
     meta["engine"]=os.Args[1]
+    if data.Semantics=="PBR-EXACT-v2.2" {peak,e:=pbrVmHWM();if e!=nil{return e};meta["VmHWM_bytes"]=peak;meta["memory_counter"]="/proc/self/status VmHWM after exec"}
     encoded,err:=json.MarshalIndent(meta,"","  ");if err!=nil{return err}
     if err=os.WriteFile(os.Args[4]+".meta.json",encoded,0600);err!=nil{return err}
     return nil

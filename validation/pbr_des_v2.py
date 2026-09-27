@@ -11,7 +11,7 @@ from experiments.pbr_cases_v2 import manual_cases
 from references.pbr_ref import simulate
 from validation.pbr_checks import validate
 
-FIELDS = ['start', 'finish', 'remaining', 'state', 'job_finish', 'mission_success', 'completion_known',
+FIELDS = ['start', 'finish', 'remaining', 'state', 'job_finish', 'job_results', 'mission_success', 'completion_known',
           'cmax', 'completion_lower_bound', 'run_status', 'stopped', 'machine_release', 'transfer_at',
           'buffer_entry', 'buffer_counts', 'buffer_peaks', 'resource_unit', 'resource_owners',
           'resource_ownership', 'resource_wait_integral', 'blocked_machine_integral', 'coupling_witnesses']
