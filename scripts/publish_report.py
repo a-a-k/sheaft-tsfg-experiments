@@ -47,11 +47,13 @@ def gh(*args,check=True):
 
 
 def release():
-    result=gh('api',f'repos/{REPOSITORY}/releases/tags/{TAG}',check=False)
-    if result.returncode:
-        assert '404' in result.stderr,'Release lookup failed; refusing to infer absence'
-        return None
-    return json.loads(result.stdout)
+    # The by-tag endpoint does not return unpublished drafts. The authenticated
+    # list includes them, so an interrupted upload can safely resume its draft.
+    result=gh('api',f'repos/{REPOSITORY}/releases?per_page=100','--paginate','--slurp')
+    matches=[item for page in json.loads(result.stdout) for item in page
+             if item['tag_name']==TAG]
+    assert len(matches)<=1,'Ambiguous release tag; refusing publication'
+    return matches[0] if matches else None
 
 
 def main():
