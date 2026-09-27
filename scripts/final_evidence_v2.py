@@ -7,6 +7,7 @@ import json
 import math
 import os
 from pathlib import Path
+import platform
 import shutil
 import statistics
 import sys
@@ -157,6 +158,7 @@ def reserve_evidence(collector,registry,out):
         with zipfile.ZipFile(selected_path) as selected,zipfile.ZipFile(holdout_path) as holdout:
             selection_bytes=selected.read('selection.json');selection=json.loads(selection_bytes)
             results=json.loads(holdout.read('holdout/reserve-statistics.json'))
+            assert (selection['family'],selection['n'],selection['law'])==key==(results['family'],results['n'],results['law'])
             assert hashlib.sha256(selection_bytes).hexdigest()==results['selection_sha256']
             assert selection['execution_status']=='COMPLETE' and selection['holdout_generated'] is False
             assert results['execution_status']=='COMPLETE' and results['observations']==1000
@@ -263,7 +265,7 @@ def write_report(out,areas,points,regions,hypotheses,registry,ledger):
             [dict(series='reserve',n=r['n'],family=r['family'],law=r['law'],reason=r['reason']) for r in regions if r['execution_status']!='COMPLETE'])
     dump(out/'execution-status.json',status)
     text=['# Sheaft v2.2: итог исполнения и границы результатов','',
-        '**Все допущенные работы завершены. Научный статус кампании — PARTIAL:** обязательная матрица '
+        '**Все допущенные процессы запущены, результаты и остановки сохранены. Научный статус кампании — PARTIAL:** обязательная матрица '
         'не заполнена из-за таймаутов, номинальных взаимных блокировок и опубликованных правил допуска. '
         'Успешное завершение workflow не превращает эти пропуски в положительный результат.','',
         'Предыдущая кампания и её отрицательные результаты сохранены. Новая PBR-модель имеет конечные буферы '
@@ -404,6 +406,7 @@ def main():
     assert sum(ledger['actual_seconds'].values())+ledger['reservation_seconds']<=ledger['total_runner_seconds']
     shutil.copy2('artifacts/budget/budget-v2.json',out/'budget-v2.json')
     shutil.copy2('artifacts/budget/budget-ledger.jsonl',out/'budget-ledger.jsonl')
+    shutil.copy2('artifacts/stats-environment/versions.json',out/'report-statistics-environment.json')
     entries=[json.loads(line) for line in (out/'budget-ledger.jsonl').read_text().splitlines()]
     dump(out/'failed-jobs.json',[row for row in entries if row['kind']=='ACTUAL' and row['conclusion'] not in ('success','skipped')])
     status=write_report(out,areas,points,regions,hypotheses,registry,ledger)
@@ -411,7 +414,8 @@ def main():
     dump(out/'revision-v2.json',registry)
     public_code={p.as_posix():hashlib.sha256(p.read_bytes()).hexdigest() for folder in ('scripts','experiments','validation','engines','references','planning')
         for p in sorted(Path(folder).rglob('*')) if p.is_file() and p.suffix in ('.py','.cpp','.go','.h','.hpp')}
-    dump(out/'report-source.json',dict(source_sha=os.environ['GITHUB_SHA'],run_id=os.environ['GITHUB_RUN_ID'],public_code=public_code))
+    dump(out/'report-source.json',dict(source_sha=os.environ['GITHUB_SHA'],run_id=os.environ['GITHUB_RUN_ID'],
+        python=sys.version,platform=platform.platform(),public_code=public_code))
     files={p.relative_to(root).as_posix():hashlib.sha256(p.read_bytes()).hexdigest() for p in sorted(root.rglob('*')) if p.is_file()}
     dump(root/'SHA256.json',files)
     print(json.dumps(status,ensure_ascii=False),flush=True)
