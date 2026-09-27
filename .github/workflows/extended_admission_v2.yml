@@ -60,5 +60,6 @@ jobs:
         if: always()
         with:
           name: pbr-admission-summary
-          path: artifacts/pbr-mk01/pbr-admission.json
+          path: |
+            artifacts/pbr-mk01/pbr-admission.json
             artifacts/budget/

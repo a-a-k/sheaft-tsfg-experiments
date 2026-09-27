@@ -4,7 +4,7 @@ on:
     inputs:
       phase:
         type: choice
-        options: [prepare, prepare-million, diagnostic, hundred]
+        options: [prepare, prepare-million, diagnostic, hundred, million]
         default: prepare
         required: true
       inputs_run:
@@ -16,6 +16,9 @@ on:
       diagnostic_run:
         type: string
         description: Successful diagnostic batch, required before 100k
+      hundred_runs:
+        type: string
+        description: Three successful 100k run IDs separated by commas, required for million
       repeat:
         type: choice
         options: ['0', '1', '2', '3']
@@ -85,22 +88,25 @@ jobs:
             artifacts/aps-admission/
             artifacts/build/
   batch:
-    if: inputs.phase == 'diagnostic' || inputs.phase == 'hundred'
+    if: inputs.phase == 'diagnostic' || inputs.phase == 'hundred' || inputs.phase == 'million'
     runs-on: ubuntu-24.04
     timeout-minutes: 3
     outputs:
-      matrix: ${{ steps.plan.outputs.matrix }}
+      matrix: ${{ steps.plan.outputs.matrix || steps.million.outputs.matrix }}
+      count: ${{ inputs.phase == 'million' && steps.million.outputs.count || 10 }}
     env:
       GH_TOKEN: ${{ github.token }}
       INPUTS_RUN: ${{ inputs.inputs_run }}
       ADMISSION_RUN: ${{ inputs.admission_run }}
       PHASE: ${{ inputs.phase }}
       REPEAT: ${{ inputs.repeat }}
+      HUNDRED_RUNS: ${{ inputs.hundred_runs }}
+      DIAGNOSTIC_RUN: ${{ inputs.diagnostic_run }}
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
       - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
         with:
-          name: aps-inputs-index-100k
+          name: aps-inputs-index-${{ inputs.phase == 'million' && '1m' || '100k' }}
           run-id: ${{ inputs.inputs_run }}
           github-token: ${{ github.token }}
           path: batch
@@ -112,9 +118,13 @@ jobs:
           github-token: ${{ github.token }}
           path: batch/diagnostic
       - id: plan
+        if: inputs.phase != 'million'
         run: python scripts/aps_batch_v2.py plan --root batch --phase "$PHASE" --repeat "$REPEAT" --inputs-run "$INPUTS_RUN" --admission-run "$ADMISSION_RUN"
+      - id: million
+        if: inputs.phase == 'million'
+        run: python scripts/aps_million_gate_v2.py --root batch --hundred-runs "$HUNDRED_RUNS" --diagnostic-run "$DIAGNOSTIC_RUN"
       - env:
-          RESERVED: ${{ steps.plan.outputs.reservation }}
+          RESERVED: ${{ steps.plan.outputs.reservation || steps.million.outputs.reservation }}
         run: python scripts/budget_v2.py --package aps-first --reserve-seconds "$RESERVED"
       - run: python validation/aps_memory.py
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
@@ -127,8 +137,9 @@ jobs:
             artifacts/aps-admission/memory-counter.json
   measure:
     needs: batch
+    if: needs.batch.outputs.count != '0'
     runs-on: ubuntu-24.04
-    timeout-minutes: ${{ inputs.phase == 'diagnostic' && 3 || 6 }}
+    timeout-minutes: ${{ inputs.phase == 'million' && 50 || inputs.phase == 'diagnostic' && 3 || 6 }}
     strategy:
       fail-fast: false
       max-parallel: 4
@@ -144,13 +155,13 @@ jobs:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
       - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
         with:
-          name: aps-inputs-100k
+          name: aps-inputs-${{ inputs.phase == 'million' && '1m' || '100k' }}
           run-id: ${{ inputs.inputs_run }}
           github-token: ${{ github.token }}
           path: aps-inputs
       - name: Isolated complete planning process
         run: |
-          if [ "$PHASE" = diagnostic ]; then file=diagnostic-10k.jsonl; limit=60; else file=task.jsonl; limit=180; fi
+          if [ "$PHASE" = diagnostic ]; then file=diagnostic-10k.jsonl; limit=60; elif [ "$PHASE" = million ]; then file=task.jsonl; limit=2700; else file=task.jsonl; limit=180; fi
           python scripts/run_aps_v2.py --input "aps-inputs/$TASK/$file" --output result --limit "$limit" --repeat "$REPEAT"
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         if: always()
@@ -160,9 +171,9 @@ jobs:
           compression-level: 1
   validate:
     needs: [batch, measure]
-    if: always() && needs.batch.result == 'success'
+    if: always() && needs.batch.result == 'success' && needs.batch.outputs.count != '0'
     runs-on: ubuntu-24.04
-    timeout-minutes: 5
+    timeout-minutes: ${{ inputs.phase == 'million' && 8 || 5 }}
     strategy:
       fail-fast: false
       max-parallel: 4
@@ -177,7 +188,7 @@ jobs:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
       - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
         with:
-          name: aps-inputs-100k
+          name: aps-inputs-${{ inputs.phase == 'million' && '1m' || '100k' }}
           run-id: ${{ inputs.inputs_run }}
           github-token: ${{ github.token }}
           path: aps-inputs
@@ -208,7 +219,7 @@ jobs:
           compression-level: 1
   report:
     needs: [batch, validate]
-    if: always() && needs.batch.result == 'success'
+    if: always() && needs.batch.result == 'success' && needs.batch.outputs.count != '0'
     runs-on: ubuntu-24.04
     timeout-minutes: 3
     steps:
@@ -217,7 +228,9 @@ jobs:
         with:
           pattern: aps-validated-*
           path: collected
-      - run: python scripts/aps_batch_v2.py report --root collected --output report --expected 10
+      - env:
+          EXPECTED: ${{ needs.batch.outputs.count }}
+        run: python scripts/aps_batch_v2.py report --root collected --output report --expected "$EXPECTED"
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         if: always()
         with:
