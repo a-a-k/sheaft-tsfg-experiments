@@ -1,0 +1,55 @@
+{
+  "execution_status": "COMPLETE",
+  "scope": "First package PR1-4; PF diagnostics also available",
+  "campaign_execution_status": "PARTIAL",
+  "PBR_preliminary_inputs": 36,
+  "K10_complete": 30,
+  "nominal_deadlocks": [
+    "F2-DENSE-N10000-M200-s101-PB",
+    "F2-DENSE-N10000-M200-s101-PBR",
+    "F2-DENSE-N10000-M200-s102-PB",
+    "F2-DENSE-N10000-M200-s102-PBR",
+    "F2-DENSE-N10000-M200-s103-PB",
+    "F2-DENSE-N10000-M200-s103-PBR"
+  ],
+  "strong_controls": [
+    "F2-DENSE-N1000-M200-s103-PBR"
+  ],
+  "weak_controls": [
+    "F1-DENSE-N1000-M200-s101-PB",
+    "F1-DENSE-N1000-M200-s101-PBR",
+    "F1-DENSE-N1000-M200-s101-PR",
+    "F1-DENSE-N1000-M200-s102-PB",
+    "F1-DENSE-N1000-M200-s102-PBR",
+    "F1-DENSE-N1000-M200-s102-PR",
+    "F1-DENSE-N1000-M200-s103-PB",
+    "F1-DENSE-N1000-M200-s103-PBR",
+    "F1-DENSE-N1000-M200-s103-PR",
+    "F2-DENSE-N1000-M200-s101-PB",
+    "F2-DENSE-N1000-M200-s101-PBR",
+    "F2-DENSE-N1000-M200-s101-PR",
+    "F2-DENSE-N1000-M200-s102-PB",
+    "F2-DENSE-N1000-M200-s102-PBR",
+    "F2-DENSE-N1000-M200-s102-PR",
+    "F2-DENSE-N1000-M200-s103-PB",
+    "F2-DENSE-N1000-M200-s103-PR",
+    "F1-DENSE-N10000-M200-s101-PB",
+    "F1-DENSE-N10000-M200-s101-PBR",
+    "F1-DENSE-N10000-M200-s101-PR",
+    "F1-DENSE-N10000-M200-s102-PB",
+    "F1-DENSE-N10000-M200-s102-PBR",
+    "F1-DENSE-N10000-M200-s102-PR",
+    "F1-DENSE-N10000-M200-s103-PB",
+    "F1-DENSE-N10000-M200-s103-PBR",
+    "F1-DENSE-N10000-M200-s103-PR",
+    "F2-DENSE-N10000-M200-s101-PR",
+    "F2-DENSE-N10000-M200-s102-PR",
+    "F2-DENSE-N10000-M200-s103-PR"
+  ],
+  "outstanding": [
+    "Remaining million APS repeats",
+    "Large admitted PBR pairs and explicit gates",
+    "Independent reserve holdout and fixed-family Holm analysis",
+    "Final evidence and budget audit"
+  ]
+}

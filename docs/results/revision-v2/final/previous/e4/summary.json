@@ -1,0 +1,939 @@
+{
+  "status": "COMPLETE",
+  "simulations_run": 0,
+  "regions": [
+    {
+      "family": "F1",
+      "law": "independent",
+      "status": "DERIVED_FROM_SAVED_OUTPUT",
+      "analysis": "POST_HOC_EXPLORATORY",
+      "original_H5": "NOT_SUPPORTED",
+      "scenarios": 1000,
+      "jobs": 10000,
+      "baseline_mean_produced_jobs": 10000.0,
+      "baseline_mission_success_fraction": 1.0,
+      "task_sha256": "9a79e3f6347df40eeab14ace787b6ee58b854bf24971bdeab0dd3821969ead8c",
+      "task_hash_definition": "SHA256 of original fixed-plan input.bin",
+      "bootstrap": {
+        "unit": "whole scenario record, all configurations together",
+        "method": "percentile",
+        "replicas": 10000,
+        "seed_text": "20260927|2.2|9a79e3f6347df40eeab14ace787b6ee58b854bf24971bdeab0dd3821969ead8c|e4_reanalysis_bootstrap:F1:independent|all",
+        "seed": 9712905591185805869,
+        "coverage": "pointwise, no multiplicity claim"
+      },
+      "cmax_status": "ALL_KNOWN",
+      "configurations": [
+        {
+          "machine": 180,
+          "group": "T",
+          "produced_jobs_effect": {
+            "mean": 0.0,
+            "median": 0.0,
+            "improved_fraction": 0.0,
+            "worsened_fraction": 0.0,
+            "unchanged_fraction": 1.0,
+            "ci95": [
+              0.0,
+              0.0
+            ]
+          },
+          "mean_output_fraction": 1.0,
+          "output_fraction_effect": {
+            "mean": 0.0,
+            "median": 0.0,
+            "improved_fraction": 0.0,
+            "worsened_fraction": 0.0,
+            "unchanged_fraction": 1.0,
+            "ci95": [
+              0.0,
+              0.0
+            ]
+          },
+          "mission_success_fraction": 1.0,
+          "cmax_reduction_seconds": {
+            "mean": 11.798090909090908,
+            "median": 0.0,
+            "improved_fraction": 0.038,
+            "worsened_fraction": 0.0,
+            "unchanged_fraction": 0.962,
+            "ci95": [
+              7.175927272727273,
+              17.247297727272723
+            ]
+          }
+        },
+        {
+          "machine": 181,
+          "group": "T",
+          "produced_jobs_effect": {
+            "mean": 0.0,
+            "median": 0.0,
+            "improved_fraction": 0.0,
+            "worsened_fraction": 0.0,
+            "unchanged_fraction": 1.0,
+            "ci95": [
+              0.0,
+              0.0
+            ]
+          },
+          "mean_output_fraction": 1.0,
+          "output_fraction_effect": {
+            "mean": 0.0,
+            "median": 0.0,
+            "improved_fraction": 0.0,
+            "worsened_fraction": 0.0,
+            "unchanged_fraction": 1.0,
+            "ci95": [
+              0.0,
+              0.0
+            ]
+          },
+          "mission_success_fraction": 1.0,
+          "cmax_reduction_seconds": {
+            "mean": 11.999818181818181,
+            "median": 0.0,
+            "improved_fraction": 0.037,
+            "worsened_fraction": 0.0,
+            "unchanged_fraction": 0.963,
+            "ci95": [
+              7.323818181818182,
+              17.27611818181818
+            ]
+          }
+        },
+        {
+          "machine": 182,
+          "group": "T",
+          "produced_jobs_effect": {
+            "mean": 0.0,
+            "median": 0.0,
+            "improved_fraction": 0.0,
+            "worsened_fraction": 0.0,
+            "unchanged_fraction": 1.0,
+            "ci95": [
+              0.0,
+              0.0
+            ]
+          },
+          "mean_output_fraction": 1.0,
+          "output_fraction_effect": {
+            "mean": 0.0,
+            "median": 0.0,
+            "improved_fraction": 0.0,
+            "worsened_fraction": 0.0,
+            "unchanged_fraction": 1.0,
+            "ci95": [
+              0.0,
+              0.0
+            ]
+          },
+          "mission_success_fraction": 1.0,
+          "cmax_reduction_seconds": {
+            "mean": 9.652363636363637,
+            "median": 0.0,
+            "improved_fraction": 0.043,
+            "worsened_fraction": 0.0,
+            "unchanged_fraction": 0.957,
+            "ci95": [
+              5.9530590909090915,
+              13.998529545454543
+            ]
+          }
+        },
+        {
+          "machine": 0,
+          "group": "B",
+          "produced_jobs_effect": {
+            "mean": 0.0,
+            "median": 0.0,
+            "improved_fraction": 0.0,
+            "worsened_fraction": 0.0,
+            "unchanged_fraction": 1.0,
+            "ci95": [
+              0.0,
+              0.0
+            ]
+          },
+          "mean_output_fraction": 1.0,
+          "output_fraction_effect": {
+            "mean": 0.0,
+            "median": 0.0,
+            "improved_fraction": 0.0,
+            "worsened_fraction": 0.0,
+            "unchanged_fraction": 1.0,
+            "ci95": [
+              0.0,
+              0.0
+            ]
+          },
+          "mission_success_fraction": 1.0,
+          "cmax_reduction_seconds": {
+            "mean": 0.0,
+            "median": 0.0,
+            "improved_fraction": 0.0,
+            "worsened_fraction": 0.0,
+            "unchanged_fraction": 1.0,
+            "ci95": [
+              0.0,
+              0.0
+            ]
+          }
+        },
+        {
+          "machine": 1,
+          "group": "B",
+          "produced_jobs_effect": {
+            "mean": 0.0,
+            "median": 0.0,
+            "improved_fraction": 0.0,
+            "worsened_fraction": 0.0,
+            "unchanged_fraction": 1.0,
+            "ci95": [
+              0.0,
+              0.0
+            ]
+          },
+          "mean_output_fraction": 1.0,
+          "output_fraction_effect": {
+            "mean": 0.0,
+            "median": 0.0,
+            "improved_fraction": 0.0,
+            "worsened_fraction": 0.0,
+            "unchanged_fraction": 1.0,
+            "ci95": [
+              0.0,
+              0.0
+            ]
+          },
+          "mission_success_fraction": 1.0,
+          "cmax_reduction_seconds": {
+            "mean": 0.0,
+            "median": 0.0,
+            "improved_fraction": 0.0,
+            "worsened_fraction": 0.0,
+            "unchanged_fraction": 1.0,
+            "ci95": [
+              0.0,
+              0.0
+            ]
+          }
+        },
+        {
+          "machine": 2,
+          "group": "B",
+          "produced_jobs_effect": {
+            "mean": 0.0,
+            "median": 0.0,
+            "improved_fraction": 0.0,
+            "worsened_fraction": 0.0,
+            "unchanged_fraction": 1.0,
+            "ci95": [
+              0.0,
+              0.0
+            ]
+          },
+          "mean_output_fraction": 1.0,
+          "output_fraction_effect": {
+            "mean": 0.0,
+            "median": 0.0,
+            "improved_fraction": 0.0,
+            "worsened_fraction": 0.0,
+            "unchanged_fraction": 1.0,
+            "ci95": [
+              0.0,
+              0.0
+            ]
+          },
+          "mission_success_fraction": 1.0,
+          "cmax_reduction_seconds": {
+            "mean": 0.0,
+            "median": 0.0,
+            "improved_fraction": 0.0,
+            "worsened_fraction": 0.0,
+            "unchanged_fraction": 1.0,
+            "ci95": [
+              0.0,
+              0.0
+            ]
+          }
+        }
+      ],
+      "source_artifact": 10903988001,
+      "source_archive_sha256": "9883ef3b5a47f1ad8f84d6346c37d74e09518d1ceae1a838ebb8be9778950988",
+      "evidence_sha256": "a1f564f9211014be9e9073486c9bfe0ea92553b9aee9308741aec6d0e44e64f9",
+      "bootstrap_indices_sha256": "66ee30dcd9a3da185e5101a97f72af46dbc0a0f182c770374a3c89614549c32b",
+      "numpy_version": "2.5.3"
+    },
+    {
+      "family": "F1",
+      "law": "common-cause",
+      "status": "DERIVED_FROM_SAVED_OUTPUT",
+      "analysis": "POST_HOC_EXPLORATORY",
+      "original_H5": "NOT_SUPPORTED",
+      "scenarios": 1000,
+      "jobs": 10000,
+      "baseline_mean_produced_jobs": 10000.0,
+      "baseline_mission_success_fraction": 1.0,
+      "task_sha256": "9a79e3f6347df40eeab14ace787b6ee58b854bf24971bdeab0dd3821969ead8c",
+      "task_hash_definition": "SHA256 of original fixed-plan input.bin",
+      "bootstrap": {
+        "unit": "whole scenario record, all configurations together",
+        "method": "percentile",
+        "replicas": 10000,
+        "seed_text": "20260927|2.2|9a79e3f6347df40eeab14ace787b6ee58b854bf24971bdeab0dd3821969ead8c|e4_reanalysis_bootstrap:F1:common-cause|all",
+        "seed": 14955131338365292162,
+        "coverage": "pointwise, no multiplicity claim"
+      },
+      "cmax_status": "ALL_KNOWN",
+      "configurations": [
+        {
+          "machine": 180,
+          "group": "T",
+          "produced_jobs_effect": {
+            "mean": 0.0,
+            "median": 0.0,
+            "improved_fraction": 0.0,
+            "worsened_fraction": 0.0,
+            "unchanged_fraction": 1.0,
+            "ci95": [
+              0.0,
+              0.0
+            ]
+          },
+          "mean_output_fraction": 1.0,
+          "output_fraction_effect": {
+            "mean": 0.0,
+            "median": 0.0,
+            "improved_fraction": 0.0,
+            "worsened_fraction": 0.0,
+            "unchanged_fraction": 1.0,
+            "ci95": [
+              0.0,
+              0.0
+            ]
+          },
+          "mission_success_fraction": 1.0,
+          "cmax_reduction_seconds": {
+            "mean": 11.095545454545455,
+            "median": 0.0,
+            "improved_fraction": 0.044,
+            "worsened_fraction": 0.0,
+            "unchanged_fraction": 0.956,
+            "ci95": [
+              7.037915909090909,
+              15.602818181818183
+            ]
+          }
+        },
+        {
+          "machine": 181,
+          "group": "T",
+          "produced_jobs_effect": {
+            "mean": 0.0,
+            "median": 0.0,
+            "improved_fraction": 0.0,
+            "worsened_fraction": 0.0,
+            "unchanged_fraction": 1.0,
+            "ci95": [
+              0.0,
+              0.0
+            ]
+          },
+          "mean_output_fraction": 1.0,
+          "output_fraction_effect": {
+            "mean": 0.0,
+            "median": 0.0,
+            "improved_fraction": 0.0,
+            "worsened_fraction": 0.0,
+            "unchanged_fraction": 1.0,
+            "ci95": [
+              0.0,
+              0.0
+            ]
+          },
+          "mission_success_fraction": 1.0,
+          "cmax_reduction_seconds": {
+            "mean": 11.856272727272728,
+            "median": 0.0,
+            "improved_fraction": 0.046,
+            "worsened_fraction": 0.0,
+            "unchanged_fraction": 0.954,
+            "ci95": [
+              7.666895454545455,
+              16.63744318181818
+            ]
+          }
+        },
+        {
+          "machine": 182,
+          "group": "T",
+          "produced_jobs_effect": {
+            "mean": 0.0,
+            "median": 0.0,
+            "improved_fraction": 0.0,
+            "worsened_fraction": 0.0,
+            "unchanged_fraction": 1.0,
+            "ci95": [
+              0.0,
+              0.0
+            ]
+          },
+          "mean_output_fraction": 1.0,
+          "output_fraction_effect": {
+            "mean": 0.0,
+            "median": 0.0,
+            "improved_fraction": 0.0,
+            "worsened_fraction": 0.0,
+            "unchanged_fraction": 1.0,
+            "ci95": [
+              0.0,
+              0.0
+            ]
+          },
+          "mission_success_fraction": 1.0,
+          "cmax_reduction_seconds": {
+            "mean": 13.148,
+            "median": 0.0,
+            "improved_fraction": 0.048,
+            "worsened_fraction": 0.0,
+            "unchanged_fraction": 0.952,
+            "ci95": [
+              8.758975,
+              17.972409090909085
+            ]
+          }
+        },
+        {
+          "machine": 0,
+          "group": "B",
+          "produced_jobs_effect": {
+            "mean": 0.0,
+            "median": 0.0,
+            "improved_fraction": 0.0,
+            "worsened_fraction": 0.0,
+            "unchanged_fraction": 1.0,
+            "ci95": [
+              0.0,
+              0.0
+            ]
+          },
+          "mean_output_fraction": 1.0,
+          "output_fraction_effect": {
+            "mean": 0.0,
+            "median": 0.0,
+            "improved_fraction": 0.0,
+            "worsened_fraction": 0.0,
+            "unchanged_fraction": 1.0,
+            "ci95": [
+              0.0,
+              0.0
+            ]
+          },
+          "mission_success_fraction": 1.0,
+          "cmax_reduction_seconds": {
+            "mean": 0.0018181818181818182,
+            "median": 0.0,
+            "improved_fraction": 0.001,
+            "worsened_fraction": 0.0,
+            "unchanged_fraction": 0.999,
+            "ci95": [
+              0.0,
+              0.005454545454545454
+            ]
+          }
+        },
+        {
+          "machine": 1,
+          "group": "B",
+          "produced_jobs_effect": {
+            "mean": 0.0,
+            "median": 0.0,
+            "improved_fraction": 0.0,
+            "worsened_fraction": 0.0,
+            "unchanged_fraction": 1.0,
+            "ci95": [
+              0.0,
+              0.0
+            ]
+          },
+          "mean_output_fraction": 1.0,
+          "output_fraction_effect": {
+            "mean": 0.0,
+            "median": 0.0,
+            "improved_fraction": 0.0,
+            "worsened_fraction": 0.0,
+            "unchanged_fraction": 1.0,
+            "ci95": [
+              0.0,
+              0.0
+            ]
+          },
+          "mission_success_fraction": 1.0,
+          "cmax_reduction_seconds": {
+            "mean": 0.0018181818181818182,
+            "median": 0.0,
+            "improved_fraction": 0.001,
+            "worsened_fraction": 0.0,
+            "unchanged_fraction": 0.999,
+            "ci95": [
+              0.0,
+              0.005454545454545454
+            ]
+          }
+        },
+        {
+          "machine": 2,
+          "group": "B",
+          "produced_jobs_effect": {
+            "mean": 0.0,
+            "median": 0.0,
+            "improved_fraction": 0.0,
+            "worsened_fraction": 0.0,
+            "unchanged_fraction": 1.0,
+            "ci95": [
+              0.0,
+              0.0
+            ]
+          },
+          "mean_output_fraction": 1.0,
+          "output_fraction_effect": {
+            "mean": 0.0,
+            "median": 0.0,
+            "improved_fraction": 0.0,
+            "worsened_fraction": 0.0,
+            "unchanged_fraction": 1.0,
+            "ci95": [
+              0.0,
+              0.0
+            ]
+          },
+          "mission_success_fraction": 1.0,
+          "cmax_reduction_seconds": {
+            "mean": 0.0,
+            "median": 0.0,
+            "improved_fraction": 0.0,
+            "worsened_fraction": 0.0,
+            "unchanged_fraction": 1.0,
+            "ci95": [
+              0.0,
+              0.0
+            ]
+          }
+        }
+      ],
+      "source_artifact": 10903988001,
+      "source_archive_sha256": "9883ef3b5a47f1ad8f84d6346c37d74e09518d1ceae1a838ebb8be9778950988",
+      "evidence_sha256": "2a935f69038dc4656f02813b5524b4cd6339b7adef8d21e4d709b12a4f204d8f",
+      "bootstrap_indices_sha256": "a34ee16e4cd2c07298be749df048ba7211637080a51f298a8cab47bbf76309d3",
+      "numpy_version": "2.5.3"
+    },
+    {
+      "family": "F2",
+      "law": "independent",
+      "status": "DERIVED_FROM_SAVED_OUTPUT",
+      "analysis": "POST_HOC_EXPLORATORY",
+      "original_H5": "NOT_SUPPORTED",
+      "scenarios": 1000,
+      "jobs": 10000,
+      "baseline_mean_produced_jobs": 7646.857,
+      "baseline_mission_success_fraction": 0.0,
+      "task_sha256": "2860fea535bec04bcf6129532b6266f940fd9ee866744edd8069b32c882278c8",
+      "task_hash_definition": "SHA256 of original fixed-plan input.bin",
+      "bootstrap": {
+        "unit": "whole scenario record, all configurations together",
+        "method": "percentile",
+        "replicas": 10000,
+        "seed_text": "20260927|2.2|2860fea535bec04bcf6129532b6266f940fd9ee866744edd8069b32c882278c8|e4_reanalysis_bootstrap:F2:independent|all",
+        "seed": 6317572706610953704,
+        "coverage": "pointwise, no multiplicity claim"
+      },
+      "cmax_status": "UNKNOWN_FOR_INCOMPLETE_MISSIONS",
+      "configurations": [
+        {
+          "machine": 155,
+          "group": "T",
+          "produced_jobs_effect": {
+            "mean": 2.007,
+            "median": 0.0,
+            "improved_fraction": 0.138,
+            "worsened_fraction": 0.0,
+            "unchanged_fraction": 0.862,
+            "ci95": [
+              1.129,
+              3.072
+            ]
+          },
+          "mean_output_fraction": 0.7648864,
+          "output_fraction_effect": {
+            "mean": 0.0002007,
+            "median": 0.0,
+            "improved_fraction": 0.138,
+            "worsened_fraction": 0.0,
+            "unchanged_fraction": 0.862,
+            "ci95": [
+              0.0001129,
+              0.0003072
+            ]
+          },
+          "mission_success_fraction": 0.0,
+          "cmax_reduction_seconds": null
+        },
+        {
+          "machine": 166,
+          "group": "T",
+          "produced_jobs_effect": {
+            "mean": 1.366,
+            "median": 0.0,
+            "improved_fraction": 0.157,
+            "worsened_fraction": 0.0,
+            "unchanged_fraction": 0.843,
+            "ci95": [
+              0.663,
+              2.5460499999999993
+            ]
+          },
+          "mean_output_fraction": 0.7648223,
+          "output_fraction_effect": {
+            "mean": 0.0001366,
+            "median": 0.0,
+            "improved_fraction": 0.157,
+            "worsened_fraction": 0.0,
+            "unchanged_fraction": 0.843,
+            "ci95": [
+              6.63e-05,
+              0.0002546049999999999
+            ]
+          },
+          "mission_success_fraction": 0.0,
+          "cmax_reduction_seconds": null
+        },
+        {
+          "machine": 48,
+          "group": "T",
+          "produced_jobs_effect": {
+            "mean": 1.071,
+            "median": 0.0,
+            "improved_fraction": 0.151,
+            "worsened_fraction": 0.0,
+            "unchanged_fraction": 0.849,
+            "ci95": [
+              0.682,
+              1.542
+            ]
+          },
+          "mean_output_fraction": 0.7647927999999999,
+          "output_fraction_effect": {
+            "mean": 0.0001071,
+            "median": 0.0,
+            "improved_fraction": 0.151,
+            "worsened_fraction": 0.0,
+            "unchanged_fraction": 0.849,
+            "ci95": [
+              6.82e-05,
+              0.0001542
+            ]
+          },
+          "mission_success_fraction": 0.0,
+          "cmax_reduction_seconds": null
+        },
+        {
+          "machine": 193,
+          "group": "B",
+          "produced_jobs_effect": {
+            "mean": 1.426,
+            "median": 0.0,
+            "improved_fraction": 0.117,
+            "worsened_fraction": 0.0,
+            "unchanged_fraction": 0.883,
+            "ci95": [
+              0.7499750000000001,
+              2.3310249999999995
+            ]
+          },
+          "mean_output_fraction": 0.7648283,
+          "output_fraction_effect": {
+            "mean": 0.0001426,
+            "median": 0.0,
+            "improved_fraction": 0.117,
+            "worsened_fraction": 0.0,
+            "unchanged_fraction": 0.883,
+            "ci95": [
+              7.499750000000001e-05,
+              0.00023310249999999996
+            ]
+          },
+          "mission_success_fraction": 0.0,
+          "cmax_reduction_seconds": null
+        },
+        {
+          "machine": 139,
+          "group": "B",
+          "produced_jobs_effect": {
+            "mean": 1.651,
+            "median": 0.0,
+            "improved_fraction": 0.124,
+            "worsened_fraction": 0.0,
+            "unchanged_fraction": 0.876,
+            "ci95": [
+              0.941975,
+              2.4940249999999997
+            ]
+          },
+          "mean_output_fraction": 0.7648507999999999,
+          "output_fraction_effect": {
+            "mean": 0.0001651,
+            "median": 0.0,
+            "improved_fraction": 0.124,
+            "worsened_fraction": 0.0,
+            "unchanged_fraction": 0.876,
+            "ci95": [
+              9.41975e-05,
+              0.0002494025
+            ]
+          },
+          "mission_success_fraction": 0.0,
+          "cmax_reduction_seconds": null
+        },
+        {
+          "machine": 59,
+          "group": "B",
+          "produced_jobs_effect": {
+            "mean": 1.543,
+            "median": 0.0,
+            "improved_fraction": 0.131,
+            "worsened_fraction": 0.0,
+            "unchanged_fraction": 0.869,
+            "ci95": [
+              0.826,
+              2.585
+            ]
+          },
+          "mean_output_fraction": 0.76484,
+          "output_fraction_effect": {
+            "mean": 0.00015429999999999998,
+            "median": 0.0,
+            "improved_fraction": 0.131,
+            "worsened_fraction": 0.0,
+            "unchanged_fraction": 0.869,
+            "ci95": [
+              8.26e-05,
+              0.0002585
+            ]
+          },
+          "mission_success_fraction": 0.0,
+          "cmax_reduction_seconds": null
+        }
+      ],
+      "source_artifact": 10904337463,
+      "source_archive_sha256": "fa1c410164d91e3902fa9a087f717cc976e7bab8dbe25afe4f4996995c175a85",
+      "evidence_sha256": "0e0bdd375905a0a6636460f93b8f653ac05f54a13ca58c990a0e17279ebbf1f0",
+      "bootstrap_indices_sha256": "70703f3257847ae653dc9d02e89b8b2aaf544a8b3730cec40423c9383f12d6b1",
+      "numpy_version": "2.5.3"
+    },
+    {
+      "family": "F2",
+      "law": "common-cause",
+      "status": "DERIVED_FROM_SAVED_OUTPUT",
+      "analysis": "POST_HOC_EXPLORATORY",
+      "original_H5": "NOT_SUPPORTED",
+      "scenarios": 1000,
+      "jobs": 10000,
+      "baseline_mean_produced_jobs": 7577.81,
+      "baseline_mission_success_fraction": 0.0,
+      "task_sha256": "2860fea535bec04bcf6129532b6266f940fd9ee866744edd8069b32c882278c8",
+      "task_hash_definition": "SHA256 of original fixed-plan input.bin",
+      "bootstrap": {
+        "unit": "whole scenario record, all configurations together",
+        "method": "percentile",
+        "replicas": 10000,
+        "seed_text": "20260927|2.2|2860fea535bec04bcf6129532b6266f940fd9ee866744edd8069b32c882278c8|e4_reanalysis_bootstrap:F2:common-cause|all",
+        "seed": 6447171942384050632,
+        "coverage": "pointwise, no multiplicity claim"
+      },
+      "cmax_status": "UNKNOWN_FOR_INCOMPLETE_MISSIONS",
+      "configurations": [
+        {
+          "machine": 155,
+          "group": "T",
+          "produced_jobs_effect": {
+            "mean": 1.869,
+            "median": 0.0,
+            "improved_fraction": 0.101,
+            "worsened_fraction": 0.0,
+            "unchanged_fraction": 0.899,
+            "ci95": [
+              1.0899750000000001,
+              2.8070499999999994
+            ]
+          },
+          "mean_output_fraction": 0.7579679,
+          "output_fraction_effect": {
+            "mean": 0.0001869,
+            "median": 0.0,
+            "improved_fraction": 0.101,
+            "worsened_fraction": 0.0,
+            "unchanged_fraction": 0.899,
+            "ci95": [
+              0.00010899750000000001,
+              0.00028070499999999996
+            ]
+          },
+          "mission_success_fraction": 0.0,
+          "cmax_reduction_seconds": null
+        },
+        {
+          "machine": 166,
+          "group": "T",
+          "produced_jobs_effect": {
+            "mean": 1.153,
+            "median": 0.0,
+            "improved_fraction": 0.161,
+            "worsened_fraction": 0.0,
+            "unchanged_fraction": 0.839,
+            "ci95": [
+              0.722,
+              1.659
+            ]
+          },
+          "mean_output_fraction": 0.7578963,
+          "output_fraction_effect": {
+            "mean": 0.0001153,
+            "median": 0.0,
+            "improved_fraction": 0.161,
+            "worsened_fraction": 0.0,
+            "unchanged_fraction": 0.839,
+            "ci95": [
+              7.219999999999999e-05,
+              0.0001659
+            ]
+          },
+          "mission_success_fraction": 0.0,
+          "cmax_reduction_seconds": null
+        },
+        {
+          "machine": 48,
+          "group": "T",
+          "produced_jobs_effect": {
+            "mean": 2.816,
+            "median": 0.0,
+            "improved_fraction": 0.172,
+            "worsened_fraction": 0.0,
+            "unchanged_fraction": 0.828,
+            "ci95": [
+              1.715975,
+              4.072049999999999
+            ]
+          },
+          "mean_output_fraction": 0.7580626,
+          "output_fraction_effect": {
+            "mean": 0.00028159999999999996,
+            "median": 0.0,
+            "improved_fraction": 0.172,
+            "worsened_fraction": 0.0,
+            "unchanged_fraction": 0.828,
+            "ci95": [
+              0.0001715975,
+              0.0004072049999999999
+            ]
+          },
+          "mission_success_fraction": 0.0,
+          "cmax_reduction_seconds": null
+        },
+        {
+          "machine": 193,
+          "group": "B",
+          "produced_jobs_effect": {
+            "mean": 1.727,
+            "median": 0.0,
+            "improved_fraction": 0.124,
+            "worsened_fraction": 0.0,
+            "unchanged_fraction": 0.876,
+            "ci95": [
+              0.973,
+              2.6490249999999995
+            ]
+          },
+          "mean_output_fraction": 0.7579537000000001,
+          "output_fraction_effect": {
+            "mean": 0.0001727,
+            "median": 0.0,
+            "improved_fraction": 0.124,
+            "worsened_fraction": 0.0,
+            "unchanged_fraction": 0.876,
+            "ci95": [
+              9.73e-05,
+              0.0002649025
+            ]
+          },
+          "mission_success_fraction": 0.0,
+          "cmax_reduction_seconds": null
+        },
+        {
+          "machine": 139,
+          "group": "B",
+          "produced_jobs_effect": {
+            "mean": 1.428,
+            "median": 0.0,
+            "improved_fraction": 0.108,
+            "worsened_fraction": 0.0,
+            "unchanged_fraction": 0.892,
+            "ci95": [
+              0.83195,
+              2.1450249999999995
+            ]
+          },
+          "mean_output_fraction": 0.7579238,
+          "output_fraction_effect": {
+            "mean": 0.0001428,
+            "median": 0.0,
+            "improved_fraction": 0.108,
+            "worsened_fraction": 0.0,
+            "unchanged_fraction": 0.892,
+            "ci95": [
+              8.319499999999999e-05,
+              0.00021450249999999994
+            ]
+          },
+          "mission_success_fraction": 0.0,
+          "cmax_reduction_seconds": null
+        },
+        {
+          "machine": 59,
+          "group": "B",
+          "produced_jobs_effect": {
+            "mean": 1.33,
+            "median": 0.0,
+            "improved_fraction": 0.103,
+            "worsened_fraction": 0.0,
+            "unchanged_fraction": 0.897,
+            "ci95": [
+              0.661,
+              2.1270249999999993
+            ]
+          },
+          "mean_output_fraction": 0.7579140000000001,
+          "output_fraction_effect": {
+            "mean": 0.000133,
+            "median": 0.0,
+            "improved_fraction": 0.103,
+            "worsened_fraction": 0.0,
+            "unchanged_fraction": 0.897,
+            "ci95": [
+              6.610000000000001e-05,
+              0.00021270249999999992
+            ]
+          },
+          "mission_success_fraction": 0.0,
+          "cmax_reduction_seconds": null
+        }
+      ],
+      "source_artifact": 10904337463,
+      "source_archive_sha256": "fa1c410164d91e3902fa9a087f717cc976e7bab8dbe25afe4f4996995c175a85",
+      "evidence_sha256": "a3b441f2126813bdca90d8700365ecf5e258fa5325e027bea2c7858e7756b467",
+      "bootstrap_indices_sha256": "2da2532471dd355ea28fbaf98ea995686735376816d04311699746694a7ee4ba",
+      "numpy_version": "2.5.3"
+    }
+  ],
+  "limitation": "Post-hoc output effects do not revise H5; pointwise intervals are not confirmatory tests. Zero sample effect and degenerate bootstrap intervals do not establish population equivalence."
+}

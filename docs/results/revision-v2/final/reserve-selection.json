@@ -1,0 +1,180 @@
+[
+  {
+    "run_id": 36312894404,
+    "task_sha256": "6c25e0501aa836f1af6571d365ddbbf09342e86b098f5d0874a7eedbc50bb087",
+    "law": "independent",
+    "family": "F1",
+    "n": 10000,
+    "D_fixed": 3930080,
+    "execution_status": "COMPLETE",
+    "holdout_generated": false,
+    "primary_engine": "DES-EXT-v2.2",
+    "pilot_sha256": "03ed90568f71e44c3c1473f9b5c4df51b22b191d94b25f4dac02aec95d24694b",
+    "C0": 3572800,
+    "D_cal": 3630030,
+    "calibration_status": "RESOLVED",
+    "known_calibration_completions": 100,
+    "selected": 79,
+    "candidates": [
+      79,
+      115,
+      161,
+      180,
+      181,
+      182,
+      189,
+      196,
+      198
+    ],
+    "candidates_sha256": "bc4e577007dc0bce78b13a495cd6cdb905ab639b9806df3e56f22d06fc4f11ff",
+    "selection_effects": [
+      {
+        "machine": 79,
+        "mean_gain": 0.0
+      },
+      {
+        "machine": 115,
+        "mean_gain": 0.0
+      },
+      {
+        "machine": 161,
+        "mean_gain": 0.0
+      },
+      {
+        "machine": 180,
+        "mean_gain": 0.0
+      },
+      {
+        "machine": 181,
+        "mean_gain": 0.0
+      },
+      {
+        "machine": 182,
+        "mean_gain": 0.0
+      },
+      {
+        "machine": 189,
+        "mean_gain": 0.0
+      },
+      {
+        "machine": 196,
+        "mean_gain": 0.0
+      },
+      {
+        "machine": 198,
+        "mean_gain": 0.0
+      }
+    ],
+    "critical_control": 196,
+    "load_control": 180,
+    "random_controls": [
+      79,
+      115,
+      161
+    ],
+    "configurations": [
+      null,
+      79,
+      115,
+      161,
+      180,
+      196
+    ],
+    "ranking_sha256": "3212168000a8087952849a2b67d8d5adb6657b14b307a043f118e4bda2ec697d",
+    "selection_bank_sha256": "fe425cada471393a201e576e20431095306c6efdfa221318af18ecca52847fc1",
+    "calibration_bank_sha256": "d8cc193aae0a83746e8a11dedd4a76242243ed2e5857d61074fe50fa348a25f1",
+    "baseline_input_sha256": "0e574c8bb119e374d2e1806ffeed0ce41f3c2fbbd16b5320b409389d022e43a9",
+    "statistics_spec_sha256": "526587d2f6960fec64f8f61a9a8c71ca9e723935cba527527230f7ac4b299820",
+    "tick_unit": "0.01/11 second",
+    "primary_metric": "fraction of jobs completed by the specified deadline"
+  },
+  {
+    "run_id": 36314314805,
+    "task_sha256": "6c25e0501aa836f1af6571d365ddbbf09342e86b098f5d0874a7eedbc50bb087",
+    "law": "common-cause",
+    "family": "F1",
+    "n": 10000,
+    "D_fixed": 3930080,
+    "execution_status": "COMPLETE",
+    "holdout_generated": false,
+    "primary_engine": "DES-EXT-v2.2",
+    "pilot_sha256": "d2d47cd2ff3da2e0549256132ddf384a18268f2434b8a123899690ef38e71e06",
+    "C0": 3572800,
+    "D_cal": 3617820,
+    "calibration_status": "RESOLVED",
+    "known_calibration_completions": 100,
+    "selected": 79,
+    "candidates": [
+      79,
+      115,
+      161,
+      180,
+      181,
+      182,
+      189,
+      196,
+      198
+    ],
+    "candidates_sha256": "bc4e577007dc0bce78b13a495cd6cdb905ab639b9806df3e56f22d06fc4f11ff",
+    "selection_effects": [
+      {
+        "machine": 79,
+        "mean_gain": 0.0
+      },
+      {
+        "machine": 115,
+        "mean_gain": 0.0
+      },
+      {
+        "machine": 161,
+        "mean_gain": 0.0
+      },
+      {
+        "machine": 180,
+        "mean_gain": 0.0
+      },
+      {
+        "machine": 181,
+        "mean_gain": 0.0
+      },
+      {
+        "machine": 182,
+        "mean_gain": 0.0
+      },
+      {
+        "machine": 189,
+        "mean_gain": 0.0
+      },
+      {
+        "machine": 196,
+        "mean_gain": 0.0
+      },
+      {
+        "machine": 198,
+        "mean_gain": 0.0
+      }
+    ],
+    "critical_control": 196,
+    "load_control": 180,
+    "random_controls": [
+      79,
+      115,
+      161
+    ],
+    "configurations": [
+      null,
+      79,
+      115,
+      161,
+      180,
+      196
+    ],
+    "ranking_sha256": "3a8ce3fd50df03b84144586ca4c42db356c49eccf13ad4b73103aeb9a52ba767",
+    "selection_bank_sha256": "f13eaf8079ba921d4f322efab1e16b6faed28808b51b5a4fa3eff7c4e300c8b3",
+    "calibration_bank_sha256": "91133fb11a596ff930d89e47ca0decc9f870fc24bb2c46494033e19fbede08e0",
+    "baseline_input_sha256": "0e574c8bb119e374d2e1806ffeed0ce41f3c2fbbd16b5320b409389d022e43a9",
+    "statistics_spec_sha256": "526587d2f6960fec64f8f61a9a8c71ca9e723935cba527527230f7ac4b299820",
+    "tick_unit": "0.01/11 second",
+    "primary_metric": "fraction of jobs completed by the specified deadline"
+  }
+]

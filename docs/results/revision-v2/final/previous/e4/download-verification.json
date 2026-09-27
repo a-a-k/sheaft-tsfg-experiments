@@ -1,0 +1,8 @@
+{
+  "status": "PASS",
+  "release": "revision-v2-e4-1bab7db283f5",
+  "files": {
+    "e4-complete-v2.zip": "63334fce5d6c221b53620a8fe4a8bdf89aa9b147815a7decd74d09086189ed06"
+  },
+  "check": "Downloaded release; outer archive, internal manifests, original raw files verified"
+}

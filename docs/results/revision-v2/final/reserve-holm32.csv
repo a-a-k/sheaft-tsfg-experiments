@@ -1,0 +1,33 @@
+family,n,law,deadline,comparison,observation_status,p_raw,mean,ci95,p_holm,reject
+F1,10000,common-cause,D_fixed,base,COMPLETE,1.0,0.0,"[0.0, 0.0]",1.0,False
+F1,10000,common-cause,D_fixed,load,COMPLETE,1.0,0.0,"[0.0, 0.0]",1.0,False
+F1,10000,common-cause,D_cal,base,COMPLETE,0.2819814756122967,1.0000000000000008e-06,"[-2.0000000000000016e-06, 5.000000000000005e-06]",1.0,False
+F1,10000,common-cause,D_cal,load,COMPLETE,0.9486513512819365,-3.400000000000003e-05,"[-7.400000000000006e-05, 5.000000000000005e-06]",1.0,False
+F1,10000,independent,D_fixed,base,COMPLETE,1.0,0.0,"[0.0, 0.0]",1.0,False
+F1,10000,independent,D_fixed,load,COMPLETE,1.0,0.0,"[0.0, 0.0]",1.0,False
+F1,10000,independent,D_cal,base,COMPLETE,0.1587763300882064,1.0000000000000008e-06,"[0.0, 3.0000000000000026e-06]",1.0,False
+F1,10000,independent,D_cal,load,COMPLETE,0.9999999970964453,-8.800000000000008e-05,"[-0.0001190000000000001, -5.900000000000005e-05]",1.0,False
+F1,100000,common-cause,D_fixed,base,INCOMPLETE,1.0,,,1.0,False
+F1,100000,common-cause,D_fixed,load,INCOMPLETE,1.0,,,1.0,False
+F1,100000,common-cause,D_cal,base,INCOMPLETE,1.0,,,1.0,False
+F1,100000,common-cause,D_cal,load,INCOMPLETE,1.0,,,1.0,False
+F1,100000,independent,D_fixed,base,INCOMPLETE,1.0,,,1.0,False
+F1,100000,independent,D_fixed,load,INCOMPLETE,1.0,,,1.0,False
+F1,100000,independent,D_cal,base,INCOMPLETE,1.0,,,1.0,False
+F1,100000,independent,D_cal,load,INCOMPLETE,1.0,,,1.0,False
+F2,10000,common-cause,D_fixed,base,INCOMPLETE,1.0,,,1.0,False
+F2,10000,common-cause,D_fixed,load,INCOMPLETE,1.0,,,1.0,False
+F2,10000,common-cause,D_cal,base,INCOMPLETE,1.0,,,1.0,False
+F2,10000,common-cause,D_cal,load,INCOMPLETE,1.0,,,1.0,False
+F2,10000,independent,D_fixed,base,INCOMPLETE,1.0,,,1.0,False
+F2,10000,independent,D_fixed,load,INCOMPLETE,1.0,,,1.0,False
+F2,10000,independent,D_cal,base,INCOMPLETE,1.0,,,1.0,False
+F2,10000,independent,D_cal,load,INCOMPLETE,1.0,,,1.0,False
+F2,100000,common-cause,D_fixed,base,INCOMPLETE,1.0,,,1.0,False
+F2,100000,common-cause,D_fixed,load,INCOMPLETE,1.0,,,1.0,False
+F2,100000,common-cause,D_cal,base,INCOMPLETE,1.0,,,1.0,False
+F2,100000,common-cause,D_cal,load,INCOMPLETE,1.0,,,1.0,False
+F2,100000,independent,D_fixed,base,INCOMPLETE,1.0,,,1.0,False
+F2,100000,independent,D_fixed,load,INCOMPLETE,1.0,,,1.0,False
+F2,100000,independent,D_cal,base,INCOMPLETE,1.0,,,1.0,False
+F2,100000,independent,D_cal,load,INCOMPLETE,1.0,,,1.0,False

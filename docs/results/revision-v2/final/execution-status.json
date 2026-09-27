@@ -1,0 +1,120 @@
+{
+  "protocol": "2.2",
+  "execution_status": "PARTIAL",
+  "authorized_work_status": "EXPERIMENTS_CLOSED_AT_PROTOCOL_GATES",
+  "publication_status": "READY_FOR_PUBLICATION_AND_SEPARATE_DOWNLOAD_VERIFICATION",
+  "APS": "COMPLETE",
+  "PBR_correctness": "COMPLETE",
+  "PBR_screen": "COMPLETE",
+  "PBR_large": "PARTIAL",
+  "reserve_holdout": "PARTIAL",
+  "reserve_completed_regions": 2,
+  "reserve_expected_regions": 8,
+  "PF": "COMPLETE_DIAGNOSTICS",
+  "APS_presentation_N_seconds": 74.7277512,
+  "correctness_scope": "Exact admitted core/extended comparisons; observed large trajectory prefixes only when a process timed out",
+  "incomplete_obligations": [
+    {
+      "series": "PBR",
+      "n": 100000,
+      "family": "F1",
+      "reason": {
+        "timeouts": 18,
+        "not_run_processes": 0,
+        "nominal_statuses": {
+          "101": "NOMINALLY_ADMISSIBLE",
+          "102": "NOMINALLY_ADMISSIBLE",
+          "103": "NOMINALLY_ADMISSIBLE"
+        }
+      },
+      "missing_complete_pairs": 9
+    },
+    {
+      "series": "PBR",
+      "n": 100000,
+      "family": "F2",
+      "reason": {
+        "timeouts": 0,
+        "not_run_processes": 36,
+        "nominal_statuses": {
+          "101": "NO_ADMISSIBLE_INPUT",
+          "102": "NO_ADMISSIBLE_INPUT",
+          "103": "NO_ADMISSIBLE_INPUT"
+        }
+      },
+      "missing_complete_pairs": 9
+    },
+    {
+      "series": "PBR",
+      "n": 1000000,
+      "family": "F1",
+      "reason": {
+        "timeouts": 0,
+        "not_run_processes": 36,
+        "nominal_statuses": {
+          "101": "COMPUTATION_INCOMPLETE",
+          "102": "NOMINALLY_ADMISSIBLE",
+          "103": "COMPUTATION_INCOMPLETE"
+        }
+      },
+      "missing_complete_pairs": 9
+    },
+    {
+      "series": "PBR",
+      "n": 1000000,
+      "family": "F2",
+      "reason": {
+        "timeouts": 0,
+        "not_run_processes": 36,
+        "nominal_statuses": {
+          "101": "NO_ADMISSIBLE_INPUT",
+          "102": "NO_ADMISSIBLE_INPUT",
+          "103": "NO_ADMISSIBLE_INPUT"
+        }
+      },
+      "missing_complete_pairs": 9
+    },
+    {
+      "series": "reserve",
+      "n": 100000,
+      "family": "F1",
+      "law": "common-cause",
+      "reason": "NOT_RUN_BUDGET_GATE"
+    },
+    {
+      "series": "reserve",
+      "n": 100000,
+      "family": "F1",
+      "law": "independent",
+      "reason": "NOT_RUN_BUDGET_GATE"
+    },
+    {
+      "series": "reserve",
+      "n": 10000,
+      "family": "F2",
+      "law": "common-cause",
+      "reason": "NO_ADMISSIBLE_INPUT"
+    },
+    {
+      "series": "reserve",
+      "n": 10000,
+      "family": "F2",
+      "law": "independent",
+      "reason": "NO_ADMISSIBLE_INPUT"
+    },
+    {
+      "series": "reserve",
+      "n": 100000,
+      "family": "F2",
+      "law": "common-cause",
+      "reason": "NO_ADMISSIBLE_INPUT"
+    },
+    {
+      "series": "reserve",
+      "n": 100000,
+      "family": "F2",
+      "law": "independent",
+      "reason": "NO_ADMISSIBLE_INPUT"
+    }
+  ]
+}

@@ -1,0 +1,7 @@
+{
+  "numpy": "2.5.3",
+  "scipy": "1.16.3",
+  "wheel": "scipy-1.16.3-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.whl",
+  "sha256": "72d1717fd3b5e6ec747327ce9bda32d5463f472c9dce9f54499e81fbd50245a1",
+  "source": "https://pypi.org/pypi/scipy/1.16.3/json"
+}

@@ -1,0 +1,32 @@
+[
+  {
+    "kind": "ACTUAL",
+    "package": "flow-report",
+    "run_id": 36317404661,
+    "attempt": 1,
+    "job_id": 108614619081,
+    "job": "report",
+    "runner_seconds": 156.0,
+    "conclusion": "failure"
+  },
+  {
+    "kind": "ACTUAL",
+    "package": "flow-report",
+    "run_id": 36316301467,
+    "attempt": 1,
+    "job_id": 108611547249,
+    "job": "report",
+    "runner_seconds": 65.0,
+    "conclusion": "failure"
+  },
+  {
+    "kind": "ACTUAL",
+    "package": "reuse",
+    "run_id": 36307514228,
+    "attempt": 1,
+    "job_id": 108587087222,
+    "job": "publish",
+    "runner_seconds": 16.0,
+    "conclusion": "failure"
+  }
+]

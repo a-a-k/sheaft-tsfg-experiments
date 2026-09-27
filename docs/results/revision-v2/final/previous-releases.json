@@ -1,0 +1,190 @@
+[
+  {
+    "role": "prior_campaign_release",
+    "tag": "v0.2.0-full-study",
+    "url": "https://github.com/a-a-k/sheaft-tsfg-experiments/releases/tag/v0.2.0-full-study",
+    "published_at": "2026-09-27T05:36:47Z",
+    "assets": [
+      {
+        "name": "aggregation.csv",
+        "size": 11297,
+        "digest": "sha256:a2279ffd1f370d60f2464691e5b1c9be6539b7fccae2c15602d64c7693f7f10e",
+        "browser_download_url": "https://github.com/a-a-k/sheaft-tsfg-experiments/releases/download/v0.2.0-full-study/aggregation.csv"
+      },
+      {
+        "name": "aggregation.png",
+        "size": 86588,
+        "digest": "sha256:6f00c82b1e1b8fbb0d43877569b8ad3f918cfdd288346b58211db7bcbd11ec10",
+        "browser_download_url": "https://github.com/a-a-k/sheaft-tsfg-experiments/releases/download/v0.2.0-full-study/aggregation.png"
+      },
+      {
+        "name": "evidence.zip",
+        "size": 210999117,
+        "digest": "sha256:f709ec5a47655db3cf71669fc752f204ed5bb6f0f286bcb124e3d05b4439f3f0",
+        "browser_download_url": "https://github.com/a-a-k/sheaft-tsfg-experiments/releases/download/v0.2.0-full-study/evidence.zip"
+      },
+      {
+        "name": "H3-measurements.csv",
+        "size": 76988,
+        "digest": "sha256:1dc0ec1b5e6945a73b7983568e8c548f2459d608378f094a896800919f9d486a",
+        "browser_download_url": "https://github.com/a-a-k/sheaft-tsfg-experiments/releases/download/v0.2.0-full-study/H3-measurements.csv"
+      },
+      {
+        "name": "H3.png",
+        "size": 133214,
+        "digest": "sha256:db16f8ec8610420bec0765886cf546ea4330a333f5e3aee1401da49525d598c9",
+        "browser_download_url": "https://github.com/a-a-k/sheaft-tsfg-experiments/releases/download/v0.2.0-full-study/H3.png"
+      },
+      {
+        "name": "input-diagnostics.json",
+        "size": 277461,
+        "digest": "sha256:576168b51e9076a1880984cf784c9883b7097e367392cf5ab16a678d533e11a3",
+        "browser_download_url": "https://github.com/a-a-k/sheaft-tsfg-experiments/releases/download/v0.2.0-full-study/input-diagnostics.json"
+      },
+      {
+        "name": "inputs-index.json",
+        "size": 23090,
+        "digest": "sha256:9f470fbe3352c9f7107f570cefe89a9fb4f9558733410d628cb4bbd44244d28f",
+        "browser_download_url": "https://github.com/a-a-k/sheaft-tsfg-experiments/releases/download/v0.2.0-full-study/inputs-index.json"
+      },
+      {
+        "name": "inputs.zip",
+        "size": 624643044,
+        "digest": "sha256:02692b0bbe0550e42f538cf578ab745b21aaaec8a48a1c77842951715130fd96",
+        "browser_download_url": "https://github.com/a-a-k/sheaft-tsfg-experiments/releases/download/v0.2.0-full-study/inputs.zip"
+      },
+      {
+        "name": "main-processes.csv",
+        "size": 139027,
+        "digest": "sha256:9f0e10977f1532a9c4608c5c46b610dcca22dce736bf6e4b235dab7dae45a646",
+        "browser_download_url": "https://github.com/a-a-k/sheaft-tsfg-experiments/releases/download/v0.2.0-full-study/main-processes.csv"
+      },
+      {
+        "name": "REPORT_RU.md",
+        "size": 35082,
+        "digest": "sha256:c0e2b40ae45a22632d4edf72bbd7a50c34d5313a76d18d0c2032dd8b4cc7dead",
+        "browser_download_url": "https://github.com/a-a-k/sheaft-tsfg-experiments/releases/download/v0.2.0-full-study/REPORT_RU.md"
+      },
+      {
+        "name": "REPORT_RU.pdf",
+        "size": 117705,
+        "digest": "sha256:2955582001116a769cbc001a19d4b8da7a63d83ea823fb0bb72cfe49f2f1c813",
+        "browser_download_url": "https://github.com/a-a-k/sheaft-tsfg-experiments/releases/download/v0.2.0-full-study/REPORT_RU.pdf"
+      },
+      {
+        "name": "reserves.png",
+        "size": 64395,
+        "digest": "sha256:244a658ab76ad9c949ea0da5a8e54085a2a4814cf93613bf82aecf725cdc66bf",
+        "browser_download_url": "https://github.com/a-a-k/sheaft-tsfg-experiments/releases/download/v0.2.0-full-study/reserves.png"
+      },
+      {
+        "name": "runs.json",
+        "size": 4623,
+        "digest": "sha256:2b9206da50f90b9c7f759ae18d6c10b14ab3dbd7469e251d416771c858a4afe1",
+        "browser_download_url": "https://github.com/a-a-k/sheaft-tsfg-experiments/releases/download/v0.2.0-full-study/runs.json"
+      },
+      {
+        "name": "screen-processes.csv",
+        "size": 26002,
+        "digest": "sha256:e65e8a80078c921fcd6cdab4adff9a2fc74f11454e55217bac98766fe4d81e49",
+        "browser_download_url": "https://github.com/a-a-k/sheaft-tsfg-experiments/releases/download/v0.2.0-full-study/screen-processes.csv"
+      },
+      {
+        "name": "SHA256.json",
+        "size": 1725,
+        "digest": "sha256:4bea762031733bdbbca7ef983ec9efcb5c7db30291786d50554d7029b7ac94d6",
+        "browser_download_url": "https://github.com/a-a-k/sheaft-tsfg-experiments/releases/download/v0.2.0-full-study/SHA256.json"
+      },
+      {
+        "name": "strict-deadlines-post-hoc.csv",
+        "size": 10829,
+        "digest": "sha256:d7ffb3bacb992d963942848378b2a67c3524002486f0bfde56f5e54b7f6fb0ec",
+        "browser_download_url": "https://github.com/a-a-k/sheaft-tsfg-experiments/releases/download/v0.2.0-full-study/strict-deadlines-post-hoc.csv"
+      },
+      {
+        "name": "summary.json",
+        "size": 234547,
+        "digest": "sha256:a8456d5c18982ae7a568ea48d59de13e5e3154c66bc97543f6b888d391ebcf3f",
+        "browser_download_url": "https://github.com/a-a-k/sheaft-tsfg-experiments/releases/download/v0.2.0-full-study/summary.json"
+      },
+      {
+        "name": "supplementary-processes.csv",
+        "size": 54080,
+        "digest": "sha256:ed71e44dbfdd20cc8357e99c90a0b588fea73db33066425d66cab81593523c9e",
+        "browser_download_url": "https://github.com/a-a-k/sheaft-tsfg-experiments/releases/download/v0.2.0-full-study/supplementary-processes.csv"
+      },
+      {
+        "name": "supplementary-summary.csv",
+        "size": 2798,
+        "digest": "sha256:75d8cbbf33f3a9a5e1ac3ed19138dc2d76a5c8eacfdfa4bc8a17fee3b01de7ad",
+        "browser_download_url": "https://github.com/a-a-k/sheaft-tsfg-experiments/releases/download/v0.2.0-full-study/supplementary-summary.csv"
+      },
+      {
+        "name": "timeout-ratio-bounds.csv",
+        "size": 13624,
+        "digest": "sha256:a6f11399045fa4432c5c0c857e994d66b83243ed2ba29fec171dff07d428f44a",
+        "browser_download_url": "https://github.com/a-a-k/sheaft-tsfg-experiments/releases/download/v0.2.0-full-study/timeout-ratio-bounds.csv"
+      }
+    ]
+  },
+  {
+    "role": "e4_release",
+    "tag": "revision-v2-e4-1bab7db283f5",
+    "url": "https://github.com/a-a-k/sheaft-tsfg-experiments/releases/tag/revision-v2-e4-1bab7db283f5",
+    "published_at": "2026-09-27T08:56:15Z",
+    "assets": [
+      {
+        "name": "e4-complete-v2.zip",
+        "size": 72008491,
+        "digest": "sha256:63334fce5d6c221b53620a8fe4a8bdf89aa9b147815a7decd74d09086189ed06",
+        "browser_download_url": "https://github.com/a-a-k/sheaft-tsfg-experiments/releases/download/revision-v2-e4-1bab7db283f5/e4-complete-v2.zip"
+      },
+      {
+        "name": "SHA256.json",
+        "size": 94,
+        "digest": "sha256:89055799af8701955ee2a26a0145547247e297964e2d220cd7d37b1dd481c0df",
+        "browser_download_url": "https://github.com/a-a-k/sheaft-tsfg-experiments/releases/download/revision-v2-e4-1bab7db283f5/SHA256.json"
+      }
+    ]
+  },
+  {
+    "role": "first_package_release",
+    "tag": "revision-v2-first-package-7a7dedbed12c",
+    "url": "https://github.com/a-a-k/sheaft-tsfg-experiments/releases/tag/revision-v2-first-package-7a7dedbed12c",
+    "published_at": "2026-09-27T10:38:15Z",
+    "assets": [
+      {
+        "name": "first-package-v2.zip",
+        "size": 59809944,
+        "digest": "sha256:671d72e005f4151dd18b6fc2e5502e82ec58c80831c484e828b57de1e7db66ed",
+        "browser_download_url": "https://github.com/a-a-k/sheaft-tsfg-experiments/releases/download/revision-v2-first-package-7a7dedbed12c/first-package-v2.zip"
+      },
+      {
+        "name": "SHA256.json",
+        "size": 97,
+        "digest": "sha256:0eaf45b9a7a6cc34b008d8daf86c9c7d2f835f1b53d60ad54fbadc2566a56c83",
+        "browser_download_url": "https://github.com/a-a-k/sheaft-tsfg-experiments/releases/download/revision-v2-first-package-7a7dedbed12c/SHA256.json"
+      }
+    ]
+  },
+  {
+    "role": "aps_release",
+    "tag": "revision-v2-aps-matrix-68ce2dfe0dfb",
+    "url": "https://github.com/a-a-k/sheaft-tsfg-experiments/releases/tag/revision-v2-aps-matrix-68ce2dfe0dfb",
+    "published_at": "2026-09-27T10:50:10Z",
+    "assets": [
+      {
+        "name": "aps-matrix-v2.zip",
+        "size": 381946224,
+        "digest": "sha256:19de13c89af6bab470d59da890936b164c4ae68e4c96554e4dc1a465735363c8",
+        "browser_download_url": "https://github.com/a-a-k/sheaft-tsfg-experiments/releases/download/revision-v2-aps-matrix-68ce2dfe0dfb/aps-matrix-v2.zip"
+      },
+      {
+        "name": "SHA256.json",
+        "size": 94,
+        "digest": "sha256:9e6d9824a653ca5bdc0fa747de719b2509d31899e6f4f68e3499ae8b534602dc",
+        "browser_download_url": "https://github.com/a-a-k/sheaft-tsfg-experiments/releases/download/revision-v2-aps-matrix-68ce2dfe0dfb/SHA256.json"
+      }
+    ]
+  }
+]

@@ -1,0 +1,123 @@
+[
+  {
+    "n": 100000,
+    "family": "F1",
+    "expected_pairs": 9,
+    "expected_processes": 36,
+    "attempted_pairs": 9,
+    "complete_correct_pairs": 0,
+    "attempted_processes": 36,
+    "not_run_processes": 0,
+    "measured_processes": 18,
+    "timeouts": 18,
+    "G": null,
+    "round_cpu_groups": [
+      {
+        "round": 1,
+        "CPU_model": "AMD EPYC 7763 64-Core Processor",
+        "complete_pairs": 0,
+        "G": null
+      },
+      {
+        "round": 1,
+        "CPU_model": "AMD EPYC 9V45 96-Core Processor",
+        "complete_pairs": 0,
+        "G": null
+      },
+      {
+        "round": 2,
+        "CPU_model": "AMD EPYC 7763 64-Core Processor",
+        "complete_pairs": 0,
+        "G": null
+      },
+      {
+        "round": 2,
+        "CPU_model": "INTEL(R) XEON(R) PLATINUM 8573C",
+        "complete_pairs": 0,
+        "G": null
+      },
+      {
+        "round": 3,
+        "CPU_model": "AMD EPYC 7763 64-Core Processor",
+        "complete_pairs": 0,
+        "G": null
+      },
+      {
+        "round": 3,
+        "CPU_model": "AMD EPYC 9V74 80-Core Processor",
+        "complete_pairs": 0,
+        "G": null
+      }
+    ],
+    "hypothesis_status": "INCONCLUSIVE",
+    "nominal_statuses": {
+      "101": "NOMINALLY_ADMISSIBLE",
+      "102": "NOMINALLY_ADMISSIBLE",
+      "103": "NOMINALLY_ADMISSIBLE"
+    },
+    "execution_status": "PARTIAL"
+  },
+  {
+    "n": 100000,
+    "family": "F2",
+    "expected_pairs": 9,
+    "expected_processes": 36,
+    "attempted_pairs": 0,
+    "complete_correct_pairs": 0,
+    "attempted_processes": 0,
+    "not_run_processes": 36,
+    "measured_processes": 0,
+    "timeouts": 0,
+    "G": null,
+    "round_cpu_groups": [],
+    "hypothesis_status": "INCONCLUSIVE",
+    "nominal_statuses": {
+      "101": "NO_ADMISSIBLE_INPUT",
+      "102": "NO_ADMISSIBLE_INPUT",
+      "103": "NO_ADMISSIBLE_INPUT"
+    },
+    "execution_status": "PARTIAL"
+  },
+  {
+    "n": 1000000,
+    "family": "F1",
+    "expected_pairs": 9,
+    "expected_processes": 36,
+    "attempted_pairs": 0,
+    "complete_correct_pairs": 0,
+    "attempted_processes": 0,
+    "not_run_processes": 36,
+    "measured_processes": 0,
+    "timeouts": 0,
+    "G": null,
+    "round_cpu_groups": [],
+    "hypothesis_status": "INCONCLUSIVE",
+    "nominal_statuses": {
+      "101": "COMPUTATION_INCOMPLETE",
+      "102": "NOMINALLY_ADMISSIBLE",
+      "103": "COMPUTATION_INCOMPLETE"
+    },
+    "execution_status": "PARTIAL"
+  },
+  {
+    "n": 1000000,
+    "family": "F2",
+    "expected_pairs": 9,
+    "expected_processes": 36,
+    "attempted_pairs": 0,
+    "complete_correct_pairs": 0,
+    "attempted_processes": 0,
+    "not_run_processes": 36,
+    "measured_processes": 0,
+    "timeouts": 0,
+    "G": null,
+    "round_cpu_groups": [],
+    "hypothesis_status": "INCONCLUSIVE",
+    "nominal_statuses": {
+      "101": "NO_ADMISSIBLE_INPUT",
+      "102": "NO_ADMISSIBLE_INPUT",
+      "103": "NO_ADMISSIBLE_INPUT"
+    },
+    "execution_status": "PARTIAL"
+  }
+]

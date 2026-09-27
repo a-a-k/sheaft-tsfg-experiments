@@ -18,12 +18,13 @@
   "flow_run": 36311747232,
   "flow_invalid_step_run": 36311526885,
   "report_preflight_runs": [36316301467, 36316390333],
-  "report_build_runs": [36317404661, 36317608004],
+  "report_build_runs": [36317404661, 36317608004, 36317878894],
+  "final_report_run": 36317878894,
+  "final_release": "revision-v2-final-package-16366e27dea4",
+  "final_archive_sha256": "907deb2c035103eb838ab9a90c528d0b464c04cda51142e024046a2b700989cb",
   "superseded_final_releases": ["revision-v2-final-package-bd43e803a57b"],
   "execution_status": "PARTIAL",
   "experiments_closed": true,
-  "publication_status": "PENDING_FINAL_EVIDENCE",
-  "outstanding": [
-    "Global 32-member Holm analysis and final evidence publication"
-  ]
+  "publication_status": "VERIFIED",
+  "outstanding": []
 }
