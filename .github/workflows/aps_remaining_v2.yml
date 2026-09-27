@@ -1,8 +1,5 @@
 name: APS remaining million matrix v2
 on:
-  push:
-    branches: ['implementation/revision-v2']
-    paths: ['.github/workflows/aps_remaining_v2.yml']
   workflow_dispatch:
     inputs:
       batch:

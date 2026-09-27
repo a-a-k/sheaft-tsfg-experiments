@@ -21,6 +21,7 @@
     "aps_remaining_v2.yml": "aps-rest",
     "extended_admission_v2.yml": "pbr-correctness",
     "extended_screen_v2.yml": "pbr-screen"
+    ,"flow_admission_v2.yml": "flow-report"
   },
   "initial_deviation": "The first archive-preservation push also triggered unchanged legacy CI before v2.2 became available. Its runner time is charged to reuse; subsequent revision pushes skip that legacy campaign."
 }
