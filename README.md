@@ -1,5 +1,13 @@
 # Sheaft / TSFG manufacturing execution experiment
 
+Revision 2.2 is in progress; the original campaign below remains preserved.
+The [first APS report](docs/results/revision-v2/aps-first/APS_FIRST_REPORT_RU.md)
+contains 30 validated 100k measurements and the first two validated million-operation
+plans: F1 in 75.51 s and F2 in 32.51 s, one repeat each. The complete million matrix
+is pending. [Download the inputs, plans and verified report archive](https://github.com/a-a-k/sheaft-tsfg-experiments/releases/tag/revision-v2-aps-first-c2c51bbdecce).
+The [complete E4 archive and output reanalysis](https://github.com/a-a-k/sheaft-tsfg-experiments/releases/tag/revision-v2-e4-1bab7db283f5)
+is also published. These releases do not mark the whole revision complete.
+
 Fixed manufacturing schedule experiment using the existing Go TSFG kernel from
 S1 with a new operation policy adapter. [Reuse specification](docs/TSFG_REUSE_RU.md)
 amends protocol 1.1 and records exactly which code is reused.
