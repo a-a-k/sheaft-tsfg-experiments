@@ -1,0 +1,482 @@
+[
+  {
+    "dataset_id": "F1-DENSE-N1000-M200-s101",
+    "artifact_id": 10904110165,
+    "artifact_sha256": "8c2771a7cc3d81ec06fabfe1c8cc40325810ad4b02598ca8f189780fd8ca32ff",
+    "files": {
+      "input.bin": "66c66526ae9821861de5343257a851e0832157ac4e93ecd1017f3d2485c34ab1",
+      "operations.jsonl.gz": "5962c04a586ddd952260634aeaac4bd994bd746c9db5017a31bfa39f49e252e5",
+      "scenarios-1000.json": "472ac843b9b8babca5218bc001911bf6f128e1c4f8599451540e033c65a41347"
+    }
+  },
+  {
+    "dataset_id": "F1-DENSE-N1000-M200-s102",
+    "artifact_id": 10903064768,
+    "artifact_sha256": "86cee8bc47b5579d92ca125812b02f6fc1761dc9707c819ec86ad3d9a5d2cb2a",
+    "files": {
+      "input.bin": "66c66526ae9821861de5343257a851e0832157ac4e93ecd1017f3d2485c34ab1",
+      "operations.jsonl.gz": "5962c04a586ddd952260634aeaac4bd994bd746c9db5017a31bfa39f49e252e5",
+      "scenarios-1000.json": "b04a78ca3f4dc4b502a071ad86f7d2d7415d968d7d2be66d585b688ae63fdcba"
+    }
+  },
+  {
+    "dataset_id": "F1-DENSE-N1000-M200-s103",
+    "artifact_id": 10903861839,
+    "artifact_sha256": "11e84356c5dc17f61199e939ffdcb8c5d81729e4fb9b8b79107cbd5fbe0d897f",
+    "files": {
+      "input.bin": "66c66526ae9821861de5343257a851e0832157ac4e93ecd1017f3d2485c34ab1",
+      "operations.jsonl.gz": "5962c04a586ddd952260634aeaac4bd994bd746c9db5017a31bfa39f49e252e5",
+      "scenarios-1000.json": "a2c081b89d888e9de5498c12ff1dabe4a80fa7df0b52712ae2ae5d384f4d0e80"
+    }
+  },
+  {
+    "dataset_id": "F1-DENSE-N10000-M200-s101",
+    "artifact_id": 10903991636,
+    "artifact_sha256": "23b1ad18a5e272f1755eaff7345ff54ff1eb2a3a2a349e75a7e745b3045db5f3",
+    "files": {
+      "input.bin": "5882c9d88207a9b8a0a606ba7fccb43cc16d2c59916bfdbf2ccbba149cf63c44",
+      "operations.jsonl.gz": "4bc022b8edd17f6aa9d8e5f7753f074d670db645904273ef31b7242b5bcad10a",
+      "scenarios-1000.json": "620428fcf8de9a8ef4119564eb108f70c8fac1560ffb45b384a48b375fbf32a8"
+    }
+  },
+  {
+    "dataset_id": "F1-DENSE-N10000-M200-s102",
+    "artifact_id": 10903478292,
+    "artifact_sha256": "990680271c1e99cdefd8ad53d0121894cc0efdc103ace884b20f612b348c6a89",
+    "files": {
+      "input.bin": "5882c9d88207a9b8a0a606ba7fccb43cc16d2c59916bfdbf2ccbba149cf63c44",
+      "operations.jsonl.gz": "4bc022b8edd17f6aa9d8e5f7753f074d670db645904273ef31b7242b5bcad10a",
+      "scenarios-1000.json": "efc019f3439c7084f9715e7c76c2cafe4645723a547970989a6a7dfc678626c8"
+    }
+  },
+  {
+    "dataset_id": "F1-DENSE-N10000-M200-s103",
+    "artifact_id": 10903832960,
+    "artifact_sha256": "15602c48b84c73da07ad66d0f1c359f5b35826686a83f931d2a0ea9b4372166d",
+    "files": {
+      "input.bin": "5882c9d88207a9b8a0a606ba7fccb43cc16d2c59916bfdbf2ccbba149cf63c44",
+      "operations.jsonl.gz": "4bc022b8edd17f6aa9d8e5f7753f074d670db645904273ef31b7242b5bcad10a",
+      "scenarios-1000.json": "aab82774a67c34cf311366ea599f32a76275511e709f28381365152abe2e1d3c"
+    }
+  },
+  {
+    "dataset_id": "F1-DENSE-N100000-M200-s101",
+    "artifact_id": 10903544437,
+    "artifact_sha256": "786f9da33aab5a6e6d2bdb10423bd642c0ef7d2a6fc6bbc5a581ea07049d8902",
+    "files": {
+      "input.bin": "9a79e3f6347df40eeab14ace787b6ee58b854bf24971bdeab0dd3821969ead8c",
+      "operations.jsonl.gz": "f5c2b66c7ac4c6d3b8ce7b9fcd60d6c7d768599f911aed450054aca8f4333035",
+      "scenarios-1000.json": "3f4a3c76c789ce76981cdd317843c67626608bffc5553c3c72bffe69461c5e35"
+    }
+  },
+  {
+    "dataset_id": "F1-DENSE-N100000-M200-s102",
+    "artifact_id": 10903144765,
+    "artifact_sha256": "fa7714b979798bc4c40bf03673ad0f06d24e6a7c58312abba8e9c66b19c9d1b7",
+    "files": {
+      "input.bin": "9a79e3f6347df40eeab14ace787b6ee58b854bf24971bdeab0dd3821969ead8c",
+      "operations.jsonl.gz": "f5c2b66c7ac4c6d3b8ce7b9fcd60d6c7d768599f911aed450054aca8f4333035",
+      "scenarios-1000.json": "0d560665708174780239c9748567af3d7d82a2b4f3b09d5d3af53b8785849feb"
+    }
+  },
+  {
+    "dataset_id": "F1-DENSE-N100000-M200-s103",
+    "artifact_id": 10903889394,
+    "artifact_sha256": "827b352c54b3102425fdcbd0e63ca3dcf42517b4381e8ecd90bda2675706ef2c",
+    "files": {
+      "input.bin": "9a79e3f6347df40eeab14ace787b6ee58b854bf24971bdeab0dd3821969ead8c",
+      "operations.jsonl.gz": "f5c2b66c7ac4c6d3b8ce7b9fcd60d6c7d768599f911aed450054aca8f4333035",
+      "scenarios-1000.json": "0a3724873322e3871e017c58c2b66abdcce945e3dc7ef5f7cad78e88a786848c"
+    }
+  },
+  {
+    "dataset_id": "F1-DENSE-N1000000-M200-s101",
+    "artifact_id": 10904099275,
+    "artifact_sha256": "c040aaa62ce384b6c0dd3a70db0a507f95abf37f2767a01ea9cf54aae59f3948",
+    "files": {
+      "input.bin": "e1ed363599098afad673ef269d0864db592ad8a140e6843306276a18375eafad",
+      "operations.jsonl.gz": "a7b823ec5582ddedacde1eb9b2251c5a5a4e10030dde24e91c9e8cef2a66d10f",
+      "scenarios-1000.json": "ce04322acc054de8d7da76209ae160691ac173642b0f1a723a76e17ee5962d2e"
+    }
+  },
+  {
+    "dataset_id": "F1-DENSE-N1000000-M200-s102",
+    "artifact_id": 10903994960,
+    "artifact_sha256": "65767a47b06a05d9acf5156da2a5c84f819e04cb4f2cc7e16442f4cbe6cc0551",
+    "files": {
+      "input.bin": "e1ed363599098afad673ef269d0864db592ad8a140e6843306276a18375eafad",
+      "operations.jsonl.gz": "a7b823ec5582ddedacde1eb9b2251c5a5a4e10030dde24e91c9e8cef2a66d10f",
+      "scenarios-1000.json": "68cfd77e12468715166d28295fedbf25f00d9f7a0c024e09b29b865fdb32f3cc"
+    }
+  },
+  {
+    "dataset_id": "F1-DENSE-N1000000-M200-s103",
+    "artifact_id": 10904616979,
+    "artifact_sha256": "706aeef3f0041ee2bd827be0b981149ce0c3d460c529078610e69a9c7e1de1ef",
+    "files": {
+      "input.bin": "e1ed363599098afad673ef269d0864db592ad8a140e6843306276a18375eafad",
+      "operations.jsonl.gz": "a7b823ec5582ddedacde1eb9b2251c5a5a4e10030dde24e91c9e8cef2a66d10f",
+      "scenarios-1000.json": "e825445e1f4bf3a3e1976323dcd94c3bc3ad5e5d4fbdc078878e356f1b33d919"
+    }
+  },
+  {
+    "dataset_id": "F1-SPARSE-N1000-M200-s101",
+    "artifact_id": 10903284319,
+    "artifact_sha256": "b0a5fb31c82ce62805f344cc95108ee3de96f154437b8ee678a4545193f11986",
+    "files": {
+      "input.bin": "acc1e825bc9e60e4a331c4e2c0ec05e45b5935eb5af6ba13242f4c007b198e4a",
+      "operations.jsonl.gz": "2ce0057532af66114ddab72e848ee8691b9bde9854ef99c21a5be81834d42d6a",
+      "scenarios-1000.json": "faf4223875cb580e0281d4d8edc513f71848bfa196a0fc8f0ed51c7ba6a6a752"
+    }
+  },
+  {
+    "dataset_id": "F1-SPARSE-N1000-M200-s102",
+    "artifact_id": 10904060534,
+    "artifact_sha256": "3cfc5f84f5ca4fb3c03bc74951b36f4f8d4aa2c07c2a09b5558262aa90e53700",
+    "files": {
+      "input.bin": "f76dab4709fb83a00efbb3dcc58f9b67ee08eb2579339aec55067e8f3236d928",
+      "operations.jsonl.gz": "1a91d58e9c551021b6dc507767210ea56c3381d9e8d5d3fe2a1f34d79d12c2cd",
+      "scenarios-1000.json": "9849b328e6f620a3ee84516a12e893a20f84d92c4362477995e6e0e424e78c9e"
+    }
+  },
+  {
+    "dataset_id": "F1-SPARSE-N1000-M200-s103",
+    "artifact_id": 10904250080,
+    "artifact_sha256": "4542160aa027d51e00fb336a8c6d68f52f04938a5e93ad271b763f768dfb8f20",
+    "files": {
+      "input.bin": "70bc2cf7e27a432248f69a55671dad237088039bc48a790baa66a55bbc635c3d",
+      "operations.jsonl.gz": "ff9c0a96994a6b724f78738416f7f26975dca48b20ee5c6a7f2374c2ba5caf9d",
+      "scenarios-1000.json": "6729be14db071cb0d7854e79559d5baa366ef3b71613cdcfe463feef676cbf95"
+    }
+  },
+  {
+    "dataset_id": "F1-SPARSE-N10000-M200-s101",
+    "artifact_id": 10904016566,
+    "artifact_sha256": "ed53282780fbe82a336481fe055a8f409eae5cf1af8fde046c50ac3f5756aa5a",
+    "files": {
+      "input.bin": "30d615223a10ff0b98b5c72e9a1872e7897db91fa4142c4833b4e1cd4367873b",
+      "operations.jsonl.gz": "a29f268c2f3a70a95b9d976c8b5f14643d30a68a7098715a300e6a7e7e14f520",
+      "scenarios-1000.json": "3b8622119fb0a446c1ae9b9ac5d43b14af55e1d5b33c85338303c3b823327ed8"
+    }
+  },
+  {
+    "dataset_id": "F1-SPARSE-N10000-M200-s102",
+    "artifact_id": 10903438796,
+    "artifact_sha256": "df4e447bfad5090675042f006ffbae1d67267a2293019ac0170ea7b68cfdc6d9",
+    "files": {
+      "input.bin": "6cc7041568fcc2c5ce75332f673a3148b6b7ae96758d369745595b53693ff62e",
+      "operations.jsonl.gz": "347c86e33279918c4d3043d9947dc2922a14e0946bd605f2773a8632ea71e5f6",
+      "scenarios-1000.json": "9825e9678e2f090895e149956d74197be7f7c64f2fa7b0ee8bda2fa8ffb45713"
+    }
+  },
+  {
+    "dataset_id": "F1-SPARSE-N10000-M200-s103",
+    "artifact_id": 10903873267,
+    "artifact_sha256": "5e3fe438bfb8c787c97189a68dda4065e9e637dc4c4522b59df98a8954f48ef0",
+    "files": {
+      "input.bin": "fc8e640ae1c967c0274098bd6dd28f5d35fd39ed5f39ea0f16648275055a1065",
+      "operations.jsonl.gz": "b309cf887ada989654fb95daed55f03900482ce23291bfd4d615f3e2bcac3699",
+      "scenarios-1000.json": "71c25e60c7c67a51f37112be15c8287befbbbc40a16c65d59bd820ceab4d4cef"
+    }
+  },
+  {
+    "dataset_id": "F1-SPARSE-N100000-M200-s101",
+    "artifact_id": 10904476636,
+    "artifact_sha256": "887e55a1bdfabf218c5146c9411389df2fb20b912ab235d452daa9558199f6b5",
+    "files": {
+      "input.bin": "934d21fa24533b374555d5919147527a0953c98fdbb19ab0f7fe23210ab02e40",
+      "operations.jsonl.gz": "050add7ffdebd2d3da342db435f720253153b64d3d2bbaf15a6dd756e8617a5b",
+      "scenarios-1000.json": "b9a4f6f1b19e582c42cd6496178d6216e2e38ecb641e19fc10fca9d6faf51529"
+    }
+  },
+  {
+    "dataset_id": "F1-SPARSE-N100000-M200-s102",
+    "artifact_id": 10903884549,
+    "artifact_sha256": "0a37e669e61be9c62a0cbcb7c0df71eb6b5428aaa3a433aeb15907bcdad6111e",
+    "files": {
+      "input.bin": "9f66998e3cd112d642046ac6a94ecea7e6585c8d47ecac3b560c33d134b6b4a8",
+      "operations.jsonl.gz": "5cceb344405db43ff208bbb3f975fb2adcab6d99741d6e50b45b9ca9c503424e",
+      "scenarios-1000.json": "2680dd1916208e289180ed331de35b81e102a69c3a268bc1c300f6bf964cd336"
+    }
+  },
+  {
+    "dataset_id": "F1-SPARSE-N100000-M200-s103",
+    "artifact_id": 10904167869,
+    "artifact_sha256": "c83e0b4b798b095c48bd2cce0b45bdc59bbda7e38b49a41c110e60aa8c687240",
+    "files": {
+      "input.bin": "b6f3f6316fc3ea4cc82b3756638dcbfe093dc9e8550b124f7b76c6fef8fd6c7d",
+      "operations.jsonl.gz": "a284bc4d8fac4be29350348667c4a9b4fb5c86f5f442d69a1cc2ecb11a58c53f",
+      "scenarios-1000.json": "b33dae969ee743d483f5a7cc6af3c5a88eb0ad0babc47b42da7c32b3e7eeb518"
+    }
+  },
+  {
+    "dataset_id": "F1-SPARSE-N1000000-M200-s101",
+    "artifact_id": 10905095848,
+    "artifact_sha256": "66c55ff467844b00d5136ca7c149af3669529e76489fd3af0253878df3146fa6",
+    "files": {
+      "input.bin": "351633d09d4096be7df05db35313972a40782863d3d7b05ba9ef9a320ce3ddff",
+      "operations.jsonl.gz": "ff7266c9e579ce5cbfed19d51ef9955093e7aeb4bc4f374d1dd8dded8a163144",
+      "scenarios-1000.json": "ee5d58db887319853ae440e667a21304107c73ea6236e3ec416e55b18e5475cb"
+    }
+  },
+  {
+    "dataset_id": "F1-SPARSE-N1000000-M200-s102",
+    "artifact_id": 10905256775,
+    "artifact_sha256": "73955cf8a921defd0b378c6886a89f323fca535c4c864231a32be64dcd138127",
+    "files": {
+      "input.bin": "e20aff9db05adca8d40d7a3c483119459e1cf42cca0eaa6a59ac5bc136016fc5",
+      "operations.jsonl.gz": "46a9c0c1db5322c17d1e3d218c007abcbc6fa6d6acd65199dbc08792159e7b04",
+      "scenarios-1000.json": "337b29bd3498b37fa05caf32c03526d2a7c80bee13f72fc9a81785493c869a3a"
+    }
+  },
+  {
+    "dataset_id": "F1-SPARSE-N1000000-M200-s103",
+    "artifact_id": 10905301617,
+    "artifact_sha256": "c1bdd61c04f61a63f97e2d0c36eb1d8aff5f15576857b7a8547bf26e102d3387",
+    "files": {
+      "input.bin": "c0a2521755c2291e80051d72f7065b388fbbf7a35bbeb073a4f05be2c2ce97d8",
+      "operations.jsonl.gz": "86ce0d9977d7fa4301be8390058885c53996484944d41741350130f42419c3c3",
+      "scenarios-1000.json": "338c988c232d5bb3bfb6b0df3e6f3b564dd651b874fb91b532bc8f2dedceb544"
+    }
+  },
+  {
+    "dataset_id": "F2-DENSE-N1000-M200-s101",
+    "artifact_id": 10904115495,
+    "artifact_sha256": "bc466ed330c4fc31ed5511165b275b90144b4d30f16e596efee487dd56ec23c0",
+    "files": {
+      "input.bin": "3425ca0d221df3ecbd4d4dd9dad1501432af5dc8415c02b3b029259d1a1b577e",
+      "operations.jsonl.gz": "95cca71aef0130e1342a74db78ce63daceac1a2aea4d71d176c235714910ff00",
+      "scenarios-1000.json": "483ede5d614baeb1c38f8559bbcd2105c8a7f0426915fee93c9f770814b19a5f"
+    }
+  },
+  {
+    "dataset_id": "F2-DENSE-N1000-M200-s102",
+    "artifact_id": 10903399497,
+    "artifact_sha256": "d3a99b8b694bda1737d7acbb6a606292dc1091ca2d0eb72b2dc174b36c19645b",
+    "files": {
+      "input.bin": "e21546587d4cec4e54ec75d9d8eb4bd6ef3d0a09fcb7ff92eb5b1353122887be",
+      "operations.jsonl.gz": "0ce3ed612039e8e4b7c34d2118be6b6dc81d5984e057f91b837155359fe23b25",
+      "scenarios-1000.json": "46df237c08ba3bea0c81536d2ac7b8f9e591c786dbae03f827ac0d5b0179108a"
+    }
+  },
+  {
+    "dataset_id": "F2-DENSE-N1000-M200-s103",
+    "artifact_id": 10904170894,
+    "artifact_sha256": "f699b8497a23453ce01841ab0e85c089c155b0b1b31ac06d47b650ac52ddeb65",
+    "files": {
+      "input.bin": "f48e9aca20a212d6fe6fe84d67185b325d6d8a8102ddd00bc384d66b056f9cc3",
+      "operations.jsonl.gz": "d30b3261fcbb05d0a8d74954139772b0e993912610c1c82cd3229324fcc7a67a",
+      "scenarios-1000.json": "fb739045585c9591d1c15492e6831c0deef894003836ee52d65d67a047b22d58"
+    }
+  },
+  {
+    "dataset_id": "F2-DENSE-N10000-M200-s101",
+    "artifact_id": 10904236688,
+    "artifact_sha256": "94a453d3359f0a2ca07d196a180d571b24eb6ee1dc1b6210ad4987b8d52a394e",
+    "files": {
+      "input.bin": "dd3b343c301da3cc4eb88ba873e85fcb0859de18ac3c54357fea562e53895d98",
+      "operations.jsonl.gz": "fcd09042b10bab960c55d4553086a3e2b6120a56d755a8248e67eacc4b2325f5",
+      "scenarios-1000.json": "dc2a02d58e71c93e30ebb4a4e72882eed35e0a70362b4372782149c806ea3889"
+    }
+  },
+  {
+    "dataset_id": "F2-DENSE-N10000-M200-s102",
+    "artifact_id": 10904191740,
+    "artifact_sha256": "a1a8ffaba87c4a218f39aa220c38619c12494e85ac15e8a90311b0f0d4507ef2",
+    "files": {
+      "input.bin": "c47637526076186abd4f3adb3bf1f5b80247ba01bb73a9903852d735fe7cf6f1",
+      "operations.jsonl.gz": "1e390e9bc38a36631f965edd73abcdba476fbaeb7758ebb96d4c2410448cd30f",
+      "scenarios-1000.json": "9f23eb52d8185af6d88d1d7d900a21b73e33de7c4b996096a193f8220dce972a"
+    }
+  },
+  {
+    "dataset_id": "F2-DENSE-N10000-M200-s103",
+    "artifact_id": 10903433938,
+    "artifact_sha256": "007ebdbd28bc13cb08de5df63a68efac5ec57c339c685c67490d351a1aa9b9d4",
+    "files": {
+      "input.bin": "f9d0a097fb71eb89af8291879487fae670486955036f835f92da7b7592414048",
+      "operations.jsonl.gz": "57b612dd3666510629cdbd211867b30424287e7616d71b14ccd30773690370b6",
+      "scenarios-1000.json": "eb6ae9cb198d55d86b228db5b766852589437cd716a5e4ff87888cb0c8bcaefd"
+    }
+  },
+  {
+    "dataset_id": "F2-DENSE-N100000-M200-s101",
+    "artifact_id": 10904167956,
+    "artifact_sha256": "526b54d2f5e7d6ad3eade973a419548963258ea08f4669d137514e06d7c293f7",
+    "files": {
+      "input.bin": "2860fea535bec04bcf6129532b6266f940fd9ee866744edd8069b32c882278c8",
+      "operations.jsonl.gz": "48f6549dfc8e79101c8d581308c5911e596ff98acaa0e244bd3f6c91646733f9",
+      "scenarios-1000.json": "2a5551d91d8082f501879e0b3985ad259a55b7a8519992e89959f2ac376f098a"
+    }
+  },
+  {
+    "dataset_id": "F2-DENSE-N100000-M200-s102",
+    "artifact_id": 10904018430,
+    "artifact_sha256": "a896fe9f36a82c9d3dc68b5c3281caf59152dd0bf4bdeee5f9f453038a2577fa",
+    "files": {
+      "input.bin": "b43d2ad44af069474264ea737370a53666c209ed19787477d9ab54cc75ae1ccf",
+      "operations.jsonl.gz": "9fe20ae0e6e47bf9359603d54746f00cc3257bdf3bd0b7c90f51e0725a62d874",
+      "scenarios-1000.json": "f78200fa1555f5c49eb769b92bb2d3cb2911328744b62708e318140afac5ec01"
+    }
+  },
+  {
+    "dataset_id": "F2-DENSE-N100000-M200-s103",
+    "artifact_id": 10904273209,
+    "artifact_sha256": "6f6cfd0302e0cb266ec96783c302775ace558f0ec7f202f9eb7d4bace4c957df",
+    "files": {
+      "input.bin": "deb03d2d80d3709d3e44e28049a5f705f7b7238032017814af5948db7ad9915a",
+      "operations.jsonl.gz": "b71b63db86fdad075e8d5c6e4a5f95c58cc8cbd51c4f5b8a3f0043f91f8b9b5d",
+      "scenarios-1000.json": "4d155b29ca308a084248d58ae3fd1eef34f2189685d23f2977b7803f0168c181"
+    }
+  },
+  {
+    "dataset_id": "F2-DENSE-N1000000-M200-s101",
+    "artifact_id": 10905172760,
+    "artifact_sha256": "27ea668d3a872cf767a0e8d17023495571dc60fd2e326f012795e0b36d6044c4",
+    "files": {
+      "input.bin": "3a570f7d07061048809b404bf0ee0b49db142e7cf8d4860ac449b4a1ac6f80bc",
+      "operations.jsonl.gz": "d98134539c2cbf95b836afcb9c87acd90c90f25e5eb0882cd17f9d9ca878f747",
+      "scenarios-1000.json": "7623e95bb9516f37cae77d13a1090c263e6937a0399ca23becba1ac408407f83"
+    }
+  },
+  {
+    "dataset_id": "F2-DENSE-N1000000-M200-s102",
+    "artifact_id": 10905436635,
+    "artifact_sha256": "300832f663e3d063e0cb76444ef152c1fadba5d07c9f026be5648586b6477005",
+    "files": {
+      "input.bin": "50b51863db04ba0b82dfd7654638b7e375bdd6779ae7bb09525e183bd8e24c9d",
+      "operations.jsonl.gz": "6d0410d37cd73df06e7336af843aba6edb2a5dd6d70d9b2d3d07fff65f4a0df4",
+      "scenarios-1000.json": "a09705292233b669a1780c7ce3c30c06b437638033bad96ca03155cf917811b7"
+    }
+  },
+  {
+    "dataset_id": "F2-DENSE-N1000000-M200-s103",
+    "artifact_id": 10904992419,
+    "artifact_sha256": "b860a2ba0177db7d24355160863e98440227414de84749111a925350e047266a",
+    "files": {
+      "input.bin": "d87c91a564e5034e7dac0cfc026b0080868905480f95899b13ab10224dd9e0ec",
+      "operations.jsonl.gz": "2713f63ff74f68e81869d021060760a4b71ae127c78dd419b9fa0294235e603f",
+      "scenarios-1000.json": "0a4164e0895a8e422c54bfb1fc099c11650392514a9d01cf8d3bd1046813ac5c"
+    }
+  },
+  {
+    "dataset_id": "F2-SPARSE-N1000-M200-s101",
+    "artifact_id": 10904405141,
+    "artifact_sha256": "c1cefec34492877a5e89cfa30fb874318e107b0c0f178b97ccb46ca696565059",
+    "files": {
+      "input.bin": "b9b02fa79e8ca6c15c986973e2875302710b05fbf31a09e6ba50e7454e28f844",
+      "operations.jsonl.gz": "b938405425eb2a8436673dfd573524e97fb8499e621ea9068fe566f12d5301c7",
+      "scenarios-1000.json": "e0b421fdd9bb1bd456cfb91b982184cc0f24ebbd433adbedea6206974b136f72"
+    }
+  },
+  {
+    "dataset_id": "F2-SPARSE-N1000-M200-s102",
+    "artifact_id": 10904320595,
+    "artifact_sha256": "e3616388a105d57c0bc8408d5a0719e213692aa05957f6fc7bce3517c75f2440",
+    "files": {
+      "input.bin": "1637eba9305200b2f7fd957e9cbf22296694f9ef0e3c8dc0841b2cbd946af4e5",
+      "operations.jsonl.gz": "f00914102dfbabf1b55531ed6d5e2de37b448489c750564782a33bd87b490a01",
+      "scenarios-1000.json": "9646220d0d69d5e58fa8b4376aab3fb13c06f0f1919e9a139a70a3d2ba75ba58"
+    }
+  },
+  {
+    "dataset_id": "F2-SPARSE-N1000-M200-s103",
+    "artifact_id": 10904430213,
+    "artifact_sha256": "49e5cf17cea0e440bfcded4dbed7c7a73e17d213773f0ba2a50be46c223c3532",
+    "files": {
+      "input.bin": "f5ba93ed2355f38a844a26c549170471db57e68e95638e747088f66fa2d66866",
+      "operations.jsonl.gz": "c961d6924cf01b3c229120ff08fbbf7834ff43b315690d72ad6d9a30cfaa93b2",
+      "scenarios-1000.json": "a6162ce2c7dc33921deeb22d542c0c8491496f8891822f816cafc18732d7d3dd"
+    }
+  },
+  {
+    "dataset_id": "F2-SPARSE-N10000-M200-s101",
+    "artifact_id": 10903593766,
+    "artifact_sha256": "8eca613e2bedaeef4695e720d975f5ac990c0edfa865173a4cd068482956c152",
+    "files": {
+      "input.bin": "b8e0e3b8464b8c195de6b2a2b20c5e3e9e7b08e67bbd149fdc7fe14f162bc943",
+      "operations.jsonl.gz": "7eac24f64138a84b274245da3c679e7d8d4feebbf737188b79886431ad572216",
+      "scenarios-1000.json": "fe6eb907e58c353faf100933a758b12e21deeb2fb491de81ba2ff3692b7154b3"
+    }
+  },
+  {
+    "dataset_id": "F2-SPARSE-N10000-M200-s102",
+    "artifact_id": 10903878600,
+    "artifact_sha256": "554e5cc2292575dcc6be66cb572038d3c899274df1c6a84875c01000b29978d8",
+    "files": {
+      "input.bin": "efa3be82d55506c2f0ce7083ace001e6d2bd6e13d410f768d300fe67df3f9e28",
+      "operations.jsonl.gz": "becb8273903f875fb6aab9581d378e136a2ba8b67cf6a456c3ce597e04643a5a",
+      "scenarios-1000.json": "5ccd2777bd9c2172c213ba8c1b95a23c026268361a4055980d8ac09532a9a8ab"
+    }
+  },
+  {
+    "dataset_id": "F2-SPARSE-N10000-M200-s103",
+    "artifact_id": 10904495852,
+    "artifact_sha256": "5fb0c5c6b88ae9d00c71cef0927156ffcfeacfcca047a938e72d2e45b586e595",
+    "files": {
+      "input.bin": "a46eed876eda08587e87c9d3b3c3f8936b6af639e53f90d0e1336de56b88ce53",
+      "operations.jsonl.gz": "7a0a25fd09be7d72e727a81f6d64d69a4455e976778ede241fc6f0fdef932675",
+      "scenarios-1000.json": "846fcd6f5cb27d59cda1eeba64d110ccf6d3695df281fe8de3cb3932b442ef88"
+    }
+  },
+  {
+    "dataset_id": "F2-SPARSE-N100000-M200-s101",
+    "artifact_id": 10904525753,
+    "artifact_sha256": "b8ad402f69879fc71648b53114594b04023b861eed66778edc3ac7d1f4fea476",
+    "files": {
+      "input.bin": "666bb8a1acd3c0461f0c87737b5125474ae2d1b1175b6c8df22d4e4b3eb2f1ed",
+      "operations.jsonl.gz": "c0c3306b89d128d2fd0c97e4f48f193b7c71a64674ec800fbeef41fb78cd7df1",
+      "scenarios-1000.json": "311597ec501229b6a5824c387734398ba25e363f84fbf51903080a6a04e8de8b"
+    }
+  },
+  {
+    "dataset_id": "F2-SPARSE-N100000-M200-s102",
+    "artifact_id": 10904615988,
+    "artifact_sha256": "7c0cd556fda2c481c1ad9dc59e7df4c5655b2b6812150382ab05d5d6db9d2294",
+    "files": {
+      "input.bin": "f654606ee6e777919e41e172e27f7e93a68c5624bdf3463117e240720692bc10",
+      "operations.jsonl.gz": "aa6f2eeb3b5e1294ebf3afe2879879c8a0dafbc357c239c490ea7343906fe07e",
+      "scenarios-1000.json": "1166206b3b24d4e40a025a4770091bc2fd30ababc7fddb9861906cc291df6fe3"
+    }
+  },
+  {
+    "dataset_id": "F2-SPARSE-N100000-M200-s103",
+    "artifact_id": 10904193704,
+    "artifact_sha256": "0f4947dec11dc3111f308880fee4e80bdd50de175501c14c9935fd0d6826701e",
+    "files": {
+      "input.bin": "66c3f7fd51dace30df3c86a167c1b41f1bf98603332a38cd36a7884182810cd8",
+      "operations.jsonl.gz": "4d2ab7e7f8a4943ef6f1b8e906faf074b38dbaaf3e04a021962a1350593c7ae1",
+      "scenarios-1000.json": "f91eeff3fe789428f3d9cce28f0e69eae7b532b6900203da4ae4ad1675a5064f"
+    }
+  },
+  {
+    "dataset_id": "F2-SPARSE-N1000000-M200-s101",
+    "artifact_id": 10905502009,
+    "artifact_sha256": "d42ead5fb3b5853dbbaca16f6e6c16a168011d751f02693d78aa49fcdbc88247",
+    "files": {
+      "input.bin": "31d0e838ee527f479cab85acd5086480c59dee55a6a5c737ed24386372fcc8eb",
+      "operations.jsonl.gz": "2788e0cf02819577114eb1495ded443d9ca35ee16d4b24b5381a020feeac513c",
+      "scenarios-1000.json": "77f9cf778f1a7aae3740bb2dbb0825ca644c031ee97d60bbb5f1cfc45097ef09"
+    }
+  },
+  {
+    "dataset_id": "F2-SPARSE-N1000000-M200-s102",
+    "artifact_id": 10905258011,
+    "artifact_sha256": "96642223ddb02a657fe8dba6b56febb6563fac32ea74ee54ebb4d022e176c471",
+    "files": {
+      "input.bin": "2225f7621d648ca0db81e00b7b34bdf14d9a3174fd0c80e661f8626bf74bf6a3",
+      "operations.jsonl.gz": "de1152813fed8ca9fd5449d94433ae13c0e990203d64312a171bb0af915e40d5",
+      "scenarios-1000.json": "87fc20e35f56132ca231f4045159dec1111c61e1c6690056312878845f9476d5"
+    }
+  },
+  {
+    "dataset_id": "F2-SPARSE-N1000000-M200-s103",
+    "artifact_id": 10904778472,
+    "artifact_sha256": "6184d2376f5f2d8001ba4dbe2f698326d0e1ba8099d4953b9eb7333072b2c8cd",
+    "files": {
+      "input.bin": "fe9a7dd9af3c494e674a7d9a2dd517d51866eb1af9127e1b909231d426705a42",
+      "operations.jsonl.gz": "7a7c954640a0174d04b97b4cc299fe1165d7c06c540ee74c5e5863aefe23041c",
+      "scenarios-1000.json": "bf8d77934cda49038fb9b14e90f861f780231f4bbd2749dab657ed6c5ec208b4"
+    }
+  }
+]

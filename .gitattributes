@@ -1,0 +1,2 @@
+# Preserve the bytes of the checksum-identified Actions documents on checkout.
+docs/results/full-study/** -text
