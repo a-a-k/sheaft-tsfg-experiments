@@ -20,7 +20,7 @@ def main():
     assert speedup_bounds(rows)['upper'] is None
     known=[dict(completion_known=True,cmax=c,run_status='COMPLETE') for c in [1100,2200,3300]]
     result=tardiness(known,1100)
-    assert result['mean']==1 and result['p50']==1 and math.isclose(result['p95'],1.9)
+    assert result['observations']==3 and result['mean']==1 and result['p50']==1 and math.isclose(result['p95'],1.9)
     result=tardiness(known+[dict(completion_known=False,cmax=None,run_status='HORIZON',completion_lower_bound=4400)],1100)
     assert result['mean'] is None and result['p50'] is None and result['p95'] is None
     assert result['unknown']==1 and result['unknown_tardiness_lower_bounds_s']==[3.]

@@ -34,7 +34,7 @@ def tardiness(rows,deadline):
     assert all(row['cmax'] is None for row in unknown)
     bounds=[max(0,row['completion_lower_bound']-deadline)/1100 for row in unknown
             if row.get('completion_lower_bound') is not None]
-    result=dict(n=len(rows),known=len(known),unknown=len(unknown),
+    result=dict(observations=len(rows),known=len(known),unknown=len(unknown),
         deadlocked=sum(row['run_status']=='DEADLOCK' for row in unknown),
         unit='seconds',mean=None,p50=None,p95=None,
         unknown_tardiness_lower_bounds_s=bounds)
