@@ -28,7 +28,7 @@ def oom_kills():
     return int(dict(line.split() for line in path.read_text().splitlines()).get('oom_kill',0))
 
 
-def execute(data,scenarios,horizon,mode,engine,root,records,label):
+def execute(data,scenarios,horizon,mode,engine,root,records,label,limit=60):
     root.mkdir(parents=True,exist_ok=True)
     input_file=root/'input.json';scenario_file=root/'scenarios.json';output=root/'output.jsonl'
     input_file.write_text(json.dumps(data,separators=(',',':')));scenario_file.write_text(json.dumps(scenarios,separators=(',',':')))
@@ -44,7 +44,7 @@ def execute(data,scenarios,horizon,mode,engine,root,records,label):
                 for line in Path(f'/proc/{process.pid}/status').read_text().splitlines():
                     if line.startswith('VmHWM:'):observed=max(observed,int(line.split()[1])*1024)
             except FileNotFoundError:pass
-            if time.monotonic()-start>=60:
+            if time.monotonic()-start>=limit:
                 os.killpg(process.pid,signal.SIGKILL);status='TIMEOUT';break
             time.sleep(.02)
         process.wait()
@@ -53,7 +53,7 @@ def execute(data,scenarios,horizon,mode,engine,root,records,label):
     if status=='ERROR' and oom_kills()>before_oom:status='OOM'
     record=dict(label=label,engine=engine,mode=mode,horizon=horizon,scenarios=len(scenarios),
         performance_status=status,T_total_s=elapsed if status=='MEASURED' else None,
-        elapsed_s=elapsed,elapsed_lower_bound_s=60 if status=='TIMEOUT' else None,
+        elapsed_s=elapsed,elapsed_lower_bound_s=limit if status=='TIMEOUT' else None,
         observed_peak_bytes=observed,observed_peak_status='OBSERVED_LOWER_BOUND',input_sha256=sha(input_file),scenarios_sha256=sha(scenario_file),
         source_sha=os.environ['GITHUB_SHA'],run_id=os.environ['GITHUB_RUN_ID'],returncode=process.returncode)
     rows=None
@@ -71,8 +71,8 @@ def execute(data,scenarios,horizon,mode,engine,root,records,label):
     return rows
 
 
-def pair(data,scenarios,horizon,mode,root,records,label):
-    rows={engine:execute(data,scenarios,horizon,mode,engine,root/engine,records,label) for engine in ('des','tsfg')}
+def pair(data,scenarios,horizon,mode,root,records,label,limit=60):
+    rows={engine:execute(data,scenarios,horizon,mode,engine,root/engine,records,label,limit) for engine in ('des','tsfg')}
     if any(value is None for value in rows.values()):return None
     for sc,a,b in zip(scenarios,rows['des'],rows['tsfg']):
         for field in FIELDS:assert a[field]==b[field],(label,sc['id'],field)

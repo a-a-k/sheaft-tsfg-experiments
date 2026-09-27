@@ -36,7 +36,7 @@ def plan(args):
     assert len(cases)==6
     (args.root/'batch-manifest.json').write_text(json.dumps(dict(cases=cases,batch=args.batch,
         admission_run=args.admission_run,admission_artifact_sha256=digest,source_hashes=source_hashes,
-        reservation_seconds=5040),indent=2)+'\n')
+        reservation_seconds=args.reservation),indent=2)+'\n')
     with open(os.environ['GITHUB_OUTPUT'],'a') as out:out.write('matrix='+json.dumps(dict(include=cases),separators=(',',':'))+'\n')
 
 
@@ -67,6 +67,7 @@ def main():
     parser=argparse.ArgumentParser();parser.add_argument('action',choices=['plan','report'])
     parser.add_argument('--root',type=Path,required=True);parser.add_argument('--output',type=Path)
     parser.add_argument('--admission-run',type=int);parser.add_argument('--batch',type=int)
+    parser.add_argument('--reservation',type=int,default=5040)
     args=parser.parse_args();{'plan':plan,'report':report}[args.action](args)
 
 

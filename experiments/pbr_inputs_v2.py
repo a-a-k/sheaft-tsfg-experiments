@@ -40,13 +40,14 @@ def derive(parent,parent_hash,profile):
         capacity_rule='max(1,ceil(5*W/(4*C0_parent))); never recalibrated after M0')
 
 
-def screen_scenarios(data,c0,profile):
+def screen_scenarios(data,c0,profile,count=10,purpose_prefix='pbr_screen',identity_prefix='SCREEN'):
+    assert count in (10,100)
     task=task_hash(data)
-    kinds=['machine']*4+['work']*2+['separated']*2+['common']*2 if profile=='PB' else [kind for kind in ('machine','work','resource','separated','common') for _ in range(2)]
+    kinds=['machine']*4+['work']*2+['separated']*2+['common']*2 if profile=='PB' else [kind for kind in ('machine','work','resource','separated','common') for _ in range(count//5)]
     result=[];seeds=[]
     for i,kind in enumerate(kinds):
-        identity=f'SCREEN-K10-{i:02d}-{kind}'
-        purpose=f'pbr_screen:{profile}:K10'
+        identity=f'{identity_prefix}-K{count}-{i:02d}-{kind}'
+        purpose=f'{purpose_prefix}:{profile}:K{count}'
         raw=f'20260927|2.2|{task}|{purpose}|{identity}'
         seed=int.from_bytes(hashlib.sha256(raw.encode()).digest()[:8],'little')
         source=np.random.Generator(np.random.PCG64(seed))

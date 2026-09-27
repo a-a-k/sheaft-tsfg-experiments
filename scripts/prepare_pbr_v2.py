@@ -1,4 +1,5 @@
 """Prepare the 36 first-stage inputs from immutable original E2 data."""
+import argparse
 import json
 import os
 from pathlib import Path
@@ -15,12 +16,13 @@ from scripts.preserve_e4_v2 import digest
 
 def main():
     if os.environ.get('GITHUB_ACTIONS')!='true':raise SystemExit('Actions only')
+    parser=argparse.ArgumentParser();parser.add_argument('--size',type=int,choices=[100000,1000000]);args=parser.parse_args()
     root=Path('artifacts/pbr-inputs');root.mkdir(parents=True,exist_ok=True)
     index=json.loads(Path('docs/results/full-study/inputs-index.json').read_text())
     entries=[]
     with tempfile.TemporaryDirectory() as temp:
         temp=Path(temp)
-        for n in (1000,10000):
+        for n in ([args.size] if args.size else (1000,10000)):
             for family in ('F1','F2'):
                 for seed in (101,102,103):
                     identity=f'{family}-DENSE-N{n}-M200-s{seed}'
@@ -32,7 +34,7 @@ def main():
                     assert digest(temp/'input.bin')==parent['files']['input.bin']
                     data=read_binary(temp/'input.bin')
                     data['dataset_id']=identity
-                    for profile in ('PB','PR','PBR'):
+                    for profile in (['PBR'] if args.size else ('PB','PR','PBR')):
                         case=identity+'-'+profile
                         derived,manifest=derive(data,parent['files']['input.bin'],profile)
                         folder=root/case;folder.mkdir()
@@ -41,9 +43,9 @@ def main():
                             source_archive_sha256=parent['artifact_sha256'],input_sha256=digest(path),
                             task_sha256=task_hash(derived),batch=len(entries)//6,order=len(entries))
                         (folder/'manifest.json').write_text(json.dumps(record,indent=2)+'\n');entries.append(record)
-    assert len(entries)==36
+    assert len(entries)==(6 if args.size else 36)
     (root/'pbr-inputs-index.json').write_text(json.dumps(dict(version='2.2',cases=entries,order='n, family, seed, PB/PR/PBR'),indent=2)+'\n')
-    print('Prepared 36 fixed cases; pool capacity and demand frozen before nominal evaluation')
+    print(f'Prepared {len(entries)} fixed cases; pool capacity and demand frozen before nominal evaluation')
 
 
 if __name__=='__main__':main()
