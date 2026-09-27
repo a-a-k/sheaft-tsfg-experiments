@@ -1,0 +1,36 @@
+name: Sheaft Energotechhub presentation
+on:
+  push:
+    branches: [presentation/energotechhub-2026]
+    paths:
+      - presentation/energotechhub-2026/**
+      - .github/workflows/presentation_energotechhub.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  presentation:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: '3.12'
+      - name: Install presentation tools on GitHub runner
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends libreoffice-impress fonts-dejavu-core
+          python -m pip install python-pptx==1.0.2 Pillow==11.3.0 PyMuPDF==1.26.4
+      - name: Build editable slides
+        run: python presentation/energotechhub-2026/build.py
+      - name: Export PDF
+        run: libreoffice -env:UserInstallation=file:///tmp/sheaft-slides --headless --convert-to pdf --outdir artifacts/energotechhub-2026 artifacts/energotechhub-2026/Sheaft_Energotechhub_2026_RU.pptx
+      - name: Check and render presentation
+        run: python presentation/energotechhub-2026/build.py --verify
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: Sheaft-Energotechhub-2026
+          path: artifacts/energotechhub-2026/
+          retention-days: 90
