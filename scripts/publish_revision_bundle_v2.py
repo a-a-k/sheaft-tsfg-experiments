@@ -37,9 +37,20 @@ def main():
             if path.is_file():bundle.write(path,str(path.relative_to(args.root)))
     (root/'SHA256.json').write_text(json.dumps({archive_name:sha(root/archive_name)},indent=2)+'\n')
     expected={**verify(root,archive_name),'SHA256.json':sha(root/'SHA256.json')}
+    body=(args.root/'report'/args.report).read_text(encoding='utf-8')
+    if args.kind=='final-package':
+        status=json.loads((args.root/'report/execution-status.json').read_text())
+        body=('Итог исполнения Sheaft v2.2. Научный статус: **'+status['execution_status']+'**.\n\n'
+            'Полный отчёт находится в `report/FINAL_REPORT_RU.md` внутри `final-package-v2.zip`. '
+            'Там же: первичные таблицы, 32 проверки Холма, допуски, бюджет и реестр источников. '
+            'Каталог `raw/` сохраняет новые исходные Actions-архивы.\n\n'
+            'Все 60 основных APS-процессов завершены и проверены. Таймауты PBR, номинальные блокировки '
+            'и недопущенные области резервов сохранены отдельно; они не заменены пилотами. '
+            'Прежняя кампания и её результаты сохранены.\n\n'
+            'Внешний и внутренний SHA-256 проверяются отдельным job после публикации.')
     payload=root/'request.json';payload.write_text(json.dumps(dict(tag_name=tag,target_commitish=os.environ['GITHUB_SHA'],
         draft=True,prerelease=True,name='Sheaft v2.2: '+args.kind,
-        body=(args.root/'report'/args.report).read_text(encoding='utf-8'))))
+        body=body)))
     current=json.loads(gh('api',f'repos/{REPO}/releases','--method','POST','--input',str(payload)))
     gh('release','upload',tag,'--repo',REPO,*[str(root/name) for name in expected])
     for attempt in range(6):
