@@ -349,7 +349,8 @@ def write_report(out,areas,points,regions,hypotheses,registry,ledger):
             st=r['statistics'].get(deadline,{})
             if st.get('status')!='COMPLETE':continue
             hs=[h for h in hypotheses if (h['family'],h['n'],h['law'],h['deadline'])==(r['family'],r['n'],r['law'],deadline)]
-            text.append(f"| {r['family']} / {r['n']} / {r['law']} / {deadline} | {st['base']['mean']:.8f} | {st['base']['ci95']} | {st['load']['mean']:.8f} | {st['load']['ci95']} | {' / '.join(f'{h[\"p_holm\"]:.6g}' for h in hs)} |")
+            p_text=' / '.join(format(h['p_holm'],'.6g') for h in hs)
+            text.append(f"| {r['family']} / {r['n']} / {r['law']} / {deadline} | {st['base']['mean']:.8f} | {st['base']['ci95']} | {st['load']['mean']:.8f} | {st['load']['ci95']} | {p_text} |")
     text.extend(['','Прирост выражен долей заказов, а не процентными пунктами. Общая семья Холма содержит ровно 32 проверки; '
         'недоступные области и сроки получили p=1. Порог полезности: прирост к базе ≥0,01, обе нижние границы CI >0 '
         'и обе скорректированные проверки значимы. Сводчик повторно пересчитал эффекты и интервалы из парных записей '
