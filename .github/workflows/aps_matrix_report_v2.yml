@@ -1,8 +1,5 @@
 name: Publish complete APS matrix v2
 on:
-  push:
-    branches: ['implementation/revision-v2']
-    paths: ['.github/workflows/aps_matrix_report_v2.yml']
   workflow_dispatch:
     inputs:
       million_runs:

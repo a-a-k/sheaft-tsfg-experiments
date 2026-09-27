@@ -5,10 +5,13 @@ The [first package report](docs/results/revision-v2/first-package/FIRST_PACKAGE_
 now includes all 36 PBR preliminary inputs (30 completed K10 campaigns and six
 nominal deadlocks), exact combined Mk01 checks and the six fluid diagnostics.
 [Complete first-package traces and verified archive](https://github.com/a-a-k/sheaft-tsfg-experiments/releases/tag/revision-v2-first-package-7a7dedbed12c).
-The [first APS report](docs/results/revision-v2/aps-first/APS_FIRST_REPORT_RU.md)
-contains 30 validated 100k measurements and the first two validated million-operation
-plans: F1 in 75.51 s and F2 in 32.51 s, one repeat each. The complete million matrix
-is pending. [Download the inputs, plans and verified report archive](https://github.com/a-a-k/sheaft-tsfg-experiments/releases/tag/revision-v2-aps-first-c2c51bbdecce).
+The [complete APS matrix](docs/results/revision-v2/aps-matrix/APS_MATRIX_REPORT_RU.md)
+contains 60 validated primary processes: 10 unique inputs at each of 100k and one
+million operations, three repeats each. The maximum of the million-input medians
+is **74.73 s**, on one CPU with a 4 GiB memory limit.
+[All million-operation plans and verified report archive](https://github.com/a-a-k/sheaft-tsfg-experiments/releases/tag/revision-v2-aps-matrix-68ce2dfe0dfb).
+The [first APS archive](https://github.com/a-a-k/sheaft-tsfg-experiments/releases/tag/revision-v2-aps-first-c2c51bbdecce)
+also retains the complete compact million-operation input collection.
 The [complete E4 archive and output reanalysis](https://github.com/a-a-k/sheaft-tsfg-experiments/releases/tag/revision-v2-e4-1bab7db283f5)
 is also published. These releases do not mark the whole revision complete.
 
