@@ -4,6 +4,7 @@ import copy
 import hashlib
 import json
 import os
+import platform
 from pathlib import Path
 import signal
 import subprocess
@@ -83,6 +84,16 @@ def main():
     if os.environ.get('GITHUB_ACTIONS')!='true':raise SystemExit('Actions only')
     parser=argparse.ArgumentParser();parser.add_argument('--input',type=Path,required=True);parser.add_argument('--output',type=Path,required=True)
     args=parser.parse_args();root=args.output;root.mkdir(parents=True,exist_ok=True)
+    environment=dict(source_sha=os.environ['GITHUB_SHA'],run_id=os.environ['GITHUB_RUN_ID'],
+        python=sys.version,platform=platform.platform(),allowed_cpus=sorted(os.sched_getaffinity(0)),
+        cpuinfo=Path('/proc/cpuinfo').read_text(),
+        cgroup={name:Path('/sys/fs/cgroup',name).read_text().strip() for name in ('cpu.max','memory.max','memory.swap.max')},
+        versions={name:subprocess.check_output(command,text=True) for name,command in
+                  [('go',['go','version']),('g++',['g++','--version'])]},
+        public_code_sha256={name:sha(Path(name)) for name in ('engines/des_ext/main.cpp',
+            'engines/tsfg_op/operation_adapter.go','engines/tsfg_op/pbr_adapter.go',
+            'experiments/pbr_screen_v2.py','validation/pbr_checks.py')})
+    (root/'environment.json').write_text(json.dumps(environment,indent=2)+'\n')
     manifest=json.loads((args.input/'manifest.json').read_text());assert sha(args.input/'original.json')==manifest['input_sha256']
     data=json.loads((args.input/'original.json').read_text());empty=[dict(id='M0',failures=[],work_overrides=[],resource_failures=[])]
     records=[];summary=dict(id=manifest['id'],family=manifest['family'],seed=manifest['seed'],n=manifest['n'],profile=manifest['profile'],

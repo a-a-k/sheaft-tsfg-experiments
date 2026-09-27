@@ -1,8 +1,5 @@
 name: PBR preliminary 36 instances v2
 on:
-  push:
-    branches: ['implementation/revision-v2']
-    paths: ['.github/workflows/extended_screen_v2.yml']
   workflow_dispatch:
     inputs:
       phase:
@@ -23,7 +20,7 @@ permissions:
   actions: read
 jobs:
   prepare:
-    if: inputs.phase == 'prepare' || github.event_name == 'push'
+    if: inputs.phase == 'prepare'
     runs-on: ubuntu-24.04
     timeout-minutes: 8
     container:
